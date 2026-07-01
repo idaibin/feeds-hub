@@ -31,3 +31,39 @@ pnpm install
 pnpm run check
 pnpm run build
 ```
+
+## Codex 验证记录
+
+验证时间：2026-07-01
+
+### 实际运行命令
+
+```bash
+pnpm install --store-dir /private/tmp/pnpm-store
+pnpm run check
+pnpm run build
+```
+
+### 命令结果
+
+- `pnpm install --store-dir /private/tmp/pnpm-store`：通过；同步 lockfile 并移除已废弃的 RSS 依赖残留。
+- `pnpm run check`：通过；10 个文件，0 errors / 0 warnings / 0 hints。
+- `pnpm run build`：通过；成功构建 9 个静态页面。
+
+### 页面验证结果
+
+- 首页 `/` 展示全部 4 条已审查内容。
+- 首页内容按发布时间倒序排列。
+- `/category/worldcup/`、`/category/lol/`、`/category/stock/`、`/category/ai/` 均只展示当前主题内容。
+- Card 封面、分类徽标、摘要、标签和“查看详情”正常渲染。
+- 移动端当前视口无横向溢出，布局正常。
+- 仓库内未发现 GitHub Actions workflow 文件。
+- 仓库内未发现 RSS 数据源配置文件或抓取脚本。
+
+### 修复内容
+
+- 刷新 `pnpm-lock.yaml`，移除 `fast-xml-parser` 等 RSS 抓取依赖残留。
+
+### 未完成事项
+
+- 当前分支仍为 `feat/init-feeds-hub`，正式上线前仍需确认 Vercel 部署分支。
