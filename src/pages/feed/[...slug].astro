@@ -20,7 +20,6 @@ const category = getCategoryMeta(entry.data.category);
       <h1>{entry.data.title}</h1>
       <p class="subtitle">{entry.data.subtitle}</p>
       <p class="summary">{entry.data.summary}</p>
-      <div class="tag-row">{entry.data.tags.map((tag) => <span>#{tag}</span>)}</div>
       <div class="markdown-body"><Content /></div>
       {entry.data.sourceUrl && <p class="source-line">来源：<a href={entry.data.sourceUrl} target="_blank" rel="noreferrer">{entry.data.source ?? '查看原文'}</a></p>}
     </div>
@@ -36,8 +35,6 @@ const category = getCategoryMeta(entry.data.category);
   .meta-line a { color: #1d4ed8; font-weight: 800; }
   .subtitle { font-size: 20px; color: #334155; }
   .summary { padding: 16px 18px; border-radius: 18px; background: #f8fafc; color: #334155; }
-  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
-  .tag-row span { padding: 7px 10px; border-radius: 999px; background: rgba(37,99,235,.09); color: #1d4ed8; font-size: 13px; font-weight: 700; }
   .markdown-body { margin-top: 28px; line-height: 1.85; }
   .markdown-body :global(a), .source-line a { color: #1d4ed8; text-decoration: underline; text-underline-offset: 3px; }
   .source-line { margin-top: 28px; font-size: 14px; }
