@@ -11,10 +11,5 @@ const { category } = Astro.props;
 const feeds = (await getAllFeeds()).filter((entry) => entry.data.category === category.id);
 ---
 <BaseLayout title={`${category.name}｜Feeds Hub`} description={category.description}>
-  <section class="feed-page">
-    <div class="feed-heading">
-      <h1 class="feed-title">{category.name}</h1>
-    </div>
-    {feeds.length > 0 ? <div class="feed-grid">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">暂无内容。</div>}
-  </section>
+  {feeds.length > 0 ? <div class="masonry-feed">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">暂无内容。</div>}
 </BaseLayout>
