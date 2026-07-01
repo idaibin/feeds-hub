@@ -1,6 +1,6 @@
 ---
 title: "Julián Quiñones 点燃墨西哥想象：从归化前锋到晋级符号"
-subtitle: "类型：热点信息；关键词：Quiñones、墨西哥、淘汰赛突破"
+subtitle: "Quiñones、墨西哥和淘汰赛突破成为晋级夜传播焦点"
 category: "worldcup"
 kind: "hot_topic"
 topic: "世界杯 2026"
@@ -11,7 +11,7 @@ tags:
   - "Quiñones"
   - "墨西哥"
   - "世界杯"
-summary: "这条只讲球员热点：Julián Quiñones 在墨西哥 2-0 厄瓜多尔后成为传播焦点，原因是他的进球、归化故事和墨西哥突破淘汰赛心理关口的叙事。比赛结果已拆成单独赛果卡。"
+summary: "Julián Quiñones 在墨西哥 2-0 厄瓜多尔后成为传播焦点，原因是他的进球、归化故事和墨西哥突破淘汰赛心理关口的叙事。比赛结果已拆成单独赛果卡。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/mexico-dares-dream-quinones-helps-bury-ghosts-world-cup-disappointment-2026-07-01/"
 reviewed: true

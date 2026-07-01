@@ -6,6 +6,8 @@ interface Props { entry: CollectionEntry<'feeds'>; }
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
 const href = `/feed/${entry.id}/`;
+const kindTags = new Set(['比赛结果', '赛事安排', '热点信息', '市场简报', '政策动态']);
+const visibleTags = entry.data.tags.filter((tag) => !kindTags.has(tag)).slice(0, 4);
 ---
 <article class="feed-card">
   <a class="banner-link" href={href}>
@@ -19,7 +21,7 @@ const href = `/feed/${entry.id}/`;
     <h2><a href={href}>{entry.data.title}</a></h2>
     <p class="subtitle">{entry.data.subtitle}</p>
     <p class="summary">{entry.data.summary}</p>
-    <div class="tag-row">{entry.data.tags.slice(0, 4).map((tag) => <span>#{tag}</span>)}</div>
+    {visibleTags.length > 0 && <div class="tag-row">{visibleTags.map((tag) => <span>#{tag}</span>)}</div>}
   </div>
 </article>
 

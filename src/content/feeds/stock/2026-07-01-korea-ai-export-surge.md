@@ -1,6 +1,6 @@
 ---
 title: "韩国出口创近半世纪最强增速：AI 芯片需求继续外溢"
-subtitle: "类型：市场简报；关键词：韩国出口、半导体、AI 资本开支"
+subtitle: "韩国出口、半导体和 AI 资本开支成为权益市场观察线"
 category: "stock"
 kind: "market_brief"
 topic: "A 股 / 美股"
@@ -11,7 +11,7 @@ tags:
   - "韩国出口"
   - "AI芯片"
   - "半导体"
-summary: "这条只讲产业数据映射到权益市场：韩国 6 月出口受 AI 芯片需求推动大增，半导体链条仍是股市主线；风险变量是科技财报验证、AI 资本开支持续性和利率环境。"
+summary: "韩国 6 月出口受 AI 芯片需求推动大增，半导体链条仍是股市主线；风险变量是科技财报验证、AI 资本开支持续性和利率环境。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/world/asia-pacific/south-korea-exports-post-strongest-growth-since-1978-2026-07-01/"
 reviewed: true
