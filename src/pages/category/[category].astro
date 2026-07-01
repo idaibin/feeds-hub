@@ -1,24 +1,44 @@
 ---
 import FeedCard from '@/components/FeedCard.astro';
+import TopicFilter from '@/components/TopicFilter.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { CATEGORIES, getAllFeeds } from '@/lib/feeds';
+import { CATEGORIES, getAllFeeds, getFeedCounts } from '@/lib/feeds';
 
 export function getStaticPaths() {
   return CATEGORIES.map((category) => ({ params: { category: category.id }, props: { category } }));
 }
 
 const { category } = Astro.props;
-const feeds = (await getAllFeeds()).filter((entry) => entry.data.category === category.id);
+const allFeeds = await getAllFeeds();
+const counts = getFeedCounts(allFeeds);
+const feeds = allFeeds.filter((entry) => entry.data.category === category.id);
 ---
 <BaseLayout title={`${category.name}｜Feeds Hub`} description={category.description}>
-  <section class="hero-panel" style="margin-bottom: 28px;">
-    <span class="eyebrow">主题分类</span>
-    <h1>{category.name}</h1>
-    <p>{category.description}</p>
-    <a class="pill-link" href="/">返回全部信息流</a>
+  <section class="hero">
+    <div class="hero-panel">
+      <span class="eyebrow">主题筛选 · 仅显示当前主题</span>
+      <h1>{category.name}</h1>
+      <p>{category.description}</p>
+    </div>
+    <aside class="summary-panel">
+      <div>
+        <span class="summary-number">{feeds.length}</span>
+        <span class="summary-label">当前主题内容</span>
+        <p>本页只显示 {category.name}，排序规则与全部信息一致：按发布时间倒序。</p>
+      </div>
+      <a class="pill-link" href="/">返回全部信息</a>
+    </aside>
   </section>
+
+  <TopicFilter active={category.id} counts={counts} />
+
   <section>
-    <div class="section-head"><div><h2>{category.name}最新内容</h2><p>仅展示通过基础审查的内容。</p></div></div>
-    {feeds.length > 0 ? <div class="feed-grid">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">该分类暂无已审查内容。</div>}
+    <div class="section-head">
+      <div>
+        <h2>{category.name}</h2>
+        <p>仅展示当前主题下通过审查的内容。</p>
+      </div>
+    </div>
+    {feeds.length > 0 ? <div class="feed-grid">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">该主题暂无已审查内容。</div>}
   </section>
 </BaseLayout>
