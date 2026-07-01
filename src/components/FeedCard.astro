@@ -6,8 +6,6 @@ interface Props { entry: CollectionEntry<'feeds'>; }
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
 const href = `/feed/${entry.id}/`;
-const kindTags = new Set(['比赛结果', '赛事安排', '热点信息', '市场简报', '政策动态']);
-const visibleTags = entry.data.tags.filter((tag) => !kindTags.has(tag)).slice(0, 4);
 ---
 <article class="feed-card">
   <a class="banner-link" href={href}>
@@ -21,7 +19,6 @@ const visibleTags = entry.data.tags.filter((tag) => !kindTags.has(tag)).slice(0,
     <h2><a href={href}>{entry.data.title}</a></h2>
     <p class="subtitle">{entry.data.subtitle}</p>
     <p class="summary">{entry.data.summary}</p>
-    {visibleTags.length > 0 && <div class="tag-row">{visibleTags.map((tag) => <span>#{tag}</span>)}</div>}
   </div>
 </article>
 
@@ -38,7 +35,5 @@ const visibleTags = entry.data.tags.filter((tag) => !kindTags.has(tag)).slice(0,
   h2 { margin: 0 0 8px; font-size: 20px; line-height: 1.35; letter-spacing: -.03em; }
   .subtitle { margin: 0 0 10px; color: var(--muted-strong); line-height: 1.55; font-weight: 800; }
   .summary { margin: 0; color: var(--muted); line-height: 1.75; font-size: 14px; }
-  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-  .tag-row span { padding: 6px 9px; border-radius: 999px; color: #334155; background: #f1f5f9; font-size: 12px; font-weight: 700; }
   @media (max-width: 640px) { .feed-card { margin-bottom: 14px; border-radius: 18px; } .feed-body { padding: 14px; } h2 { font-size: 19px; } }
 </style>
