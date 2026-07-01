@@ -9,14 +9,16 @@
 - 添加首页、分类页、详情页。
 - 新增 ChatGPT 自动更新规范：`docs/chatgpt-automation.md`。
 - 优化页面样式、Card 样式和移动端布局。
-- 新增主题筛选组件：`src/components/TopicFilter.astro`。
 - 首页 `/` 默认展示全部信息，按发布时间倒序排列。
 - 主题页 `/category/<category>/` 仅展示当前主题内容。
+- 移除页面中的重复主题筛选组件和数量徽标。
+- 移除首页 Hero、统计卡和说明文案，页面直接进入内容列表。
 
 ## 当前设计
 
 - 仓库只负责展示内容。
 - 内容由 ChatGPT 定时写入 GitHub。
+- 顶部导航保留轻量主题选择。
 - `reviewed: true` 的内容才展示。
 
 ## 待处理
