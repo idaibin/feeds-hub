@@ -6,6 +6,14 @@ interface Props { entry: CollectionEntry<'feeds'>; }
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
 const href = `/feed/${entry.id}/`;
+const kindMap = {
+  match_result: '比赛结果',
+  match_schedule: '赛事安排',
+  hot_topic: '热点信息',
+  market_brief: '市场简报',
+  policy_update: '政策动态'
+};
+const kindLabel = kindMap[entry.data.kind];
 ---
 <article class="feed-card">
   <a class="banner-link" href={href}>
@@ -13,7 +21,7 @@ const href = `/feed/${entry.id}/`;
   </a>
   <div class="feed-body">
     <div class="meta-row">
-      <span>{category.shortName}</span>
+      <span>{category.shortName} · {kindLabel}</span>
       <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
     </div>
     <h2><a href={href}>{entry.data.title}</a></h2>
@@ -31,7 +39,7 @@ const href = `/feed/${entry.id}/`;
   .feed-card:hover .banner-link img { transform: scale(1.025); }
   .feed-body { padding: 16px; }
   .meta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--muted); font-size: 12px; }
-  .meta-row span { flex: 0 0 auto; color: var(--primary-strong); font-weight: 900; }
+  .meta-row span { min-width: 0; color: var(--primary-strong); font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .meta-row time { flex: 0 0 auto; }
   h2 { margin: 0 0 8px; font-size: 20px; line-height: 1.35; letter-spacing: -.03em; }
   .subtitle { margin: 0 0 10px; color: var(--muted-strong); line-height: 1.55; font-weight: 800; }
