@@ -8,14 +8,10 @@
     "dev": "astro dev",
     "build": "astro check && astro build",
     "check": "astro check",
-    "preview": "astro preview",
-    "update:feeds": "node scripts/update-feeds.mjs",
-    "update:feeds:dry": "node scripts/update-feeds.mjs --dry-run",
-    "review:feeds": "node scripts/review-feed.mjs"
+    "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^7.0.4",
-    "fast-xml-parser": "^5.9.3"
+    "astro": "^7.0.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
