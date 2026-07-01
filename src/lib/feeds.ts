@@ -22,20 +22,6 @@ export async function getAllFeeds() {
   });
 }
 
-export async function getFeedsByCategory(category: CategoryId) {
-  const feeds = await getAllFeeds();
-  return feeds.filter((entry) => entry.data.category === category);
-}
-
-export function getFeedCounts(feeds: Awaited<ReturnType<typeof getAllFeeds>>) {
-  return Object.fromEntries(
-    CATEGORIES.map((category) => [
-      category.id,
-      feeds.filter((entry) => entry.data.category === category.id).length
-    ])
-  ) as Record<CategoryId, number>;
-}
-
 export function formatDate(value: Date) {
   return new Intl.DateTimeFormat('zh-CN', {
     year: 'numeric',
