@@ -20,8 +20,17 @@
 ## 本地验证命令
 
 ```bash
-npm install
-npm run check
-npm run build
-npm run update:feeds:dry
+pnpm install --frozen-lockfile --store-dir /private/tmp/pnpm-store
+pnpm run check
+pnpm run build
+pnpm run update:feeds:dry
+pnpm outdated --format table
 ```
+
+## 工具链
+
+- 包管理器已切换为 `pnpm@11.7.0`。
+- Astro 已升级到 `7.0.4`。
+- Vite 已通过 pnpm workspace override 固定为 `8.1.2`，并使用 Vite 8 的 Rolldown 链路。
+- Content Collection 配置已迁移到 `src/content.config.ts`，并使用 `glob()` loader 兼容 Astro 7。
+- 最近一次 `pnpm run build` 成功生成 9 个静态页面。

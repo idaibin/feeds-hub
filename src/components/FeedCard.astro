@@ -6,7 +6,7 @@ interface Props { entry: CollectionEntry<'feeds'>; }
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
 ---
-<a class="feed-card" href={`/feed/${entry.slug}/`}>
+<a class="feed-card" href={`/feed/${entry.id}/`}>
   <div class="cover-wrap"><img src={entry.data.cover} alt={`${entry.data.title}海报`} loading="lazy" /></div>
   <div class="feed-body">
     <div class="meta-row"><span>{category.shortName}</span><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time></div>

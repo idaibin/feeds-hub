@@ -5,7 +5,7 @@ import { formatDate, getCategoryMeta } from '@/lib/feeds';
 
 export async function getStaticPaths() {
   const entries = await getCollection('feeds', ({ data }) => data.reviewed === true);
-  return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
 
 const { entry } = Astro.props;

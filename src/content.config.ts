@@ -1,7 +1,9 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 
 const feeds = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/feeds' }),
   schema: z.object({
     title: z.string().min(2),
     subtitle: z.string().min(2),
@@ -12,7 +14,7 @@ const feeds = defineCollection({
     tags: z.array(z.string()).default([]),
     summary: z.string().min(2),
     source: z.string().optional(),
-    sourceUrl: z.string().url().optional(),
+    sourceUrl: z.url().optional(),
     reviewed: z.boolean().default(false),
     priority: z.number().default(0)
   })
