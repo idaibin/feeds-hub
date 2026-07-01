@@ -1,38 +1,15 @@
 ---
 import FeedCard from '@/components/FeedCard.astro';
-import TopicFilter from '@/components/TopicFilter.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getAllFeeds, getFeedCounts } from '@/lib/feeds';
+import { getAllFeeds } from '@/lib/feeds';
 
 const feeds = await getAllFeeds();
-const counts = getFeedCounts(feeds);
 ---
-<BaseLayout title="Feeds Hub｜中文信息流" description="中文主题信息流聚合站。">
-  <section class="hero">
-    <div class="hero-panel">
-      <span class="eyebrow">全部信息 · 按时间倒序</span>
-      <h1>重点信息流，自动整理成卡片。</h1>
-      <p>默认展示全部主题内容，按发布时间倒序排列。选择某个主题后，只显示该主题下的信息流。</p>
+<BaseLayout title="全部信息｜Feeds Hub" description="全部中文主题信息流。">
+  <section class="feed-page">
+    <div class="feed-heading">
+      <h1 class="feed-title">全部信息</h1>
     </div>
-    <aside class="summary-panel">
-      <div>
-        <span class="summary-number">{feeds.length}</span>
-        <span class="summary-label">全部已审查内容</span>
-        <p>世界杯、LOL、股市简报和 AI 科技会分别审查；没有可靠新增内容则跳过。</p>
-      </div>
-      <a class="pill-link" href="/category/worldcup/">查看世界杯</a>
-    </aside>
-  </section>
-
-  <TopicFilter active="all" counts={counts} />
-
-  <section>
-    <div class="section-head">
-      <div>
-        <h2>全部信息</h2>
-        <p>当前页面展示所有主题，已按发布时间倒序排列。</p>
-      </div>
-    </div>
-    {feeds.length > 0 ? <div class="feed-grid">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">暂无已审查内容。</div>}
+    {feeds.length > 0 ? <div class="feed-grid">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">暂无内容。</div>}
   </section>
 </BaseLayout>
