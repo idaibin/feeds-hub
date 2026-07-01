@@ -1,0 +1,73 @@
+---
+import { CATEGORIES } from '@/lib/feeds';
+
+interface Props {
+  active?: string;
+  counts?: Record<string, number>;
+}
+
+const { active = 'all', counts = {} } = Astro.props;
+const total = Object.values(counts).reduce((sum, value) => sum + value, 0);
+---
+<nav class="topic-filter" aria-label="信息流主题筛选">
+  <a class:list={["topic-chip", { active: active === 'all' }]} href="/">
+    <span>全部信息</span>
+    <strong>{total}</strong>
+  </a>
+  {CATEGORIES.map((category) => (
+    <a class:list={["topic-chip", { active: active === category.id }]} href={`/category/${category.id}/`}>
+      <span>{category.name}</span>
+      <strong>{counts[category.id] ?? 0}</strong>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .topic-filter {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    overflow-x: auto;
+    padding: 6px 0 18px;
+    scrollbar-width: none;
+  }
+  .topic-filter::-webkit-scrollbar { display: none; }
+  .topic-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--muted);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+  }
+  .topic-chip:hover {
+    transform: translateY(-1px);
+    color: var(--primary-strong);
+    border-color: rgba(37, 99, 235, 0.28);
+    background: #fff;
+  }
+  .topic-chip.active {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--primary), #38bdf8);
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.22);
+  }
+  .topic-chip span { font-size: 14px; font-weight: 800; white-space: nowrap; }
+  .topic-chip strong {
+    min-width: 24px;
+    height: 24px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 999px;
+    font-size: 12px;
+    background: rgba(15, 23, 42, 0.06);
+    color: inherit;
+  }
+  .topic-chip.active strong { background: rgba(255, 255, 255, 0.22); }
+</style>
