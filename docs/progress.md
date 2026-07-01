@@ -15,7 +15,16 @@
 - 移除首页 Hero、统计卡和说明文案，页面直接进入内容列表。
 - 将内容区改为瀑布流布局：桌面三列、平板两列、手机一列。
 - Card 改为消息卡片：顶部海报 banner，下面直接展示标题、时间、摘要和标签。
-- 移除 Card 内明显的“查看详情”入口，降低跳转感。
+- 已将 4 条初始化占位内容替换为真实信息流内容。
+- 已为 4 条信息分别更新高度相关 SVG 海报。
+- 已更新 ChatGPT 自动任务规则：每条信息必须按当时信息、网络热度和主观编辑判断生成海报。
+
+## 当前 4 条内容
+
+- 世界杯：墨西哥 2-0 厄瓜多尔，晋级世界杯 16 强。
+- LOL：2026 MSI 大田进入入围赛收官日。
+- 股市：美股上半年强势收官，AI 与芯片仍是主线。
+- AI 科技：Anthropic Fable / Mythos 解禁，AI 监管风向再转。
 
 ## 当前设计
 
@@ -38,38 +47,6 @@ pnpm run check
 pnpm run build
 ```
 
-## Codex 验证记录
+## 验证状态
 
-验证时间：2026-07-01
-
-### 实际运行命令
-
-```bash
-pnpm install --store-dir /private/tmp/pnpm-store
-pnpm run check
-pnpm run build
-```
-
-### 命令结果
-
-- `pnpm install --store-dir /private/tmp/pnpm-store`：通过；同步 lockfile 并移除已废弃的 RSS 依赖残留。
-- `pnpm run check`：通过；10 个文件，0 errors / 0 warnings / 0 hints。
-- `pnpm run build`：通过；成功构建 9 个静态页面。
-
-### 页面验证结果
-
-- 首页 `/` 展示全部 4 条已审查内容。
-- 首页内容按发布时间倒序排列。
-- `/category/worldcup/`、`/category/lol/`、`/category/stock/`、`/category/ai/` 均只展示当前主题内容。
-- Card 封面、分类徽标、摘要、标签和“查看详情”正常渲染。
-- 移动端当前视口无横向溢出，布局正常。
-- 仓库内未发现 GitHub Actions workflow 文件。
-- 仓库内未发现 RSS 数据源配置文件或抓取脚本。
-
-### 修复内容
-
-- 刷新 `pnpm-lock.yaml`，移除 `fast-xml-parser` 等 RSS 抓取依赖残留。
-
-### 未完成事项
-
-- 当前分支仍为 `feat/init-feeds-hub`，正式上线前仍需确认 Vercel 部署分支。
+本轮内容和海报已写入 GitHub，但未重新运行本地构建命令。
