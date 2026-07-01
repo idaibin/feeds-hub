@@ -1,0 +1,91 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = 'Feeds Hub', description = '中文主题信息流聚合站' } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">
+        <span class="brand-mark">F</span>
+        <span><strong>Feeds Hub</strong><small>中文信息流</small></span>
+      </a>
+      <nav>
+        <a href="/">首页</a>
+        <a href="/category/worldcup/">世界杯</a>
+        <a href="/category/lol/">LOL</a>
+        <a href="/category/stock/">股市</a>
+        <a href="/category/ai/">AI 科技</a>
+      </nav>
+    </header>
+    <main><slot /></main>
+    <footer class="site-footer">Feeds Hub · 自动同步、基础审查、中文信息流</footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #f5f7fb;
+    --panel: #fff;
+    --text: #172033;
+    --muted: #64748b;
+    --border: rgba(15, 23, 42, 0.1);
+    --primary: #2563eb;
+    --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    color: var(--text);
+    background: radial-gradient(circle at top left, rgba(37,99,235,.12), transparent 28rem), linear-gradient(180deg, #f8fbff, var(--bg));
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 56px; }
+  .site-header {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    padding: 16px max(16px, calc((100vw - 1180px) / 2));
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,.84); backdrop-filter: blur(18px);
+  }
+  .brand { display: inline-flex; align-items: center; gap: 12px; }
+  .brand-mark { width: 40px; height: 40px; border-radius: 14px; display: grid; place-items: center; color: #fff; font-weight: 900; background: linear-gradient(135deg, var(--primary), #38bdf8); }
+  .brand strong, .brand small { display: block; }
+  .brand small { color: var(--muted); font-size: 12px; }
+  nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  nav a, .pill-link { padding: 8px 12px; border-radius: 999px; color: var(--muted); font-size: 14px; }
+  nav a:hover, .pill-link:hover { color: #1d4ed8; background: rgba(37,99,235,.08); }
+  h1 { font-size: clamp(34px, 7vw, 64px); line-height: 1.05; letter-spacing: -.05em; margin: 0 0 18px; }
+  h2 { font-size: clamp(24px, 4vw, 36px); margin: 0 0 12px; }
+  h3, p { margin-top: 0; }
+  p { color: var(--muted); line-height: 1.75; }
+  .hero { display: grid; grid-template-columns: 1.45fr .55fr; gap: 24px; margin-bottom: 28px; }
+  .hero-panel, .summary-panel, .content-panel { border: 1px solid var(--border); background: rgba(255,255,255,.86); border-radius: 28px; box-shadow: var(--shadow); }
+  .hero-panel { padding: clamp(28px, 5vw, 56px); }
+  .summary-panel { padding: 24px; }
+  .eyebrow { display: inline-flex; padding: 8px 12px; color: #1d4ed8; background: rgba(37,99,235,.1); border-radius: 999px; font-size: 14px; font-weight: 800; margin-bottom: 16px; }
+  .summary-number { display: block; font-size: 44px; line-height: 1; font-weight: 900; color: var(--primary); margin-bottom: 8px; }
+  .category-list, .feed-grid { display: grid; gap: 16px; }
+  .category-list { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 24px 0 28px; }
+  .category-card { padding: 18px; border-radius: 22px; background: var(--panel); border: 1px solid var(--border); }
+  .category-card strong { display: block; margin-bottom: 8px; }
+  .category-card span { color: var(--muted); line-height: 1.6; font-size: 14px; }
+  .feed-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 24px 0 16px; }
+  .empty-state { padding: 36px; text-align: center; background: var(--panel); border-radius: 24px; border: 1px dashed var(--border); color: var(--muted); }
+  .site-footer { width: min(1180px, calc(100% - 32px)); margin: 0 auto 32px; padding-top: 24px; color: var(--muted); border-top: 1px solid var(--border); font-size: 14px; }
+  @media (max-width: 920px) { .site-header { align-items: flex-start; flex-direction: column; } nav { justify-content: flex-start; } .hero, .category-list, .feed-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { main { width: min(100% - 24px, 1180px); padding-top: 20px; } .site-header { padding: 14px 12px; } .hero, .category-list, .feed-grid { grid-template-columns: 1fr; } }
+</style>
