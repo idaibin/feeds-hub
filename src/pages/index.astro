@@ -5,11 +5,6 @@ import { getAllFeeds } from '@/lib/feeds';
 
 const feeds = await getAllFeeds();
 ---
-<BaseLayout title="全部信息｜Feeds Hub" description="全部中文主题信息流。">
-  <section class="feed-page">
-    <div class="feed-heading">
-      <h1 class="feed-title">全部信息</h1>
-    </div>
-    {feeds.length > 0 ? <div class="feed-grid">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">暂无内容。</div>}
-  </section>
+<BaseLayout title="Feeds Hub" description="全部中文主题信息流。">
+  {feeds.length > 0 ? <div class="masonry-feed">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">暂无内容。</div>}
 </BaseLayout>
