@@ -1,0 +1,26 @@
+{
+  "name": "feeds-hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "check": "astro check",
+    "preview": "astro preview",
+    "update:feeds": "node scripts/update-feeds.mjs",
+    "update:feeds:dry": "node scripts/update-feeds.mjs --dry-run",
+    "review:feeds": "node scripts/review-feed.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.13.0",
+    "fast-xml-parser": "^5.2.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
