@@ -5,97 +5,38 @@ import { formatDate, getCategoryMeta } from '@/lib/feeds';
 interface Props { entry: CollectionEntry<'feeds'>; }
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
+const href = `/feed/${entry.id}/`;
 ---
-<a class="feed-card" href={`/feed/${entry.id}/`} aria-label={`查看 ${entry.data.title}`}>
-  <div class="cover-wrap">
-    <img src={entry.data.cover} alt={`${entry.data.title}海报`} loading="lazy" />
-    <span class="category-badge">{category.shortName}</span>
-  </div>
+<article class="feed-card">
+  <a class="banner-link" href={href}>
+    <img src={entry.data.cover} alt={entry.data.title} loading="lazy" />
+  </a>
   <div class="feed-body">
     <div class="meta-row">
-      <span>{entry.data.topic}</span>
+      <span>{category.shortName}</span>
       <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
     </div>
-    <h3>{entry.data.title}</h3>
+    <h2><a href={href}>{entry.data.title}</a></h2>
     <p class="subtitle">{entry.data.subtitle}</p>
     <p class="summary">{entry.data.summary}</p>
-    <div class="card-footer">
-      <div class="tag-row">{entry.data.tags.slice(0, 3).map((tag) => <span>#{tag}</span>)}</div>
-      <span class="read-more">查看详情</span>
-    </div>
+    <div class="tag-row">{entry.data.tags.slice(0, 4).map((tag) => <span>#{tag}</span>)}</div>
   </div>
-</a>
+</article>
 
 <style>
-  .feed-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    border: 1px solid var(--border);
-    border-radius: 28px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.86);
-    box-shadow: var(--shadow-card);
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-  }
-  .feed-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgba(255,255,255,0.16), transparent 42%);
-  }
-  .feed-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--border-strong);
-    box-shadow: 0 24px 54px rgba(15, 23, 42, 0.13);
-  }
-  .cover-wrap {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    background: linear-gradient(135deg, #eef4ff, #f8fafc);
-    overflow: hidden;
-  }
-  .cover-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .24s ease; }
-  .feed-card:hover .cover-wrap img { transform: scale(1.035); }
-  .category-badge {
-    position: absolute;
-    left: 14px;
-    top: 14px;
-    display: inline-flex;
-    align-items: center;
-    min-height: 30px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    color: #fff;
-    background: rgba(15, 23, 42, 0.72);
-    backdrop-filter: blur(12px);
-    font-size: 12px;
-    font-weight: 900;
-  }
-  .feed-body { display: flex; flex: 1; flex-direction: column; gap: 12px; padding: 18px; }
-  .meta-row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 12px; }
-  .meta-row span { color: var(--primary-strong); font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .feed-card { display: inline-block; width: 100%; margin: 0 0 18px; break-inside: avoid; overflow: hidden; border: 1px solid var(--border); border-radius: 22px; background: rgba(255,255,255,.9); box-shadow: var(--shadow-card); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+  .feed-card:hover { transform: translateY(-3px); border-color: var(--border-strong); box-shadow: 0 20px 46px rgba(15,23,42,.12); }
+  .banner-link { display: block; aspect-ratio: 16 / 9; overflow: hidden; background: linear-gradient(135deg, #eef4ff, #f8fafc); }
+  .banner-link img { width: 100%; height: 100%; object-fit: cover; transition: transform .22s ease; }
+  .feed-card:hover .banner-link img { transform: scale(1.025); }
+  .feed-body { padding: 16px; }
+  .meta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--muted); font-size: 12px; }
+  .meta-row span { flex: 0 0 auto; color: var(--primary-strong); font-weight: 900; }
   .meta-row time { flex: 0 0 auto; }
-  h3 { margin: 0; font-size: 21px; line-height: 1.32; letter-spacing: -0.03em; }
-  .subtitle { margin: 0; color: var(--muted-strong); line-height: 1.55; font-weight: 700; }
-  .summary {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
-    margin: 0;
-    color: var(--muted);
-    line-height: 1.68;
-    font-size: 14px;
-  }
-  .card-footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 4px; }
-  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  h2 { margin: 0 0 8px; font-size: 20px; line-height: 1.35; letter-spacing: -.03em; }
+  .subtitle { margin: 0 0 10px; color: var(--muted-strong); line-height: 1.55; font-weight: 800; }
+  .summary { margin: 0; color: var(--muted); line-height: 1.75; font-size: 14px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
   .tag-row span { padding: 6px 9px; border-radius: 999px; color: #334155; background: #f1f5f9; font-size: 12px; font-weight: 700; }
-  .read-more { flex: 0 0 auto; color: var(--primary-strong); font-size: 13px; font-weight: 900; }
-  @media (max-width: 640px) {
-    h3 { font-size: 20px; }
-    .card-footer { align-items: flex-start; flex-direction: column; }
-  }
+  @media (max-width: 640px) { .feed-card { margin-bottom: 14px; border-radius: 18px; } .feed-body { padding: 14px; } h2 { font-size: 19px; } }
 </style>
