@@ -8,6 +8,7 @@ const feeds = defineCollection({
     title: z.string().min(2),
     subtitle: z.string().min(2),
     category: z.enum(['worldcup', 'lol', 'stock', 'ai']),
+    kind: z.enum(['match_result', 'match_schedule', 'hot_topic', 'market_brief', 'policy_update']).default('hot_topic'),
     topic: z.string().min(2),
     date: z.coerce.date(),
     cover: z.string().min(1),
