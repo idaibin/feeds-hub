@@ -76,7 +76,7 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
   }
   a { color: inherit; text-decoration: none; }
   img { display: block; max-width: 100%; }
-  main { position: relative; width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 22px 0 56px; }
+  main { position: relative; width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 18px 0 56px; }
   .site-header {
     position: sticky;
     top: 0;
@@ -91,70 +91,29 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
     backdrop-filter: blur(18px);
   }
   .brand { display: inline-flex; align-items: center; gap: 10px; flex: 0 0 auto; }
-  .brand-mark {
-    width: 38px;
-    height: 38px;
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    color: #fff;
-    font-weight: 950;
-    background: linear-gradient(135deg, var(--primary), var(--cyan));
-    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
-  }
+  .brand-mark { width: 38px; height: 38px; border-radius: 14px; display: grid; place-items: center; color: #fff; font-weight: 950; background: linear-gradient(135deg, var(--primary), var(--cyan)); box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2); }
   .brand strong, .brand small { display: block; }
   .brand strong { font-size: 15px; letter-spacing: -0.02em; }
   .brand small { color: var(--muted); font-size: 11px; margin-top: 1px; }
-  .site-nav {
-    display: flex;
-    gap: 4px;
-    justify-content: flex-end;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
+  .site-nav { display: flex; gap: 4px; justify-content: flex-end; overflow-x: auto; scrollbar-width: none; }
   .site-nav::-webkit-scrollbar { display: none; }
-  .site-nav a {
-    flex: 0 0 auto;
-    padding: 7px 10px;
-    border-radius: 999px;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 700;
-  }
+  .site-nav a { flex: 0 0 auto; padding: 7px 10px; border-radius: 999px; color: var(--muted); font-size: 13px; font-weight: 700; }
   .site-nav a:hover { color: var(--primary-strong); background: rgba(37, 99, 235, 0.07); }
   .site-nav a.active { color: var(--primary-strong); background: rgba(37, 99, 235, 0.1); }
   h1, h2, h3, p { margin-top: 0; }
   p { color: var(--muted); line-height: 1.75; }
-  .feed-page { display: grid; gap: 16px; }
-  .feed-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  .feed-title { margin: 0; font-size: clamp(24px, 5vw, 34px); line-height: 1.15; letter-spacing: -0.04em; }
-  .feed-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
-  .empty-state {
-    padding: 42px;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.78);
-    border-radius: 26px;
-    border: 1px dashed var(--border);
-    color: var(--muted);
-  }
-  .content-panel {
-    position: relative;
-    border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.78);
-    border-radius: 30px;
-    box-shadow: var(--shadow-card);
-    backdrop-filter: blur(18px);
-  }
+  .masonry-feed { column-count: 3; column-gap: 18px; }
+  .empty-state { padding: 42px; text-align: center; background: rgba(255, 255, 255, 0.78); border-radius: 26px; border: 1px dashed var(--border); color: var(--muted); }
+  .content-panel { position: relative; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.78); border-radius: 30px; box-shadow: var(--shadow-card); backdrop-filter: blur(18px); }
   .site-footer { position: relative; width: min(1180px, calc(100% - 32px)); margin: 0 auto 32px; padding-top: 24px; color: var(--muted); border-top: 1px solid var(--border); font-size: 14px; }
   @media (max-width: 920px) {
     .site-header { align-items: flex-start; flex-direction: column; }
     .site-nav { width: 100%; justify-content: flex-start; }
-    .feed-grid { grid-template-columns: 1fr 1fr; }
+    .masonry-feed { column-count: 2; }
   }
   @media (max-width: 640px) {
-    main { width: min(100% - 16px, 1180px); padding-top: 16px; }
+    main { width: min(100% - 16px, 1180px); padding-top: 14px; }
     .site-header { padding: 10px 12px; }
-    .feed-grid { grid-template-columns: 1fr; }
-    .feed-heading { align-items: flex-start; flex-direction: column; }
+    .masonry-feed { column-count: 1; column-gap: 0; }
   }
 </style>
