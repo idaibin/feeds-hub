@@ -1,10 +1,23 @@
 # Content Directory
 
-Feed markdown files live in `feeds/` and are grouped by topic:
+Feed markdown files live directly under category directories:
 
-- `feeds/ai`
-- `feeds/lol`
-- `feeds/stock`
-- `feeds/worldcup`
+- `ai`
+- `global`
+- `lol`
+- `product`
+- `rust`
+- `stock`
+- `worldcup`
 
-Poster assets use the matching structure under `public/images/feeds/`.
+Do not add an extra `feeds/` parent directory under `src/content`.
+
+Poster assets use the matching physical structure under `public/images/<category>/`.
+
+Frontmatter `cover` uses the site path, for example:
+
+```text
+/images/<category>/<file>.webp
+```
+
+Do not include `public` or `/feeds/` in `cover`.

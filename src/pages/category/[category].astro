@@ -1,15 +1,18 @@
 ---
 import FeedCard from '@/components/FeedCard.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { CATEGORIES, getAllFeeds } from '@/lib/feeds';
+import { CATEGORIES, getAllFeeds, getFeedsByCategory } from '@/lib/feeds';
 
 export function getStaticPaths() {
   return CATEGORIES.map((category) => ({ params: { category: category.id }, props: { category } }));
 }
 
 const { category } = Astro.props;
-const feeds = (await getAllFeeds()).filter((entry) => entry.data.category === category.id);
+const allFeeds = await getAllFeeds();
+const feeds = getFeedsByCategory(allFeeds, category.id);
 ---
 <BaseLayout title={`${category.name}｜Feeds Hub`} description={category.description}>
-  {feeds.length > 0 ? <div class="masonry-feed">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">暂无内容。</div>}
+  <section class="feed-section" aria-label={`${category.name}信息`}>
+    {feeds.length > 0 ? <div class="masonry-feed">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">暂无内容。</div>}
+  </section>
 </BaseLayout>

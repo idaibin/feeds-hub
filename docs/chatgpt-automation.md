@@ -1,6 +1,6 @@
 # ChatGPT 自动更新规范
 
-本仓库只负责展示信息流内容，不在仓库内配置 RSS 抓取任务。
+本仓库只负责展示信息流内容，不在仓库内配置 RSS 抓取任务，也不通过 GitHub Actions 抓取内容。
 
 ## 更新方式
 
@@ -8,10 +8,11 @@
 
 1. 搜索公开信息。
 2. 按主题分别审查。
-3. 生成中文摘要。
-4. 为每条信息生成高度相关的海报。
-5. 写入 GitHub 仓库。
-6. 当前没有可靠内容时，先回溯最近 1 小时；仍没有则回溯最近 1 天；仍无可靠内容则跳过。
+3. 去重并确认新增事实。
+4. 生成中文摘要。
+5. 为每条信息生成高度相关的 WebP 主封面。
+6. 写入 GitHub 仓库。
+7. 当前没有可靠内容时，先回溯最近 1 小时；仍没有则回溯最近 1 天；仍无可靠内容则跳过。
 
 ## 当前目标仓库
 
@@ -22,10 +23,10 @@ idaibin/feeds-hub
 ## 当前目标分支
 
 ```text
-feat/init-feeds-hub
+main
 ```
 
-说明：当前仍处于初始化分支阶段，默认不直接修改 main。正式部署后，如果需要线上页面每小时自动更新，需要将 Vercel 部署分支调整为该分支，或明确允许自动任务写入生产部署分支。
+自动任务允许写入生产分支，但每轮最终推送到 `main` 时只能形成一个本轮更新提交。禁止创建 PR。
 
 ## 默认主题
 
@@ -50,6 +51,21 @@ feat/init-feeds-hub
 - 重点内容：AI 公司、模型、开源项目、工程工具、产品动态
 - 分类 ID：`ai`
 
+### 全球重点简报
+
+- 重点内容：全球范围内值得关注的综合新闻
+- 分类 ID：`global`
+
+### 开源与 Rust 工程
+
+- 重点内容：Rust、开源项目、工程工具、基础设施与开发者生态
+- 分类 ID：`rust`
+
+### 创业与产品设计
+
+- 重点内容：创业、产品设计、增长、用户体验与商业化
+- 分类 ID：`product`
+
 ## 审查规则
 
 每个主题独立审查：
@@ -60,32 +76,64 @@ feat/init-feeds-hub
 4. 不写入重复内容。
 5. 不确定的信息必须降级为“待确认”，不能写成事实。
 6. 没有可靠新增内容时，按 1 小时、1 天的顺序回溯。
-7. 股市内容只做市场信息整理。
+7. 股市内容只做市场信息整理，不做个性化投资建议。
+
+## 去重规则
+
+每条候选内容必须尽量提取事件实际发生时间 `eventAt`，不要只依赖新闻发布时间。
+
+发布前生成内部去重指纹 `eventKey`，建议由以下字段组成：
+
+```text
+category + kind + mainEntity + secondaryEntity + eventAt + topic
+```
+
+如果 `eventKey` 已存在，默认不发布。只有出现明确新增事实时，才允许作为后续更新发布，并在 `summary` 中说明新增点。
+
+发布前还必须检查：
+
+1. 规范化后的 `sourceUrl` 是否已存在。
+2. 同一赛事、同一公告、同一市场事件、同一产品发布或同一版本发布是否已发布。
+3. 标题和摘要是否只是旧内容改写。
+4. 是否只有评论、转述、二次报道，没有新增事实。
 
 ## 海报规则
 
-每条信息必须有对应海报：
+每条信息必须有对应主封面：
 
-1. 海报必须围绕当前这条信息，不使用通用占位图。
-2. 海报由当时信息、网络热度和主观编辑判断共同决定。
-3. 海报标题优先放大最强传播点，例如比分、赛果、赛事阶段、市场主线、政策变化、模型名称。
-4. 世界杯偏赛果、球队、主场、晋级线索。
-5. LOL 偏赛事阶段、队伍、赛程、赛区关注点。
-6. 股市偏市场主线、指数方向、产业逻辑和风险关键词。
-7. AI 科技偏模型、公司、政策、安全、产品变化。
+1. 默认使用 WebP 主封面，不再默认使用 SVG。
+2. 主封面必须围绕当前这条信息，不使用通用占位图。
+3. 世界杯、LOL、AI 科技、全球重点简报优先使用真实感、现场感、新闻封面风格的 WebP。
+4. 股市、开源与 Rust、创业与产品设计可根据内容选择 WebP 或 SVG；结构化图表和纯信息图可使用 SVG。
+5. 标题、副标题、时间、来源、标签等文字默认由前端或模板层叠加，避免图片模型生成乱码文字。
+6. 不强制复现真实人物身份、官方队徽、官方赛事素材、真实战队 Logo 或游戏官方角色。
 
 ## 写入格式
 
 内容写入：
 
 ```text
-src/content/feeds/<category>/<yyyy-mm-dd>-<slug>.md
+src/content/<category>/<yyyy-mm-dd>-<slug>.md
 ```
 
-图片写入：
+WebP 主封面物理文件写入：
 
 ```text
-public/images/feeds/<category>/<yyyy-mm-dd>-<slug>.svg
+public/images/<category>/<yyyy-mm-dd>-<slug>.webp
+```
+
+页面和 frontmatter 中的 `cover` 使用浏览器可访问路径：
+
+```text
+/images/<category>/<yyyy-mm-dd>-<slug>.webp
+```
+
+注意：`public` 是 Astro 静态资源物理目录，不写入 `cover`。不要再使用 `feeds` 中间目录。
+
+如需 SVG 兜底或纯信息图，可额外写入：
+
+```text
+public/images/<category>/<yyyy-mm-dd>-<slug>.webp
 ```
 
 Markdown frontmatter 必须包含：
@@ -93,10 +141,13 @@ Markdown frontmatter 必须包含：
 ```yaml
 title: "标题"
 subtitle: "副标题"
-category: "worldcup | lol | stock | ai"
+category: "worldcup | lol | stock | ai | global | rust | product"
+kind: "match_result | match_schedule | hot_topic | market_brief | policy_update"
 topic: "主题"
 date: "ISO 时间"
-cover: "/images/feeds/<category>/<file>.svg"
+eventAt: "ISO 时间"
+eventKey: "category:kind:mainEntity:secondaryEntity:eventAt:topic"
+cover: "/images/<category>/<file>.webp"
 tags:
   - "标签"
 summary: "摘要"
@@ -115,7 +166,7 @@ priority: 0
 - 信息互相矛盾且无法确认。
 - 只有传言，没有权威来源。
 - 与主题无关。
-- 已存在相同来源或相同标题。
+- 已存在相同事件、相同来源或相同标题。
 
 ## 提交要求
 
@@ -131,3 +182,6 @@ content: update feeds
 - 哪些主题跳过。
 - 跳过原因。
 - 是否生成图片。
+- 主封面格式。
+- cover 路径。
+- 是否创建 PR。该项必须为否。

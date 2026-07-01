@@ -6,9 +6,9 @@ interface Props { entry: CollectionEntry<'feeds'>; }
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
 const href = `/feed/${entry.id}/`;
-const fallbackCover = `/images/feeds/${entry.data.category}/init.svg`;
+const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category}/init.webp`;
 ---
-<article class="feed-card">
+<article class={`feed-card category-${entry.data.category}`}>
   <a class="banner-link" href={href}>
     <img src={entry.data.cover} alt={entry.data.title} loading="lazy" onerror={`this.onerror=null;this.src='${fallbackCover}';`} />
   </a>
@@ -24,17 +24,66 @@ const fallbackCover = `/images/feeds/${entry.data.category}/init.svg`;
 </article>
 
 <style>
-  .feed-card { display: inline-block; width: 100%; margin: 0 0 18px; break-inside: avoid; border: 1px solid var(--border); border-radius: 22px; background: rgba(255,255,255,.9); box-shadow: var(--shadow-card); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
-  .feed-card:hover { transform: translateY(-3px); border-color: var(--border-strong); box-shadow: 0 20px 46px rgba(15,23,42,.12); }
-  .banner-link { display: block; aspect-ratio: 16 / 9; background: linear-gradient(135deg, #eef4ff, #f8fafc); border-radius: 22px 22px 0 0; }
-  .banner-link img { width: 100%; height: 100%; object-fit: cover; border-radius: 22px 22px 0 0; transition: transform .22s ease; }
+  .feed-card {
+    --accent: var(--primary);
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 16px;
+    break-inside: avoid;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .94);
+    box-shadow: 0 12px 26px rgba(31, 45, 65, 0.075);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .feed-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--accent); opacity: .72; z-index: 1; }
+  .feed-card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: 0 18px 34px rgba(31,45,65,.12); }
+  .category-worldcup { --accent: #16a34a; }
+  .category-lol { --accent: #6d5dfc; }
+  .category-stock { --accent: #0e7490; }
+  .category-ai { --accent: #4f46e5; }
+  .category-global { --accent: #2563eb; }
+  .category-rust { --accent: #b45309; }
+  .category-product { --accent: #db2777; }
+  .banner-link {
+    display: block;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, #eef4ff, #f8fafc);
+    border-bottom: 1px solid rgba(29, 43, 67, 0.08);
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+  }
+  .banner-link img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px 8px 0 0; transition: transform .22s ease; }
   .feed-card:hover .banner-link img { transform: scale(1.025); }
-  .feed-body { padding: 16px; }
-  .meta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--muted); font-size: 12px; }
-  .meta-row span { min-width: 0; color: var(--primary-strong); font-weight: 900; text-overflow: ellipsis; white-space: nowrap; }
-  .meta-row time { flex: 0 0 auto; }
-  h2 { margin: 0 0 8px; font-size: 20px; line-height: 1.35; letter-spacing: -.03em; }
-  .subtitle { margin: 0 0 10px; color: var(--muted-strong); line-height: 1.55; font-weight: 800; }
-  .summary { margin: 0; color: var(--muted); line-height: 1.75; font-size: 14px; }
-  @media (max-width: 640px) { .feed-card { margin-bottom: 14px; border-radius: 18px; } .feed-body { padding: 14px; } h2 { font-size: 19px; } }
+  .feed-body { padding: 12px 15px 13px 17px; }
+  .meta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; color: var(--muted); font-size: 12px; }
+  .meta-row span { min-width: 0; color: var(--accent); font-weight: 900; letter-spacing: .01em; text-overflow: ellipsis; white-space: nowrap; }
+  .meta-row time { flex: 0 0 auto; font-family: var(--mono); font-size: 10.5px; color: #6f7d91; }
+  h2 {
+    display: -webkit-box;
+    margin: 0 0 6px;
+    overflow: hidden;
+    font-size: 16.5px;
+    line-height: 1.38;
+    letter-spacing: 0;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .subtitle,
+  .summary {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+  }
+  .subtitle { margin: 0 0 7px; color: var(--muted-strong); font-size: 13.5px; line-height: 1.5; font-weight: 740; -webkit-line-clamp: 1; }
+  .summary { margin: 0; color: var(--muted); line-height: 1.66; font-size: 13px; -webkit-line-clamp: 2; }
+  @media (max-width: 640px) {
+    .feed-card { margin-bottom: 12px; }
+    .feed-body { padding: 14px 14px 15px 16px; }
+    h2 { font-size: 18px; }
+    .subtitle { font-size: 14.5px; }
+    .summary { font-size: 14px; }
+  }
 </style>

@@ -1,6 +1,6 @@
 # 进度记录
 
-更新时间：2026-07-01T16:02:00+08:00
+更新时间：2026-07-01T22:42:00+08:00
 
 ## 已完成
 
@@ -21,8 +21,15 @@
 - 新增信息拆分规则：`docs/feed-splitting.md`。
 - 已将多重点内容拆分为 10 条独立 feed，每条包含独立标题、`kind`、摘要、来源和海报。
 - 已验证 `kind` 字段、拆分内容、SVG 海报和分类页渲染。
+- 已将后续规则调整为 WebP 主封面优先，SVG 仅作为兜底或纯信息图。
+- 已将新内容路径规则调整为 `src/content/<category>/...`。
+- 已将新图片路径规则调整为 `public/images/<category>/...`，页面引用使用 `/images/<category>/...`。
+- 已完成历史 Markdown 迁移：旧 `feeds` 中间目录已移除，历史内容统一迁入 `src/content/<category>/...`。
+- 已完成历史海报迁移：旧 SVG 海报已转换为 WebP，并统一迁入 `public/images/<category>/...`。
+- 已将页面 fallback 海报路径调整为 `/images/<category>/init.webp`。
+- 顶部导航改为读取 `CATEGORIES`，避免新增分类后导航遗漏。
 
-## 当前 10 条内容
+## 当前内容
 
 - 世界杯比赛结果：墨西哥 2-0 厄瓜多尔，晋级世界杯 16 强。
 - 世界杯球员热点：Gilberto Mora 获得阿兹特克主场关注。
@@ -42,11 +49,11 @@
 - 顶部导航保留轻量主题选择。
 - 首页直接展示每条消息。
 - `reviewed: true` 的内容才展示。
+- 新内容直接按分类写入，不再增加 `feeds` 中间目录。
 
 ## 待处理
 
-- 当前代码仍在 `feat/init-feeds-hub` 分支。
-- 正式上线前需要确认 Vercel 部署分支。
+- 正式上线前确认 Vercel 部署分支与 main 更新策略。
 
 ## 本地验证命令
 
@@ -58,22 +65,10 @@ pnpm run build
 
 ## 验证状态
 
-本轮已完成本地验证：
+最近一次完整本地验证记录：
 
 - `pnpm install --store-dir /private/tmp/pnpm-store`：通过，依赖已是最新。
 - `pnpm run check`：通过，Astro 内容集合与类型检查 0 errors / 0 warnings / 0 hints。
-- `pnpm run build`：通过，生成 15 个静态页面。
-- 浏览器验证首页 `/`：通过，展示 10 张拆分后的独立 feed，按发布时间倒序排列。
-- 浏览器验证 `/category/lol/`：通过，仅展示 2 张 LOL 主题 feed。
-- 移动端视口验证：通过，首页无横向溢出，卡片正常展示。
-- SVG 海报验证：通过，10 个海报路径 HTTP 200，类型为 `image/svg+xml`。
-
-本轮修复内容：
-
-- 补充缺失的 `public/images/feeds/stock/2026-07-01-korea-ai-export-surge.svg`。
-- 重启 dev server 后确认 10 个 SVG 海报路径均可正常加载。
-
-未完成事项：
-
-- 当前代码仍在 `feat/init-feeds-hub` 分支。
-- 正式上线前需要确认 Vercel 部署分支。
+- `pnpm run build`：通过，生成 29 个静态页面。
+- cover 文件存在性检查：通过，`src/content/<category>/*.md` 中所有 `cover` 均能在 `public/images/<category>/*.webp` 找到。
+- 旧路径检查：通过，代码、文档、内容和 public 目录内无旧中间目录或 SVG 路径引用。
