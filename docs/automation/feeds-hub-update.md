@@ -7,9 +7,22 @@
 - 仓库：`idaibin/feeds-hub`
 - 生产分支：`main`
 - 运行频率：每小时
-- 时区：`Asia/Shanghai`
+- 时区：东八区（UTC+08:00，`Asia/Shanghai`）
 - 是否创建 PR：否
 - 是否使用仓库 RSS / GitHub Actions 抓取：否
+
+## 时间规则
+
+所有任务级时间、内容时间、分支时间戳、卡片展示时间，默认都必须使用东八区（UTC+08:00，`Asia/Shanghai`）。
+
+执行规则：
+
+1. 运行时间按东八区计算。
+2. 分支名中的 `YYYYMMDD-HHMM` 必须按东八区生成。
+3. Markdown frontmatter 中的 `date`、`eventAt` 必须使用带 `+08:00` 偏移的 ISO 时间，例如：`2026-07-02T08:54:00+08:00`。
+4. 如果来源时间是 UTC，必须先转换为东八区后再写入内容和展示字段。
+5. 禁止把 UTC 原始时间直接作为本地展示时间。
+6. 禁止使用 `CST` 缩写，避免时区歧义。
 
 ## 执行边界
 
@@ -35,18 +48,29 @@
 必须使用“临时分支集中提交，最后无 PR squash 到 main”。
 
 1. 每次运行先读取最新 `main`。
-2. 从最新 `main` 创建临时分支，命名为：
-   - `cron/feeds-hub-update-YYYYMMDD-HHMM`
-3. 本轮所有内容文件、封面文件、修复文件只写入临时分支。
-4. 临时分支允许多个中间提交。
-5. 本轮完成后，以最新 `main` 为 parent，用临时分支最终 tree 创建一个新的 main commit。
-6. main 上本轮只能产生一个提交。
-7. main 提交信息固定为：`content: update feeds`
-8. 禁止创建 PR。
-9. 禁止通过 PR merge / squash merge 合并。
-10. squash 到 main 前必须重新读取最新 main；若 main 已变化，先重建最终 tree 到最新 main。
-11. 如果无法安全完成“临时分支最终 tree -> main 单提交”，停止并汇报，不要逐个文件直接提交到 main。
-12. 成功更新 main 后删除临时分支；工具不支持删除时，在最终汇报说明。
+2. 从最新 `main` 创建临时分支，命名必须统一使用：
+
+```text
+cron/<task-name>-YYYYMMDD-HHMM
+```
+
+Feeds Hub 本任务固定使用：
+
+```text
+cron/feeds-hub-update-YYYYMMDD-HHMM
+```
+
+3. `YYYYMMDD-HHMM` 必须按东八区（UTC+08:00，`Asia/Shanghai`）生成。
+4. 本轮所有内容文件、封面文件、修复文件只写入临时分支。
+5. 临时分支允许多个中间提交。
+6. 本轮完成后，以最新 `main` 为 parent，用临时分支最终 tree 创建一个新的 main commit。
+7. main 上本轮只能产生一个提交。
+8. main 提交信息固定为：`content: update feeds`
+9. 禁止创建 PR。
+10. 禁止通过 PR merge / squash merge 合并。
+11. squash 到 main 前必须重新读取最新 main；若 main 已变化，先重建最终 tree 到最新 main。
+12. 如果无法安全完成“临时分支最终 tree -> main 单提交”，停止并汇报，不要逐个文件直接提交到 main。
+13. 成功更新 main 后删除临时分支；工具不支持删除时，在最终汇报说明。
 
 ## 默认主题
 
@@ -190,8 +214,8 @@ subtitle: string
 category: worldcup | lol | stock | ai | global | rust | product
 kind: match_result | match_schedule | hot_topic | market_brief | policy_update
 topic: string
-date: ISO datetime
-eventAt: ISO datetime
+date: ISO datetime with +08:00 offset
+eventAt: ISO datetime with +08:00 offset
 eventKey: string
 cover: string
 tags: string[]
