@@ -11,11 +11,13 @@ idaibin/aicraft/docs/standards/ai-content-quality.md
 idaibin/feeds-hub/docs/repo-scope.md
 idaibin/feeds-hub/docs/ui-spec.md
 idaibin/feeds-hub/docs/topics/README.md
+idaibin/feeds-hub/docs/sources/README.md
+idaibin/feeds-hub/docs/editorial/README.md
 ```
 
-本文件只定义 `Feeds Hub 更新` 自动任务的仓库级执行流程。主题级关注范围、输出格式、来源和跳过条件维护在 `docs/topics/`。
+本文件只定义 `Feeds Hub 更新` 自动任务的仓库级执行流程。主题级关注范围、输出格式、来源和跳过条件维护在 `docs/topics/`；主题级信息来源策略维护在 `docs/sources/`；正文写作格式维护在 `docs/editorial/`。
 
-ChatGPT 定时任务 prompt 只应作为 bootstrap：读取上述通用规范、本仓库 scope、本文件、UI 规范和对应主题文档，然后按文档执行。不要在 ChatGPT 定时任务 prompt 里复制完整业务规则。
+ChatGPT 定时任务 prompt 只应作为 bootstrap：读取上述通用规范、本仓库 scope、本文件、UI 规范、对应主题文档、对应来源文档和正文格式文档，然后按文档执行。不要在 ChatGPT 定时任务 prompt 里复制完整业务规则。
 
 ## 任务元信息
 
@@ -55,6 +57,43 @@ product
 
 主题细节不得继续堆入本文件；新增或调整主题规则时，更新对应 `docs/topics/<category>.md`。
 
+## 来源规则
+
+搜索信息前必须读取：
+
+```text
+docs/sources/README.md
+docs/sources/<category>.md
+```
+
+要求：
+
+- Level 1 来源优先作为事实依据。
+- Level 2 来源可作为事实补充和交叉验证。
+- Level 3 来源只用于判断网络热度或社区关注度，不能单独作为事实依据。
+- 热度只用于排序和是否写入，不用于正文解释。
+- 正文只写事实、当前状态和待确认信息。
+- 股市主题可以补充市场情绪：上涨、下跌、分化、震荡、偏热或偏冷。
+
+## 正文格式规则
+
+生成 Markdown 前必须读取：
+
+```text
+docs/editorial/README.md
+docs/editorial/content-format.md
+```
+
+正文规则：
+
+- 标题只写核心事实。
+- 副标题补充来源、范围或状态。
+- 摘要只写一句事实摘要。
+- 正文优先 2 段，最多 3 段。
+- 禁止写主观判断、未经来源支持的推断、操作建议、赛果推测或产品成功判断。
+- 禁止把社交热度写成事实。
+- 长背景和观点内容应放到 blog，不放到 Feeds Hub。
+
 ## UI 和图片规范
 
 UI、移动端体验、Header 主题切换、16:9 横图海报比例、图片格式和 cover 渲染规则统一以：
@@ -80,6 +119,8 @@ public/images/<category>/*.webp
 docs/automation/feeds-hub-update.md
 docs/repo-scope.md
 docs/topics/**
+docs/sources/**
+docs/editorial/**
 docs/ui-spec.md
 AGENTS.md
 README.md
@@ -98,19 +139,22 @@ docs/ui-spec.md
 AGENTS.md
 ```
 
-说明：上面的禁止路径约束默认适用于定时内容更新运行。人工维护主题规范、海报模板、展示规范或仓库协作规则时，可以在用户明确要求下修改对应 docs、`AGENTS.md`、`README.md` 和指定源码文件，但仍不得把这些改动混入普通内容更新提交。
+说明：上面的禁止路径约束默认适用于定时内容更新运行。人工维护主题规范、来源策略、正文格式、海报模板、展示规范或仓库协作规则时，可以在用户明确要求下修改对应 docs、`AGENTS.md`、`README.md` 和指定源码文件，但仍不得把这些改动混入普通内容更新提交。
 
 也禁止把通用 AI 自动化规范写入本仓库；通用规范属于 `idaibin/aicraft`。
 
 ## 执行流程
 
-1. 读取 AICraft 通用规范、本仓库 scope、本文件、`docs/ui-spec.md` 和 `docs/topics/README.md`。
+1. 读取 AICraft 通用规范、本仓库 scope、本文件、`docs/ui-spec.md`、`docs/topics/README.md`、`docs/sources/README.md` 和 `docs/editorial/README.md`。
 2. 按本轮主题读取对应 `docs/topics/<category>.md`。
-3. 搜索公开信息并记录来源。
-4. 按主题规则审查事实、去重、决定写入或跳过。
-5. 有有效内容时写入 Markdown 并生成 WebP 主封面。
-6. 验证 frontmatter、路径、cover 文件、去重键和构建结果。
-7. 使用固定提交信息写入目标分支或生产分支。
+3. 按本轮主题读取对应 `docs/sources/<category>.md`。
+4. 读取 `docs/editorial/content-format.md`。
+5. 按来源规则搜索公开信息并记录来源。
+6. 按主题规则和来源规则审查事实、热度、信息价值、去重，决定写入或跳过。
+7. 有有效内容时按正文格式规则写入 Markdown。
+8. 生成 WebP 主封面。
+9. 验证 frontmatter、路径、cover 文件、来源、正文格式、去重键和构建结果。
+10. 使用固定提交信息写入目标分支或生产分支。
 
 ## 路径规则
 
@@ -178,6 +222,11 @@ priority: number
 - Markdown frontmatter 完整。
 - `category` 属于 `src/lib/feeds.ts` 和 `src/content.config.ts` 定义的主题。
 - `date` 和 `eventAt` 使用 `+08:00` 偏移。
+- `source` 与 `sourceUrl` 符合 `docs/sources/<category>.md`。
+- `sourceUrl` 不能是搜索结果页、无法核验的截图或无事实依据的社交讨论。
+- 标题、副标题、摘要和正文符合 `docs/editorial/content-format.md`。
+- 正文未写主观判断、未经来源支持的推断、操作建议、赛果推测或产品成功判断。
+- 股市内容如写市场情绪，必须来自可核验的市场数据或可信报道。
 - `cover` 路径不包含 `public`。
 - 主封面文件存在。
 - 主封面使用 16:9 横图，推荐尺寸为 `1600x900`，最低不低于 `1280x720`。
@@ -204,6 +253,8 @@ content: update feeds
 - 更新了哪些主题。
 - 哪些主题跳过。
 - 跳过原因。
+- 使用了哪些主要来源。
+- 是否使用 Level 3 热度来源。
 - 是否生成图片。
 - 主封面格式。
 - `cover` 路径。

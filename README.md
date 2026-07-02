@@ -26,6 +26,8 @@ feeds-hub = 短周期信息流自动化
 docs/repo-scope.md
 docs/automation/feeds-hub-update.md
 docs/topics/README.md
+docs/sources/README.md
+docs/editorial/README.md
 ```
 
 ## 功能
@@ -37,6 +39,8 @@ docs/topics/README.md
 - 详情页：海报、摘要、正文、来源。
 - 内容更新由 ChatGPT 自动任务执行，不在仓库内配置 RSS 抓取任务。
 - 每一类主题由 ChatGPT 更新前独立审查，没有有效内容则跳过。
+- 每一类主题有独立来源策略，维护在 `docs/sources/<category>.md`。
+- 正文采用事实型格式，维护在 `docs/editorial/content-format.md`。
 - WebP 主封面默认由 ChatGPT 生成，保存到 `public/images/<category>`，页面引用路径使用 `/images/<category>/...`。
 - 前端展示 frontmatter `cover` 指向的 16:9 横图海报；推荐尺寸 `1600x900`，最低不低于 `1280x720`。CSS 只负责尺寸和裁切，不生成替代海报。
 
@@ -80,16 +84,20 @@ idaibin/feeds-hub/docs/repo-scope.md
 idaibin/feeds-hub/docs/automation/feeds-hub-update.md
 idaibin/feeds-hub/docs/ui-spec.md
 idaibin/feeds-hub/docs/topics/README.md
+idaibin/feeds-hub/docs/sources/README.md
+idaibin/feeds-hub/docs/editorial/README.md
 ```
 
 自动任务应执行：
 
-1. 搜索当前最新信息。
-2. 按主题分别审查。
-3. 没有有效内容时跳过对应主题。
-4. 有有效内容时写入 Markdown。
-5. 使用 ChatGPT 图片生成能力生成或更新对应 WebP 主封面。
-6. 按规范提交到指定内容分支或生产分支。
+1. 读取主题规则、来源规则和正文格式规则。
+2. 搜索当前最新信息。
+3. 按主题分别审查。
+4. 按来源等级、事实新鲜度和网络热度判断是否写入。
+5. 没有有效内容时跳过对应主题。
+6. 有有效内容时写入事实型 Markdown。
+7. 使用 ChatGPT 图片生成能力生成或更新对应 WebP 主封面。
+8. 按规范提交到指定内容分支或生产分支。
 
 ## 内容结构
 

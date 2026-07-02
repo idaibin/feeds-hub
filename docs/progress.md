@@ -1,6 +1,6 @@
 # 进度记录
 
-更新时间：2026-07-01T22:42:00+08:00
+更新时间：2026-07-02T17:05:00+08:00
 
 ## 已完成
 
@@ -50,10 +50,14 @@
 - 首页直接展示每条消息。
 - `reviewed: true` 的内容才展示。
 - 新内容直接按分类写入，不再增加 `feeds` 中间目录。
+- 主题关注范围维护在 `docs/topics/`。
+- 主题来源策略维护在 `docs/sources/`。
+- 正文事实型格式维护在 `docs/editorial/`。
 
 ## 待处理
 
 - 正式上线前确认 Vercel 部署分支与 main 更新策略。
+- 后续可继续补充热度评分、去重增强和 feed 验证脚本。
 
 ## 本地验证命令
 
@@ -96,3 +100,26 @@ pnpm run build
 - `pnpm run build`：通过，生成 37 个静态页面。
 - Header 下拉交互验证：通过，移动端无横向主题导航，下拉默认选中当前主题，切换到 AI 科技后进入 `/category/ai/`。
 - 海报比例规范已统一为 16:9 横图，推荐尺寸 `1600x900`，最低不低于 `1280x720`，列表卡片和详情页均按该比例展示。
+
+## 2026-07-02 主题来源策略
+
+- 分支：`content/source-guidelines`
+- 新增 `docs/sources/README.md`，定义来源分级、禁止来源、热度判断和 frontmatter 来源写入规则。
+- 新增 7 个主题来源文档：`worldcup.md`、`lol.md`、`stock.md`、`ai.md`、`global.md`、`rust.md`、`product.md`。
+- 赛事类主题按赛程、赛果、晋级、规则、阵容和官方节点判断是否写入。
+- 非赛事主题按事实新鲜度、来源可信度、主题相关性和网络热度判断是否写入。
+- `docs/automation/feeds-hub-update.md` 已要求自动任务读取对应 `docs/sources/<category>.md`。
+- `README.md` 已补充来源策略入口和自动更新读取要求。
+- 当前环境未执行 `pnpm run check` / `pnpm run build`。
+
+## 2026-07-02 正文事实型格式
+
+- 分支：`content/source-guidelines`
+- 新增 `docs/editorial/README.md`。
+- 新增 `docs/editorial/content-format.md`。
+- 正文统一改为事实型结构：事实、当前状态、待确认信息。
+- 股市主题允许补充市场情绪：上涨、下跌、分化、震荡、偏热、偏冷。
+- `docs/sources/README.md` 已移除正文中的解释性结构，改为只约束来源和热度判断。
+- `docs/automation/feeds-hub-update.md` 已要求生成 Markdown 前读取 `docs/editorial/content-format.md`。
+- `README.md` 已补充正文格式入口和自动更新读取要求。
+- 当前环境未执行 `pnpm run check` / `pnpm run build`。
