@@ -1,16 +1,18 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import FeedPoster from '@/components/FeedPoster.astro';
 import { formatDate, getCategoryMeta } from '@/lib/feeds';
 
 interface Props { entry: CollectionEntry<'feeds'>; }
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
 const href = `/feed/${entry.id}/`;
+const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category}/init.webp`;
 ---
 <article class={`feed-card category-${entry.data.category}`}>
   <a class="card-link" href={href} aria-label={entry.data.title}>
-    <div class="poster-shell"><FeedPoster entry={entry} /></div>
+    <div class="poster-shell">
+      <img src={entry.data.cover} alt="" loading="lazy" onerror={`this.onerror=null;this.src='${fallbackCover}';`} />
+    </div>
     <div class="feed-body">
       <div class="meta-row">
         <span>{category.shortName}</span>
@@ -49,9 +51,16 @@ const href = `/feed/${entry.id}/`;
   .card-link { display: block; color: inherit; text-decoration: none; }
   .poster-shell {
     display: block;
+    aspect-ratio: 16 / 9;
     border-radius: 22px 22px 0 0;
     overflow: hidden;
     background: #0f172a;
+  }
+  .poster-shell img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .feed-body { padding: 15px 17px 17px; }
   .meta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; color: var(--muted); font-size: 12px; }

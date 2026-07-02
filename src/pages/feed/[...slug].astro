@@ -1,6 +1,5 @@
 ---
 import { getCollection, render } from 'astro:content';
-import FeedPoster from '@/components/FeedPoster.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { formatDate, getCategoryMeta } from '@/lib/feeds';
 
@@ -12,10 +11,13 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const category = getCategoryMeta(entry.data.category);
+const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category}/init.webp`;
 ---
 <BaseLayout title={`${entry.data.title}｜Feeds Hub`} description={entry.data.summary}>
   <article class={`content-panel feed-detail category-${entry.data.category}`}>
-    <div class="detail-cover"><FeedPoster entry={entry} variant="detail" /></div>
+    <div class="detail-cover">
+      <img src={entry.data.cover} alt="" onerror={`this.onerror=null;this.src='${fallbackCover}';`} />
+    </div>
     <div class="detail-body">
       <div class="meta-line"><a href={`/category/${category.id}/`}>{category.name}</a><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time></div>
       <h1>{entry.data.title}</h1>
@@ -30,6 +32,14 @@ const category = getCategoryMeta(entry.data.category);
 <style>
   .feed-detail { overflow: hidden; }
   .detail-cover { max-width: min(760px, 92vw); margin: 0 auto; padding: clamp(18px, 3vw, 34px) clamp(18px, 3vw, 34px) 0; border-radius: 28px; }
+  .detail-cover img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: inherit;
+    background: #0f172a;
+  }
   .detail-body { padding: clamp(22px, 4vw, 42px); }
   .meta-line { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); margin-bottom: 18px; }
   .meta-line a { color: var(--primary-strong); font-weight: 850; }

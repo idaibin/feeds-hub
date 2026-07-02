@@ -1,182 +1,116 @@
 # Feeds Hub 自动更新任务
 
-本文件是 `Feeds Hub 更新` 自动任务的执行来源。后续自动任务每次运行时必须先读取本文件，再按本文执行。自动任务自身只保留最小 bootstrap prompt，避免任务规则分散在 ChatGPT 定时任务配置里。
+## Authority
+
+本任务遵循：
+
+```text
+idaibin/aicraft/docs/standards/cron-automation.md
+idaibin/aicraft/docs/standards/github-branching.md
+idaibin/aicraft/docs/standards/ai-content-quality.md
+idaibin/feeds-hub/docs/repo-scope.md
+idaibin/feeds-hub/docs/ui-spec.md
+idaibin/feeds-hub/docs/topics/README.md
+```
+
+本文件只定义 `Feeds Hub 更新` 自动任务的仓库级执行流程。主题级关注范围、输出格式、来源和跳过条件维护在 `docs/topics/`。
+
+ChatGPT 定时任务 prompt 只应作为 bootstrap：读取上述通用规范、本仓库 scope、本文件、UI 规范和对应主题文档，然后按文档执行。不要在 ChatGPT 定时任务 prompt 里复制完整业务规则。
 
 ## 任务元信息
 
 - 仓库：`idaibin/feeds-hub`
 - 生产分支：`main`
+- 任务名：`feeds-hub-update`
 - 运行频率：每小时
-- 时区：东八区（UTC+08:00，`Asia/Shanghai`）
+- 时区：`UTC+08:00 / Asia/Shanghai`
 - 是否创建 PR：否
 - 是否使用仓库 RSS / GitHub Actions 抓取：否
+- 定时生产写入：仅允许通过 AICraft 规范定义的安全 cron 分支流程写入 `main`
 
-## 时间规则
+## 任务目标
 
-所有任务级时间、内容时间、分支时间戳、卡片展示时间，默认都必须使用东八区（UTC+08:00，`Asia/Shanghai`）。
+本任务只做短周期信息流内容更新：搜索公开信息，按主题审查，去重，生成短摘要和 WebP 主封面，并写入 Feeds Hub 静态站点内容目录。
 
-执行规则：
+## 主题规则
 
-1. 运行时间按东八区计算。
-2. 分支名中的 `YYYYMMDD-HHMM` 必须按东八区生成。
-3. Markdown frontmatter 中的 `date`、`eventAt` 必须使用带 `+08:00` 偏移的 ISO 时间，例如：`2026-07-02T08:54:00+08:00`。
-4. 如果来源时间是 UTC，必须先转换为东八区后再写入内容和展示字段。
-5. 禁止把 UTC 原始时间直接作为本地展示时间。
-6. 禁止使用 `CST` 缩写，避免时区歧义。
+执行前必须读取：
 
-## 执行边界
+```text
+docs/topics/README.md
+docs/topics/<category>.md
+```
 
-本任务只做内容更新。
+默认主题与 `src/lib/feeds.ts` 的 `CATEGORIES` 保持一致：
+
+```text
+worldcup
+lol
+stock
+ai
+global
+rust
+product
+```
+
+主题细节不得继续堆入本文件；新增或调整主题规则时，更新对应 `docs/topics/<category>.md`。
+
+## UI 和图片规范
+
+UI、移动端体验、Header 主题切换、16:9 横图海报比例、图片格式和 cover 渲染规则统一以：
+
+```text
+docs/ui-spec.md
+```
+
+为准。本文件只保留内容写入和验证流程。
+
+## 允许修改
+
+普通定时内容更新只允许修改：
+
+```text
+src/content/<category>/*.md
+public/images/<category>/*.webp
+```
+
+用户明确要求更新任务规则时，才允许修改：
+
+```text
+docs/automation/feeds-hub-update.md
+docs/repo-scope.md
+docs/topics/**
+docs/ui-spec.md
+AGENTS.md
+README.md
+```
+
+## 禁止修改
 
 除非用户明确要求，禁止修改：
 
-- `src/components/**`
-- `src/pages/**`
-- `src/lib/**`
-- `docs/ui-spec.md`
-- `AGENTS.md`
-- 自动任务执行规范以外的文档
-
-允许修改：
-
-- `src/content/<category>/*.md`
-- `public/images/<category>/*.webp`
-- 本文件本身（仅当用户要求更新任务规则时）
-
-## Git 提交策略
-
-必须使用“临时分支集中提交，最后无 PR squash 到 main”。
-
-1. 每次运行先读取最新 `main`。
-2. 从最新 `main` 创建临时分支，命名必须统一使用：
-
 ```text
-cron/<task-name>-YYYYMMDD-HHMM
+src/components/**
+src/pages/**
+src/layouts/**
+src/lib/**
+docs/ui-spec.md
+AGENTS.md
 ```
 
-Feeds Hub 本任务固定使用：
+说明：上面的禁止路径约束默认适用于定时内容更新运行。人工维护主题规范、海报模板、展示规范或仓库协作规则时，可以在用户明确要求下修改对应 docs、`AGENTS.md`、`README.md` 和指定源码文件，但仍不得把这些改动混入普通内容更新提交。
 
-```text
-cron/feeds-hub-update-YYYYMMDD-HHMM
-```
+也禁止把通用 AI 自动化规范写入本仓库；通用规范属于 `idaibin/aicraft`。
 
-3. `YYYYMMDD-HHMM` 必须按东八区（UTC+08:00，`Asia/Shanghai`）生成。
-4. 本轮所有内容文件、封面文件、修复文件只写入临时分支。
-5. 临时分支允许多个中间提交。
-6. 本轮完成后，以最新 `main` 为 parent，用临时分支最终 tree 创建一个新的 main commit。
-7. main 上本轮只能产生一个提交。
-8. main 提交信息固定为：`content: update feeds`
-9. 禁止创建 PR。
-10. 禁止通过 PR merge / squash merge 合并。
-11. squash 到 main 前必须重新读取最新 main；若 main 已变化，先重建最终 tree 到最新 main。
-12. 如果无法安全完成“临时分支最终 tree -> main 单提交”，停止并汇报，不要逐个文件直接提交到 main。
-13. 成功更新 main 后删除临时分支；工具不支持删除时，在最终汇报说明。
+## 执行流程
 
-## 默认主题
-
-每轮默认审查以下主题：
-
-- `worldcup`：世界杯 2026
-- `lol`：LOL 赛事
-- `stock`：股市简报
-- `ai`：AI 科技
-- `global`：全球重点简报
-- `rust`：开源与 Rust 工程
-- `product`：创业与产品设计
-
-## 世界杯强制规则
-
-每次运行必须首先检查世界杯。
-
-检查范围：
-
-- 过去 12 小时内已完成比赛
-- 当前正在进行比赛
-- 未来 24 小时内即将开始比赛
-
-可靠来源优先级：
-
-1. FIFA 官方赛程 / 官方比赛状态
-2. 可靠体育数据源
-3. Reuters / AP / ESPN / The Guardian 等可靠报道
-
-只要存在上述任一比赛，就不能跳过世界杯主题。
-
-每轮世界杯最多写 3 条，优先级为：
-
-1. 已完赛
-2. 正在进行
-3. 未来 24 小时赛程
-
-## 世界杯 kind 规则
-
-### `match_result`
-
-用于已结束比赛。
-
-必须包含：
-
-- 双方
-- 比分
-- 状态：全场结束 / 加时 / 点球
-- 晋级或出局影响
-
-标题示例：
-
-```text
-比利时 3-2 塞内加尔，32强淘汰战过关
-```
-
-eventKey：
-
-```text
-worldcup:match_result:<gameId 或 双方>:<eventAt>
-```
-
-### `match_schedule`
-
-用于未开始比赛。
-
-必须包含：
-
-- 双方
-- 开球时间
-- 阶段
-- 状态：即将开始 / 今晚开赛 / 明日进行
-
-标题示例：
-
-```text
-美国 vs 波黑，08:00 开球
-```
-
-eventKey：
-
-```text
-worldcup:match_schedule:<gameId 或 双方>:<eventAt>
-```
-
-### `hot_topic`
-
-用于人物故事、赛后焦点、关键事件。
-
-要求：
-
-- 单一人物或单一事件
-- 不堆比分和赛程
-- 不与 match_result / match_schedule 重复
-
-## 其他主题规则
-
-其他主题没有可靠新增事实时可以跳过。
-
-但禁止因为以下原因跳过内容更新：
-
-- “没有 UI 变更”
-- “没有模板升级”
-- “只是规则没有变化”
-
-每条 feed 只表达一个核心事件。
+1. 读取 AICraft 通用规范、本仓库 scope、本文件、`docs/ui-spec.md` 和 `docs/topics/README.md`。
+2. 按本轮主题读取对应 `docs/topics/<category>.md`。
+3. 搜索公开信息并记录来源。
+4. 按主题规则审查事实、去重、决定写入或跳过。
+5. 有有效内容时写入 Markdown 并生成 WebP 主封面。
+6. 验证 frontmatter、路径、cover 文件、去重键和构建结果。
+7. 使用固定提交信息写入目标分支或生产分支。
 
 ## 路径规则
 
@@ -230,13 +164,48 @@ priority: number
 
 发布前必须依次检查：
 
-1. `eventKey` 是否已存在
-2. 规范化后的 `sourceUrl` 是否已存在
-3. 最近 7 天同 `category`、`kind`、核心主体、`eventAt` 是否重复
-4. 标题是否只是旧内容改写
+1. `eventKey` 是否已存在。
+2. 规范化后的 `sourceUrl` 是否已存在。
+3. 最近 7 天同 `category`、`kind`、核心主体、`eventAt` 是否重复。
+4. 标题是否只是旧内容改写。
 
-世界杯赛程和赛果必须使用 gameId 或“双方 + 开球时间”作为核心去重键。
+同一事件的后续项只有在包含明确新事实时才允许写入。
 
-同一场比赛的 `match_schedule` 与 `match_result` 不是重复：可以先发赛程，完赛后再发赛果。
+## 验证规则
 
-## 文案规则
+提交前必须验证：
+
+- Markdown frontmatter 完整。
+- `category` 属于 `src/lib/feeds.ts` 和 `src/content.config.ts` 定义的主题。
+- `date` 和 `eventAt` 使用 `+08:00` 偏移。
+- `cover` 路径不包含 `public`。
+- 主封面文件存在。
+- 主封面使用 16:9 横图，推荐尺寸为 `1600x900`，最低不低于 `1280x720`。
+- 主封面不是 1x1、透明、空白或通用占位图。
+- 页面仍读取 `entry.data.cover` 渲染图片海报，而不是用 CSS/HTML 生成海报替代图片。
+- `reviewed: true` 只用于已审查内容。
+- `eventKey`、`sourceUrl`、核心主体和 `eventAt` 已完成去重检查。
+- 本轮没有把普通内容更新与规则、UI 或文档调整混在一起提交。
+
+## 提交信息
+
+最终写入 `main` 的普通内容更新提交信息固定为：
+
+```text
+content: update feeds
+```
+
+规则、UI 或文档维护必须独立提交，不能与普通内容更新合并。
+
+## 汇报格式
+
+每次汇报需要说明：
+
+- 更新了哪些主题。
+- 哪些主题跳过。
+- 跳过原因。
+- 是否生成图片。
+- 主封面格式。
+- `cover` 路径。
+- 验证命令和结果。
+- 是否创建 PR。该项必须为否，除非用户明确要求。

@@ -7,7 +7,7 @@
 - 初始化 Astro 中文信息流网站。
 - 添加世界杯、LOL、股市简报、AI 科技四个默认主题。
 - 添加首页、分类页、详情页。
-- 新增 ChatGPT 自动更新规范：`docs/chatgpt-automation.md`。
+- 新增 Feeds Hub 自动更新规范。
 - 优化页面样式、Card 样式和移动端布局。
 - 首页 `/` 默认展示全部信息，按发布时间倒序排列。
 - 主题页 `/category/<category>/` 仅展示当前主题内容。
@@ -46,7 +46,7 @@
 
 - 仓库只负责展示内容。
 - 内容由 ChatGPT 定时写入 GitHub。
-- 顶部导航保留轻量主题选择。
+- Header 左侧保留品牌，右侧使用主题下拉。
 - 首页直接展示每条消息。
 - `reviewed: true` 的内容才展示。
 - 新内容直接按分类写入，不再增加 `feeds` 中间目录。
@@ -72,3 +72,27 @@ pnpm run build
 - `pnpm run build`：通过，生成 29 个静态页面。
 - cover 文件存在性检查：通过，`src/content/<category>/*.md` 中所有 `cover` 均能在 `public/images/<category>/*.webp` 找到。
 - 旧路径检查：通过，代码、文档、内容和 public 目录内无旧中间目录或 SVG 路径引用。
+
+## 2026-07-02 响应式信息流布局验证
+
+- 分支：`fix/responsive-feed-layout`
+- 审查结论：该分支原方案按横图和竖图分流展示；最终合入 main 时已按最新要求统一为 16:9 横图，不保留旧竖图比例或按图片方向分流的逻辑。
+- `pnpm install`：非 TTY 环境下被 pnpm 清理确认拦截；`CI=true pnpm install` 复跑通过，依赖已是最新。
+- `pnpm run check`：`CI=true pnpm run check` 通过，Astro 内容集合与类型检查 0 errors / 0 warnings / 0 hints。
+- `pnpm run build`：`CI=true pnpm run build` 通过，生成 37 个静态页面。
+- 移动端布局验证：单列瀑布流保持默认卡片布局。
+
+## 2026-07-02 主题文档拆分与 Header 下拉
+
+- 分支：`feat/feeds-topic-docs`
+- 新增 `docs/topics/` 主题规范文件：`worldcup.md`、`lol.md`、`stock.md`、`ai.md`、`global.md`、`rust.md`、`product.md`。
+- `docs/automation/feeds-hub-update.md` 已精简为仓库级执行流程，主题细节迁移到 `docs/topics/`。
+- `docs/ui-spec.md` 已统一移动端优先、体验优先、WebP 图片、16:9 横图海报、真实海报资源、页面读取 `cover` 和 Header 右侧主题下拉规范。
+- Header 主题切换已改为右侧下拉，选项来自 `src/lib/feeds.ts` 的 `CATEGORIES`。
+- 删除旧文档：`docs/chatgpt-automation.md`。
+- 同步清理 `README.md`、`docs/repo-scope.md` 和本文件中对旧文档的引用。
+- `pnpm install --store-dir /private/tmp/pnpm-store`：通过，依赖已是最新。
+- `pnpm run check`：通过，Astro 内容集合与类型检查 0 errors / 0 warnings / 0 hints。
+- `pnpm run build`：通过，生成 37 个静态页面。
+- Header 下拉交互验证：通过，移动端无横向主题导航，下拉默认选中当前主题，切换到 AI 科技后进入 `/category/ai/`。
+- 海报比例规范已统一为 16:9 横图，推荐尺寸 `1600x900`，最低不低于 `1280x720`，列表卡片和详情页均按该比例展示。
