@@ -5,6 +5,8 @@ category: "worldcup"
 kind: "match_schedule"
 topic: "世界杯 2026 32强赛"
 date: "2026-07-01T19:56:00+08:00"
+eventAt: "2026-07-01T19:56:00+08:00"
+eventKey: "worldcup:match_schedule:2026-07-01-senegal-belgium-knockout-reset:2026-07-01T19:56:00+08:00"
 cover: "/images/worldcup/2026-07-01-senegal-belgium-knockout-reset.webp"
 tags:
   - "世界杯2026"

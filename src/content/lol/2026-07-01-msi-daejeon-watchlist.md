@@ -5,6 +5,8 @@ category: "lol"
 kind: "match_schedule"
 topic: "2026 MSI 大田赛程"
 date: "2026-07-01T16:55:00+08:00"
+eventAt: "2026-07-01T16:55:00+08:00"
+eventKey: "lol:match_schedule:2026-07-01-msi-daejeon-watchlist:2026-07-01T16:55:00+08:00"
 cover: "/images/lol/2026-07-01-msi-daejeon-watchlist.webp"
 tags: ["MSI2026", "LOL赛事", "大田", "BO5", "国际赛"]
 summary: "2026季中冠军赛已在韩国大田进行，赛程从6月28日持续到7月12日。当前阶段的关注点是各赛区队伍对版本节奏、换线处理和BO5准备质量的适应速度，而不是单一明星选手叙事。"

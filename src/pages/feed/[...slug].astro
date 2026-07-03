@@ -12,9 +12,32 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const category = getCategoryMeta(entry.data.category);
 const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category}/init.webp`;
+const posterRatioClass = getPosterRatioClass(entry.data.category, entry.data.kind);
+
+function getPosterRatioClass(categoryId: string, kind: string) {
+  const isMatchCategory = categoryId === 'worldcup' || categoryId === 'lol';
+
+  if (isMatchCategory && ['match_result', 'match_schedule', 'player_spotlight'].includes(kind)) {
+    return 'poster-ratio-4x5';
+  }
+
+  if (['ai', 'product'].includes(categoryId) && kind === 'visual') {
+    return 'poster-ratio-4x5';
+  }
+
+  if (isMatchCategory && kind === 'visual') {
+    return 'poster-ratio-4x5';
+  }
+
+  if (['match_flow', 'knockout_update', 'worldcup_feed', 'data'].includes(kind)) {
+    return 'poster-ratio-4x3';
+  }
+
+  return 'poster-ratio-16x9';
+}
 ---
 <BaseLayout title={`${entry.data.title}｜Feeds Hub`} description={entry.data.summary}>
-  <article class={`content-panel feed-detail category-${entry.data.category}`}>
+  <article class={`content-panel feed-detail category-${entry.data.category} ${posterRatioClass}`}>
     <div class="detail-cover">
       <img src={entry.data.cover} alt="" onerror={`this.onerror=null;this.src='${fallbackCover}';`} />
     </div>
@@ -30,16 +53,34 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
 </BaseLayout>
 
 <style>
-  .feed-detail { overflow: hidden; }
-  .detail-cover { max-width: min(760px, 92vw); margin: 0 auto; padding: clamp(18px, 3vw, 34px) clamp(18px, 3vw, 34px) 0; border-radius: 28px; }
+  .feed-detail {
+    width: min(100%, var(--content-max-width));
+    margin: 10px auto 0;
+    overflow: hidden;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, .96);
+  }
+
+  .detail-cover {
+    max-width: min(760px, 100%);
+    margin: 0 auto;
+    padding: clamp(18px, 3vw, 34px) clamp(18px, 3vw, 34px) 0;
+  }
+
+  .poster-ratio-4x5 .detail-cover { max-width: min(520px, 92vw); }
+  .poster-ratio-4x3 .detail-cover { max-width: min(700px, 92vw); }
+
   .detail-cover img {
     display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 18px;
     object-fit: cover;
-    border-radius: inherit;
     background: #0f172a;
   }
+  .poster-ratio-4x5 .detail-cover img { aspect-ratio: 4 / 5; }
+  .poster-ratio-4x3 .detail-cover img { aspect-ratio: 4 / 3; }
   .detail-body { padding: clamp(22px, 4vw, 42px); }
   .meta-line { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); margin-bottom: 18px; }
   .meta-line a { color: var(--primary-strong); font-weight: 850; }
@@ -51,7 +92,7 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
   .markdown-body :global(a), .source-line a { color: var(--primary-strong); text-decoration: underline; text-underline-offset: 3px; }
   .source-line { margin-top: 28px; font-size: 14px; }
   @media (max-width: 640px) {
-    .detail-cover { max-width: none; padding: 14px 14px 0; }
+    .feed-detail { border-radius: 24px; }
     .meta-line { flex-direction: column; }
   }
 </style>

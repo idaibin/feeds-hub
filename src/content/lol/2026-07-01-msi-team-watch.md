@@ -5,6 +5,8 @@ category: "lol"
 kind: "hot_topic"
 topic: "2026 MSI"
 date: "2026-07-01T09:25:00+08:00"
+eventAt: "2026-07-01T09:25:00+08:00"
+eventKey: "lol:hot_topic:2026-07-01-msi-team-watch:2026-07-01T09:25:00+08:00"
 cover: "/images/lol/2026-07-01-msi-team-watch.webp"
 tags:
   - "GenG"

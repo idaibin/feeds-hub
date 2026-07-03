@@ -21,12 +21,17 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0569ED" />
     <title>{title}</title>
   </head>
   <body>
     <header class="site-header">
       <a class="brand" href="/" aria-label="Feeds Hub 首页">
-        <span class="brand-mark">F</span>
+        <img class="brand-mark" src="/images/brand/feeds-hub-logo-96.png" alt="" width="38" height="38" />
         <span><strong>Feeds Hub</strong><small>中文信息流</small></span>
       </a>
       <form class="topic-switcher" aria-label="主题选择">
@@ -53,17 +58,24 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
 
 <style is:global>
   :root {
-    --bg: #eef3f8;
+    --bg: #F8FAFC;
     --panel: #ffffff;
-    --text: #101827;
-    --muted: #66758a;
-    --muted-strong: #2f3d52;
-    --border: rgba(29, 43, 67, 0.12);
-    --border-strong: rgba(20, 95, 160, 0.32);
-    --primary: #145fa0;
-    --primary-strong: #0b4d84;
-    --signal: #0e9888;
-    --amber: #b7791f;
+    --surface-2: #F1F5F9;
+    --surface-3: #E2E8F0;
+    --text: #0F172A;
+    --muted: #64748B;
+    --muted-strong: #334155;
+    --border: rgba(15, 23, 42, 0.10);
+    --border-strong: rgba(5, 105, 237, 0.28);
+    --primary: #0569ED;
+    --primary-hover: #0688D1;
+    --primary-strong: #034A9A;
+    --signal: #069FB4;
+    --signal-soft: #5CCDDC;
+    --amber: #F59E0B;
+    --feed-card-min-width: 480px;
+    --feed-card-gap: 24px;
+    --content-max-width: 960px;
     --mono: "SFMono-Regular", "Cascadia Mono", "Menlo", "Consolas", monospace;
     --shadow-card: 0 16px 34px rgba(31, 45, 65, 0.08);
     font-family: "Avenir Next", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif;
@@ -74,7 +86,7 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
     color: var(--text);
     background:
       linear-gradient(180deg, rgba(255, 255, 255, .9), transparent 280px),
-      linear-gradient(90deg, rgba(20, 95, 160, .08), transparent 28%, rgba(14, 152, 136, .08)),
+      linear-gradient(90deg, rgba(5, 105, 237, .07), transparent 30%, rgba(6, 159, 180, .08)),
       var(--bg);
     min-height: 100vh;
   }
@@ -83,13 +95,13 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
     position: fixed;
     inset: 0;
     pointer-events: none;
-    background-image: linear-gradient(rgba(29, 43, 67, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(29, 43, 67, 0.045) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
     background-size: 44px 44px;
     mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.52), transparent 66%);
   }
   a { color: inherit; text-decoration: none; }
   img { display: block; max-width: 100%; }
-  main { position: relative; width: min(1160px, calc(100% - 32px)); margin: 0 auto; padding: 18px 0 56px; }
+  main { position: relative; width: min(1800px, calc(100% - 48px)); margin: 0 auto; padding: 18px 0 56px; }
   .site-header {
     position: sticky;
     top: 0;
@@ -100,11 +112,11 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
     gap: 18px;
     padding: 10px max(16px, calc((100vw - 1160px) / 2));
     border-bottom: 1px solid var(--border);
-    background: rgba(244, 248, 252, 0.9);
+    background: rgba(248, 250, 252, 0.9);
     backdrop-filter: blur(16px);
   }
   .brand { display: inline-flex; align-items: center; gap: 10px; flex: 0 0 auto; }
-  .brand-mark { width: 38px; height: 38px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-weight: 950; background: linear-gradient(135deg, var(--primary), var(--signal)); box-shadow: 0 10px 22px rgba(20, 95, 160, 0.18); }
+  .brand-mark { width: 38px; height: 38px; border-radius: 8px; object-fit: cover; box-shadow: 0 10px 22px rgba(5, 105, 237, 0.18); }
   .brand strong, .brand small { display: block; }
   .brand strong { font-size: 15px; letter-spacing: 0; }
   .brand small { color: var(--muted); font-size: 11px; margin-top: 1px; }
@@ -128,24 +140,29 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
     appearance: none;
     cursor: pointer;
   }
-  .topic-select:focus-visible { outline: 2px solid rgba(20, 95, 160, .34); outline-offset: 2px; }
+  .topic-select:focus-visible { outline: 2px solid rgba(5, 105, 237, .34); outline-offset: 2px; }
   h1, h2, h3, p { margin-top: 0; }
   p { color: var(--muted); line-height: 1.75; }
   .feed-section { margin-top: 10px; }
-  .masonry-feed { column-count: 3; column-gap: 14px; }
+  .masonry-feed {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--feed-card-min-width)), 1fr));
+    gap: var(--feed-card-gap);
+    width: 100%;
+    align-items: stretch;
+  }
   .empty-state { padding: 42px; text-align: center; background: rgba(255, 255, 255, 0.78); border-radius: 8px; border: 1px dashed var(--border); color: var(--muted); }
   .content-panel { position: relative; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.82); border-radius: 8px; box-shadow: var(--shadow-card); backdrop-filter: blur(18px); }
   .site-footer { position: relative; width: min(1160px, calc(100% - 32px)); margin: 0 auto 32px; padding-top: 24px; color: var(--muted); border-top: 1px solid var(--border); font-size: 14px; }
-  @media (max-width: 920px) {
-    .site-header { align-items: center; }
-    .topic-switcher { flex-basis: min(48vw, 220px); }
-    .masonry-feed { column-count: 2; }
+  @media (max-width: 1100px) {
+    main { width: min(100% - 32px, 960px); }
+    .masonry-feed { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
-    main { width: min(100% - 16px, 1160px); padding-top: 14px; }
+    main { width: min(100% - 16px, 960px); padding-top: 14px; }
     .site-header { padding: 10px 12px; }
     .brand small { display: none; }
     .topic-switcher { flex-basis: min(54vw, 190px); }
-    .masonry-feed { column-count: 1; column-gap: 0; }
+    .masonry-feed { gap: 16px; }
   }
 </style>
