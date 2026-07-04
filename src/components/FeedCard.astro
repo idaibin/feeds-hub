@@ -14,9 +14,9 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
   <a class="card-link" href={href} aria-label={entry.data.title}>
     <div class="poster-shell">
       <img src={entry.data.cover} alt="" loading="lazy" data-cover-image onerror={`this.onerror=null;this.src='${fallbackCover}';`} />
+      <span class="category-chip">{category.shortName}</span>
     </div>
     <div class="feed-body">
-      <span class="category-chip">{category.shortName}</span>
       <h2>{entry.data.title}</h2>
       <p class="summary">{entry.data.summary}</p>
     </div>
@@ -43,17 +43,32 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     box-shadow: 0 24px 56px rgba(15, 23, 42, .14);
   }
 
-  .feed-card.category-worldcup,
-  .feed-card.category-lol,
-  .feed-card.category-ai,
-  .feed-card.category-global {
+  .feed-card.category-worldcup {
     --accent: var(--primary);
   }
 
-  .feed-card.category-stock,
-  .feed-card.category-rust,
-  .feed-card.category-product {
+  .feed-card.category-lol {
+    --accent: #7c3aed;
+  }
+
+  .feed-card.category-stock {
     --accent: var(--signal);
+  }
+
+  .feed-card.category-ai {
+    --accent: #0569ed;
+  }
+
+  .feed-card.category-global {
+    --accent: #0f8b8d;
+  }
+
+  .feed-card.category-rust {
+    --accent: #b45309;
+  }
+
+  .feed-card.category-product {
+    --accent: #db2777;
   }
 
   .feed-card .card-link {
@@ -64,6 +79,7 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
 
   .feed-card .poster-shell {
     display: block;
+    position: relative;
     aspect-ratio: 16 / 9;
     border-radius: 22px 22px 0 0;
     overflow: hidden;
@@ -79,20 +95,25 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
   }
 
   .feed-card .feed-body {
-    position: relative;
     padding: 15px 18px 18px;
   }
 
   .feed-card .category-chip {
     position: absolute;
-    top: 15px;
-    right: 18px;
-    max-width: 38%;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    max-width: calc(100% - 24px);
     overflow: hidden;
+    border-radius: 999px;
+    padding: 6px 10px;
     color: var(--accent);
+    background: rgba(0, 0, 0, .8);
     font-size: 12px;
     font-weight: 950;
-    letter-spacing: .01em;
+    letter-spacing: 0;
+    line-height: 1.2;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, .5);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -100,25 +121,23 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
   .feed-card .category-chip::before {
     content: '';
     display: inline-block;
-    width: 8px;
-    height: 8px;
-    margin-right: 8px;
+    width: 7px;
+    height: 7px;
+    margin-right: 7px;
     border-radius: 999px;
     background: currentColor;
     vertical-align: 1px;
   }
 
   .feed-card h2 {
-    display: -webkit-box;
     margin: 0 0 8px;
-    padding-right: min(42%, 132px);
     overflow: hidden;
     color: #0f172a;
     font-size: 18px;
     line-height: 1.38;
     letter-spacing: -.01em;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .feed-card .summary {
@@ -140,9 +159,9 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     .feed-card .poster-shell { border-radius: 24px 24px 0 0; }
     .feed-card .feed-body { padding: 16px 16px 19px; }
     .feed-card .category-chip {
-      top: 16px;
-      right: 16px;
-      max-width: 36%;
+      top: 12px;
+      left: 12px;
+      max-width: calc(100% - 24px);
       font-size: 12px;
     }
     .feed-card h2 { font-size: 18px; }

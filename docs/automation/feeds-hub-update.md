@@ -1,101 +1,71 @@
-# Feeds Hub 更新任务说明
+# Feeds Hub Update
 
-## 任务目的
+AI 更新任务入口。本文只定义执行顺序；内容格式、主题、card type、海报和 UI 规则引用对应文档。
 
-`feeds-hub-update` 用于生成 Feeds Hub 的短周期信息流内容。
+## 读取顺序
 
-它只负责串联流程：
+1. `docs/topics/README.md`
+2. `docs/topics/<category>.md`
+3. `docs/card-types/README.md`
+4. `docs/rules/content-format.md`
+5. `docs/rules/poster-spec.md`
+6. `docs/rules/ui-spec.md`
+7. `src/content.config.ts`
 
-```text
-topic => card type => feed markdown + cover image
-```
-
-本文件不定义内容格式、主题规则、来源策略、海报细节或 UI 规则；这些规则分别由对应文档维护。
-
-## 输入
-
-执行者每次运行必须先读取：
-
-- `docs/topics/README.md`：获取本轮需要遍历的全部主题。
-
-然后按主题读取：
-
-- `docs/topics/<category>.md`：确定主题范围、可用类型、可选信息来源、标题倾向、可选主题海报提示词和跳过条件。
-- `docs/card-types/README.md`：根据信息内容选择 `kind`、图片比例、尺寸和通用海报类型提示词。
-- `docs/rules/content-format.md`：生成标题、副标题、摘要和正文。
-- `docs/rules/ui-spec.md`：确认 card、图片比例和 `cover` 渲染约束。
-
-## 输出
-
-每条有效信息输出两类文件：
+## 输出路径
 
 ```text
 src/content/<category>/<yyyy-mm-dd>-<slug>.md
-public/images/<category>/<yyyy-mm-dd>-<slug>.<webp|png|svg>
+public/images/<category>/<yyyy-mm-dd>-<slug>.webp
 ```
 
-Markdown frontmatter 的字段以 `src/content.config.ts` 为准，`cover` 必须指向实际写入的图片文件：
+frontmatter `cover`：
 
 ```text
-/images/<category>/<yyyy-mm-dd>-<slug>.<webp|png|svg>
+/images/<category>/<yyyy-mm-dd>-<slug>.webp
 ```
 
-如果目标主题的内容目录或图片目录不存在，执行者可以按上述路径自行创建。
+`date` 是写入时间。`eventAt` 是来源标注的事件时间或新闻发布时间；新增内容优先保存 UTC ISO datetime（`Z` 后缀），页面按 `Asia/Shanghai` 渲染。
 
-## 封面格式优先级
+## 执行流程
 
-封面格式按以下顺序选择：
+1. 遍历 `docs/topics/README.md` 列出的全部主题。
+2. 按主题独立获取公开、可核验信息。
+3. 跳过无来源、低价值、重复或不符合主题条件的信息。
+4. 为有效信息选择 `kind`。
+5. 生成符合 `docs/rules/content-format.md` 的 Markdown。
+6. 用 `eventKey` 和现有内容去重；重复 `sourceUrl` 只作为复核线索。
+7. 优先写入准确、不重复、来源可核验的 Markdown。
+8. 当前环境具备图片生成和 WebP 二进制写入能力时，按 `docs/rules/poster-spec.md` 生成并写入海报。
+9. 无法生成或写入合规 WebP 时，设置 `coverStatus: "pending"`，不得阻断内容写入。
 
-1. `webp`：优先使用高质量、高尺寸 WebP 主封面。
-2. `png`：当 WebP 无法生成、无法导出或质量不达标时使用。
-3. `svg`：当 WebP 和 PNG 都不可用时使用；必须是当前 feed 专属的事件化视觉，不得是通用模板、空白占位或无关装饰图。
+## GitHub WebP 写入
 
-无论采用哪种格式，图片比例、尺寸、视觉质量和事件相关性仍必须符合 `docs/card-types/README.md` 与 `docs/rules/ui-spec.md`。
+真实海报写入必须执行 `docs/rules/poster-spec.md` 的 GitHub Connector Flow。关键约束：
 
-## 提交信息
-
-自动内容更新提交信息默认使用运行整点区分，方便检查哪个时间点没有数据。格式为：
-
-```text
-content: update feeds <YYYYMMDD-HH>
-```
-
-示例：
-
-```text
-content: update feeds 20260704-10
-content: update feeds 20260704-11
-```
-
-如果同一整点内需要多次内容更新，可以追加批次号：
-
-```text
-content: update feeds <YYYYMMDD-HH>-<no>
-```
-
-示例：
-
-```text
-content: update feeds 20260704-10-2
-```
-
-同一轮遍历多个主题生成的内容合并为一个内容更新提交。`HH` 使用 24 小时制，按执行时本地时间取整点。
-
-## 流程
-
-1. 读取 `docs/topics/README.md`，得到本轮全部主题列表。
-2. 按主题列表逐个遍历 `docs/topics/<category>.md`。
-3. 对每个主题独立获取并核验公开信息；topic 指定信息来源时优先采用，未指定时自行搜索可核验来源。
-4. 对每个主题独立判断是否值得写入；不满足 topic 条件则跳过该主题。
-5. 对每条有效信息根据信息内容选择 card type。
-6. 按正文格式文档生成 Markdown 内容。
-7. 组合 card type 提示词、topic 额外海报提示词和事件事实，按封面格式优先级生成主封面。
-8. 写入 Markdown 和图片文件，并让 `cover` 指向实际图片路径。
+- 目标仓库：`idaibin/feeds-hub`。
+- 目标分支：`content/<task-name>`。
+- 不修改 `main`。
+- 不创建 PR。
+- WebP blob 使用纯 Base64，禁止 `data:image/webp;base64,` 前缀。
+- 原始生成高清尺寸，最终 WebP 小于等于 `300 KB`。
+- Markdown、WebP、旧 SVG/PNG 删除放入同一个 tree 和同一个 commit。
+- 提交后读取 Markdown 和 WebP 验证，并查询 Vercel commit status。
 
 ## 边界
 
 - 一条 feed 只表达一个事件。
-- 没有可核验来源时跳过。
-- 没有合规独立主封面图片时跳过。
-- 不得仅因 WebP 不可用而跳过；PNG 或 SVG 合规时可以继续写入。
-- 不在本文件重复 topic、card type、正文格式、frontmatter schema 或 UI 细节。
+- 赛事内容必须覆盖当前可核验状态：预告前瞻、比赛进程或结果。
+- 信息生成优先于图片生成。
+- 禁止写入 PNG/SVG 主封面或 fallback。
+- 禁止把 topic、card type、正文、frontmatter schema 或 UI 细节复制到本文。
+
+## 汇报
+
+每轮说明：
+
+- 遍历主题。
+- 新增、跳过、待补项。
+- 每条新增 feed 的 `source`、`sourceUrl`、`eventAt`、`eventKey`、`cover`、`coverStatus`。
+- 校验命令结果。
+- Vercel commit status，若适用。

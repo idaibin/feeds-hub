@@ -7,7 +7,7 @@ topic: "AI 公司监管与政府持股讨论"
 date: "2026-07-03T02:54:00+08:00"
 eventAt: "2026-07-03T00:28:00+08:00"
 eventKey: "ai:policy_update:anthropic-no-government-stake-talks:2026-07-03T00:28:00+08:00"
-cover: "/images/ai/2026-07-02-boe-agentic-ai-rules.webp"
+cover: "/images/ai/2026-07-03-anthropic-no-government-stake-talks.webp"
 tags:
   - "Anthropic"
   - "AI 政策"

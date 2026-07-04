@@ -1,80 +1,49 @@
 # Repository Scope
 
-## Role
-
-`idaibin/feeds-hub` is a short-cycle AI information feed product and example site.
-
-It demonstrates how an AI feed update workflow can search information, review topics, deduplicate events, generate summaries, create covers, write structured Markdown, and publish through a static site.
+`idaibin/feeds-hub` owns the static feed site, feed content schema, repository-specific update entry, topic rules, card type rules, UI rules, and generated feed cover assets.
 
 ## Owns
 
 - Short-cycle feed entries.
-- Category cards.
-- Feed summaries.
-- AI-generated feed posters and covers.
-- Repository-specific feed frontmatter.
-- Repository-specific feed content paths.
-- Feeds Hub update task entry under `docs/automation/`.
+- Category cards and feed summaries.
+- Repository-specific frontmatter and content paths.
+- AI-generated feed posters under `public/images/<category>/`.
+- Update task entry under `docs/automation/`.
+- Repository-specific rules under `docs/rules/`, `docs/topics/`, and `docs/card-types/`.
 
 ## Does Not Own
 
 - Long-form blog articles.
-- Reusable prompt source assets.
-- Reusable skill source assets.
-- Shared AI automation standards.
-- Shared GitHub branching standards.
-- Shared content quality standards.
+- Reusable prompts, skills, workflow templates, or shared standards.
+- Shared GitHub branching and AI content quality standards.
 
-Reusable prompts, skills, workflow templates, and shared standards belong in `idaibin/aicraft`.
+Reusable AI assets belong in `idaibin/aicraft`; long-form publishing belongs in `idaibin/blog`.
 
-Long-form publishing belongs in `idaibin/blog`.
-
-## Consumes From
-
-This repository consumes shared standards from:
+## External Standards
 
 ```text
 idaibin/aicraft/docs/standards/github-branching.md
 idaibin/aicraft/docs/standards/ai-content-quality.md
 ```
 
-## Update Rules
+## Allowed Update Paths
 
-Feeds Hub update task entries live under:
-
-```text
-docs/automation/
-```
-
-The current update entry is:
-
-```text
-docs/automation/feeds-hub-update.md
-```
-
-Topic-specific rules live under:
-
-```text
-docs/topics/
-```
-
-## Allowed Paths
-
-The `Feeds Hub 更新` flow may modify only:
+Normal feed update tasks may modify only:
 
 ```text
 src/content/<category>/*.md
 public/images/<category>/*.webp
 ```
 
-It may modify update documentation only when the user explicitly asks to update rules:
+Rule updates require an explicit user request and may touch:
 
 ```text
 docs/automation/**
 docs/rules/**
 docs/topics/**
+docs/card-types/**
 AGENTS.md
 README.md
 ```
 
-It must not modify reusable AI source assets. Those belong in `idaibin/aicraft`.
+Do not move reusable AI source assets into this repository.

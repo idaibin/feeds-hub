@@ -7,7 +7,7 @@ topic: "全球并购市场"
 date: "2026-07-02T23:57:00+08:00"
 eventAt: "2026-07-01T13:02:54+08:00"
 eventKey: "stock:market_brief:global-ma-record-megadeals:2026-07-01T13:02:54+08:00"
-cover: "/images/stock/2026-07-02-europe-defensives-tech-slide.webp"
+cover: "/images/stock/2026-07-02-global-ma-record-megadeals.webp"
 tags:
   - "M&A"
   - "LSEG"

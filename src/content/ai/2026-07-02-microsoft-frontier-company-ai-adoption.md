@@ -7,7 +7,7 @@ topic: "Microsoft 企业 AI 集成服务"
 date: "2026-07-02T22:55:00+08:00"
 eventAt: "2026-07-02T21:01:09+08:00"
 eventKey: "ai:hot_topic:microsoft-frontier-company-ai-adoption:2026-07-02T21:01:09+08:00"
-cover: "/images/ai/2026-07-02-zai-glm-52-developer-adoption.webp"
+cover: "/images/ai/2026-07-02-microsoft-frontier-company-ai-adoption.webp"
 tags:
   - "Microsoft"
   - "企业 AI"

@@ -7,7 +7,7 @@ topic: "西班牙 vs 奥地利"
 date: "2026-07-03T03:54:00+08:00"
 eventAt: "2026-07-03T02:11:00+08:00"
 eventKey: "worldcup:hot_topic:spain-austria-lineup-porro-olmo:2026-07-03T02:11:00+08:00"
-cover: "/images/worldcup/2026-07-02-spain-austria-yamal-focus.webp"
+cover: "/images/worldcup/2026-07-03-spain-austria-lineup-porro-olmo.webp"
 tags:
   - "世界杯"
   - "32强"

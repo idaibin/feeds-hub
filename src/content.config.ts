@@ -30,6 +30,11 @@ const feedKindSchema = z.enum([
   'visual'
 ]);
 
+const coverStatusSchema = z.enum([
+  'generated_webp',
+  'pending'
+]);
+
 const feeds = defineCollection({
   loader: glob({ pattern: '{worldcup,lol,stock,ai,global,rust,product}/**/*.md', base: './src/content' }),
   schema: z.object({
@@ -42,6 +47,7 @@ const feeds = defineCollection({
     eventAt: z.coerce.date(),
     eventKey: z.string().min(2),
     cover: z.string().min(1),
+    coverStatus: coverStatusSchema.default('generated_webp'),
     fallbackCover: z.string().min(1).optional(),
     tags: z.array(z.string()).default([]),
     summary: z.string().min(2),

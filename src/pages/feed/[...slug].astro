@@ -40,20 +40,24 @@ function getPosterRatioClass(categoryId: string, kind: string) {
   <article class={`content-panel feed-detail category-${entry.data.category} ${posterRatioClass}`}>
     <div class="detail-cover">
       <img src={entry.data.cover} alt="" onerror={`this.onerror=null;this.src='${fallbackCover}';`} />
+      <a class="category-chip" href={`/category/${category.id}/`}>{category.shortName}</a>
     </div>
     <div class="detail-body">
-      <div class="meta-line"><a href={`/category/${category.id}/`}>{category.name}</a><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time></div>
       <h1>{entry.data.title}</h1>
       <p class="subtitle">{entry.data.subtitle}</p>
       <p class="summary">{entry.data.summary}</p>
       <div class="markdown-body"><Content /></div>
-      {entry.data.sourceUrl && <p class="source-line">来源：<a href={entry.data.sourceUrl} target="_blank" rel="noreferrer">{entry.data.source ?? '查看原文'}</a></p>}
+      <p class="source-line">
+        <time datetime={entry.data.eventAt.toISOString()}>{formatDate(entry.data.eventAt)}</time>
+        {entry.data.sourceUrl && <> · 来源：<a href={entry.data.sourceUrl} target="_blank" rel="noreferrer">{entry.data.source ?? '查看原文'}</a></>}
+      </p>
     </div>
   </article>
 </BaseLayout>
 
 <style>
   .feed-detail {
+    --accent: var(--primary);
     width: min(100%, 820px);
     margin: 10px auto 0;
     overflow: hidden;
@@ -61,8 +65,40 @@ function getPosterRatioClass(categoryId: string, kind: string) {
     background: rgba(255, 255, 255, .96);
   }
 
+  .feed-detail.category-worldcup {
+    --accent: var(--primary);
+  }
+
+  .feed-detail.category-lol {
+    --accent: #7c3aed;
+  }
+
+  .feed-detail.category-stock {
+    --accent: var(--signal);
+  }
+
+  .feed-detail.category-ai {
+    --accent: #0569ed;
+  }
+
+  .feed-detail.category-global {
+    --accent: #0f8b8d;
+  }
+
+  .feed-detail.category-rust {
+    --accent: #b45309;
+  }
+
+  .feed-detail.category-product {
+    --accent: #db2777;
+  }
+
   .detail-cover {
+    position: relative;
     width: 100%;
+    overflow: hidden;
+    border-radius: 22px 22px 0 0;
+    background: #0f172a;
   }
 
   .detail-cover img {
@@ -70,25 +106,49 @@ function getPosterRatioClass(categoryId: string, kind: string) {
     width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    border-radius: 22px 22px 0 0;
     object-fit: cover;
-    background: #0f172a;
   }
   .poster-ratio-4x5 .detail-cover img { aspect-ratio: 4 / 5; }
   .poster-ratio-4x3 .detail-cover img { aspect-ratio: 4 / 3; }
+  .detail-cover .category-chip {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+    max-width: calc(100% - 32px);
+    overflow: hidden;
+    border-radius: 999px;
+    padding: 6px 10px;
+    color: var(--accent);
+    background: rgba(0, 0, 0, .8);
+    font-size: 13px;
+    font-weight: 950;
+    letter-spacing: 0;
+    line-height: 1.2;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, .55);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .detail-cover .category-chip::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    border-radius: 999px;
+    background: currentColor;
+    vertical-align: 1px;
+  }
   .detail-body { padding: clamp(22px, 4vw, 42px); }
-  .meta-line { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); margin-bottom: 18px; }
-  .meta-line a { color: var(--primary-strong); font-weight: 850; }
-  .meta-line time { font-family: var(--mono); font-size: 12px; }
-  h1 { max-width: 760px; font-size: clamp(30px, 5vw, 50px); line-height: 1.08; letter-spacing: -.02em; }
+  h1 { max-width: 760px; margin-bottom: 16px; font-size: clamp(30px, 5vw, 50px); line-height: 1.08; letter-spacing: 0; }
   .subtitle { max-width: 760px; font-size: 20px; color: var(--muted-strong); font-weight: 820; }
   .summary { padding: 16px 18px; border-radius: 14px; border: 1px solid var(--border); background: #f8fafc; color: var(--muted-strong); }
   .markdown-body { margin-top: 28px; line-height: 1.85; }
   .markdown-body :global(a), .source-line a { color: var(--primary-strong); text-decoration: underline; text-underline-offset: 3px; }
   .source-line { margin-top: 28px; font-size: 14px; }
+  .source-line time { font-family: var(--mono); font-size: 12px; }
   @media (max-width: 640px) {
     .feed-detail { border-radius: 24px; }
-    .detail-cover img { border-radius: 24px 24px 0 0; }
-    .meta-line { flex-direction: column; }
+    .detail-cover { border-radius: 24px 24px 0 0; }
   }
 </style>

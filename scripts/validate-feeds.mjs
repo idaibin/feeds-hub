@@ -5,6 +5,7 @@ import process from 'node:process';
 
 const root = process.cwd();
 const contentRoot = path.join(root, 'src', 'content');
+const publicImagesRoot = path.join(root, 'public', 'images');
 const topicsRoot = path.join(root, 'docs', 'topics');
 const cardTypesRoot = path.join(root, 'docs', 'card-types');
 
@@ -83,6 +84,9 @@ const stockSentiments = ['市场情绪：上涨', '市场情绪：下跌', '市�
 const errors = [];
 const warnings = [];
 const eventKeys = new Map();
+const sourceUrls = new Map();
+const coverExtensions = ['.webp'];
+const coverStatuses = ['generated_webp', 'pending'];
 
 function addError(file, message) {
   errors.push(`${file}: ${message}`);
@@ -180,6 +184,26 @@ async function collectMarkdownFiles(dir) {
   return files.sort();
 }
 
+async function collectFilesWithExtension(dir, extension) {
+  const files = [];
+
+  async function walk(current) {
+    if (!existsSync(current)) return;
+    const entries = await readdir(current, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        await walk(fullPath);
+      } else if (entry.isFile() && entry.name.endsWith(extension)) {
+        files.push(fullPath);
+      }
+    }
+  }
+
+  await walk(dir);
+  return files.sort();
+}
+
 function normalizeUrl(value) {
   try {
     const url = new URL(value);
@@ -193,8 +217,8 @@ function normalizeUrl(value) {
   }
 }
 
-function isIsoWithChinaOffset(value) {
-  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?\+08:00$/.test(String(value ?? ''));
+function isIsoWithSupportedOffset(value) {
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(Z|\+08:00)$/.test(String(value ?? ''));
 }
 
 function validateRequiredFields(file, data) {
@@ -229,11 +253,11 @@ function validateKind(file, data) {
 }
 
 function validateDates(file, data) {
-  if (!isIsoWithChinaOffset(data.date)) {
-    addError(file, 'date must be ISO datetime with +08:00 offset');
+  if (!isIsoWithSupportedOffset(data.date)) {
+    addError(file, 'date must be ISO datetime with UTC Z or legacy +08:00 offset');
   }
-  if (!isIsoWithChinaOffset(data.eventAt)) {
-    addError(file, 'eventAt must be ISO datetime with +08:00 offset');
+  if (!isIsoWithSupportedOffset(data.eventAt)) {
+    addError(file, 'eventAt must be ISO datetime with UTC Z or legacy +08:00 offset');
   }
 }
 
@@ -248,8 +272,37 @@ function validateCover(file, data) {
   if (data.category && !cover.startsWith(`/images/${data.category}/`)) {
     addError(file, `cover must be under /images/${data.category}/`);
   }
-  if (!cover.endsWith('.webp')) {
+  if (!coverExtensions.some((extension) => cover.endsWith(extension))) {
     addError(file, 'cover must end with .webp');
+  }
+}
+
+function validateCoverStatus(file, data) {
+  if (!('coverStatus' in data)) return;
+
+  if (!coverStatuses.includes(data.coverStatus)) {
+    addError(file, `invalid coverStatus: ${data.coverStatus}`);
+    return;
+  }
+
+  const cover = String(data.cover ?? '');
+  if (data.coverStatus === 'generated_webp' && !cover.endsWith('.webp')) {
+    addError(file, 'coverStatus generated_webp requires a .webp cover');
+  }
+}
+
+async function validateCoverAssetFormats() {
+  for (const category of categories) {
+    const categoryImagesRoot = path.join(publicImagesRoot, category);
+    const disallowedFiles = [
+      ...(await collectFilesWithExtension(categoryImagesRoot, '.svg')),
+      ...(await collectFilesWithExtension(categoryImagesRoot, '.png'))
+    ];
+
+    for (const file of disallowedFiles) {
+      const relative = path.relative(root, file).replaceAll(path.sep, '/');
+      addError(relative, 'feed cover assets must be .webp');
+    }
   }
 }
 
@@ -293,6 +346,12 @@ function validateSource(file, data) {
   const normalizedLower = normalizeUrl(data.sourceUrl).toLowerCase();
   if (sourceUrlBlockList.some((blocked) => normalizedLower.includes(blocked))) {
     addError(file, 'sourceUrl must not be a search page, screenshot, or generic query URL');
+  }
+
+  if (normalizedLower && sourceUrls.has(normalizedLower)) {
+    addWarning(file, `duplicate sourceUrl with ${sourceUrls.get(normalizedLower)}; verify this is not a duplicate event`);
+  } else if (normalizedLower) {
+    sourceUrls.set(normalizedLower, file);
   }
 }
 
@@ -339,6 +398,7 @@ async function validateFile(file) {
   validateKind(relative, data);
   validateDates(relative, data);
   validateCover(relative, data);
+  validateCoverStatus(relative, data);
   validateTopicDoc(relative, data);
   validateTags(relative, data);
   validateReviewedAndPriority(relative, data);
@@ -377,6 +437,8 @@ async function main() {
   for (const file of files) {
     await validateFile(file);
   }
+
+  await validateCoverAssetFormats();
 
   if (warnings.length > 0) {
     console.warn('\nFeed validation warnings:');

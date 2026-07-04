@@ -5,12 +5,11 @@ Feeds Hub 已升级为模板引擎系统。所有任务必须遵循 `docs/rules/
 ## 分层
 Content层：category/kind/title/subtitle/summary/eventAt/eventKey
 Template层：worldcup_schedule/worldcup_result/esports_event/ai_news/stock_brief/global_news
-Poster DSL层：ratio(16:9), size(推荐1600x900，最低1280x720), layout(hero/scoreboard/split), focus(title/score/schedule), maxLines<=2, 由执行者使用可用图像生成能力生成后保存为 WebP
+Poster DSL层：统一以 `docs/rules/poster-spec.md` 为准。
 
 ## 核心规则
 1 feed = 1 event
-海报提示词按主题和信息内容共同确定，图片只表达主题、场景、氛围和事件方向
-海报必须是 `cover` 指向的图片资源
+海报生成、格式优先级、图片写入方式和封面待补规则统一以 `docs/rules/poster-spec.md` 为准
 卡片不重复海报
 详情页完整展开
 移动端优先
@@ -23,9 +22,4 @@ hot_topic: 单一人物或事件方向，海报表达关注焦点
 
 ## 禁止
 多事件混合
-PPT风
-重复装饰
-海报与卡片重复内容
-CSS/HTML 生成海报替代图片
-1x1、透明、空白或通用占位海报
-海报图片内生成 Feeds Hub logo、Feeds Hub wordmark、Feeds Hub 品牌角标、主题标签、来源标签或状态标签
+违反 `docs/rules/poster-spec.md` 的海报生成和 fallback 规则

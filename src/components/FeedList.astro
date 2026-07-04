@@ -105,8 +105,8 @@ const initialEntries = entries.slice(0, pageSize);
         summary.className = 'summary';
         summary.textContent = item.summary;
 
-        posterShell.append(image);
-        body.append(category, title, summary);
+        posterShell.append(image, category);
+        body.append(title, summary);
         link.append(posterShell, body);
         article.append(link);
 

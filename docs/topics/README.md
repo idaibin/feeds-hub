@@ -1,45 +1,34 @@
 # Topics
 
-本目录按主题维护 Feeds Hub 的主题规则。
+主题文档只写主题差异：写什么、用哪些来源、允许哪些 `kind`、标题/eventKey 怎么定、何时跳过、是否有额外海报气质。
 
-执行者读取主题文档后，再读取 `docs/card-types/README.md` 选择 card type 和通用海报类型提示词。
+通用规则：
 
-自动更新任务必须按下方文件列表逐个遍历主题；不能只选择其中一个主题执行。每个主题独立获取信息、独立判断是否写入，没有合格信息时跳过该主题。
+- `kind` 选择看 `docs/card-types/README.md`。
+- 正文格式看 `docs/rules/content-format.md`。
+- 海报生成和写入看 `docs/rules/poster-spec.md`。
+- 自动更新必须遍历下方全部主题；每个主题独立判断，没有合格信息就跳过。
 
-## 文件
+## Files
 
-- `worldcup.md`：世界杯
-- `lol.md`：LOL 赛事
-- `stock.md`：股市简报
-- `ai.md`：AI 科技
-- `global.md`：全球重点
-- `rust.md`：开源与 Rust
-- `product.md`：创业与产品设计
+- `worldcup.md`
+- `lol.md`
+- `stock.md`
+- `ai.md`
+- `global.md`
+- `rust.md`
+- `product.md`
 
-## 单主题文档格式
-
-每个主题文档固定包含：
-
-1. 主题 ID
-2. 关注内容
-3. 可用 Card Types
-4. 信息来源，可为空；指定时优先采用，未指定时执行者自行搜索可核验来源
-5. 标题倾向
-6. 主题海报提示词，可为空
-7. 跳过条件
-
-主题文档负责回答：
+## Topic File Shape
 
 ```text
-这个主题写什么、优先从哪里取事实、标题怎么写、允许哪些类型、是否有额外主题海报气质。
+ID
+Focus
+Kinds
+Title / Event Key
+Sources
+Poster Prompt
+Skip
 ```
 
-通用 card type 负责回答：
-
-```text
-这条信息应该用哪种卡片类型、什么比例、什么通用海报结构。
-```
-
-如果主题文档没有额外主题海报提示词，则根据信息来源和内容形态直接使用 `docs/card-types/README.md` 自动选择 `kind`、比例和通用海报提示词。
-
-如果主题文档没有指定信息来源，执行者应自行搜索公开、可核验来源；如果指定了信息来源，应优先采用指定来源。
+未指定来源时，执行者自行搜索公开、可核验来源；指定来源时优先采用。

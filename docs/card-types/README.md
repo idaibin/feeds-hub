@@ -1,57 +1,14 @@
 # Card Types
 
-本目录维护 Feeds Hub 的 card 信息分类和通用海报类型提示词。
+本文件负责 `kind` 选择和通用海报类型提示词。比例、尺寸、格式、写入和 fallback 看 `docs/rules/poster-spec.md`。
 
-执行者拿到主题信息后，先用 `docs/topics/<category>.md` 判断是否值得写入，再用本文件选择 `kind`、图片比例和通用海报提示词。
+## Selection
 
-如果 topic 没有额外主题海报提示词，则直接根据信息来源和内容形态选择本文件中的 card type：
-
-- 来源是赛程、赛果、赛事官方页：优先 `match_schedule`、`match_result`、`match_flow`、`knockout_update`。
-- 来源是监管、政策、标准、官方文件：优先 `policy_update`。
-- 来源是财报、指数、宏观数据、市场报道：优先 `market_brief` 或 `data`。
-- 来源是模型、工具、产品、开源发布：优先 `hot_topic`、`ai`、`news`。
-- 来源天然包含图表、结构、地图、bracket、时间线或流程：优先 `data`。
-- 未命中明确类型：使用 `news`。
-
-## 输出
-
-每条 feed 必须确定：
-
-```text
-kind
-poster ratio
-poster size
-poster format
-card type prompt
-```
-
-## 比例
-
-| Ratio | Recommended size | Use case |
+| kind | ratio | use |
 |---|---:|---|
-| `16:9` | `1600x900` | 默认新闻、政策、市场简报、热点 |
-| `4:5` | `1440x1800` | 赛事赛程、赛果、球员或选手焦点、强视觉海报 |
-| `4:3` | `1600x1200` | 数据图、bracket、时间线、结构化图表 |
-
-禁止使用 `1:1` 作为 feed 主封面。
-
-## 格式优先级
-
-主封面格式按以下顺序选择：
-
-1. `webp`：默认首选，优先高质量、高尺寸输出。
-2. `png`：当 WebP 无法生成、导出或质量不达标时使用。
-3. `svg`：第三优先级，仅用于当前 feed 专属的矢量海报、信息图或结构图；不得作为通用模板、占位图或脚本生成的低质替代品。
-
-无论格式如何，主封面必须保持当前事件相关、比例正确、主体清晰，并符合本文件的 card type prompt 和 negative constraints。
-
-## 选择规则
-
-| kind | ratio | 何时使用 |
-|---|---:|---|
-| `match_schedule` | `4:5` | 体育或电竞赛程、赛前节点 |
+| `match_schedule` | `4:5` | 体育或电竞赛程、赛前预告、开球节点 |
 | `match_result` | `4:5` | 体育或电竞赛果、晋级、淘汰 |
-| `match_flow` | `4:3` | 比赛进程、时间线、关键节点 |
+| `match_flow` | `4:3` | 比赛进程、官方实时状态、时间线、关键节点 |
 | `player_spotlight` | `4:5` | 单一球员、选手或人物焦点 |
 | `knockout_update` | `4:3` | 淘汰赛、bracket、晋级路径 |
 | `worldcup_feed` | `4:3` | 同一比赛日或同一阶段世界杯结构化汇总 |
@@ -61,59 +18,25 @@ card type prompt
 | `breaking` | `16:9` | 已确认的突发重大变化 |
 | `insight` | `16:9` | 来源支持的背景整理或结构化解释 |
 | `news` | `16:9` | 默认新闻和普通资讯 |
-| `ai` | `16:9` | AI 主题的结构化聚合或模型 / 工具更新 |
+| `ai` | `16:9` | AI 主题的结构化聚合或模型/工具更新 |
 | `data` | `4:3` | 指数、榜单、图谱、地图、流程、架构、漏斗 |
 | `visual` | `4:5` | 图片主导的专题视觉，不作为默认 fallback |
 
 未命中时使用 `news` 和 `16:9`。
 
+## Quick Rules
+
+- 赛事官方页、赛前信息、直播进程、赛果：优先 `match_schedule`、`match_flow`、`match_result`、`knockout_update`。
+- 监管、政策、标准、官方文件：优先 `policy_update`。
+- 财报、指数、宏观数据、市场报道：优先 `market_brief` 或 `data`。
+- 模型、工具、产品、开源发布：优先 `hot_topic`、`ai`、`news`。
+- 图表、结构、地图、bracket、时间线或流程：优先 `data`。
+
 ## Prompt Assembly
 
-每条 feed 的主封面提示词按以下顺序组合：
+组合顺序、基础比例提示词和 negative constraints 统一看 `docs/rules/poster-spec.md`。
 
-```text
-Base ratio / size prompt
-+ Card type prompt
-+ Topic poster prompt from docs/topics/<category>.md
-+ Event facts from current feed
-+ Negative constraints
-```
-
-图片只表达主题、场景、氛围和事件方向。比分、时间、日期、来源、公司名、队伍名、价格等精确事实必须来自当前 feed，不得由模型补写。
-
-## Base Prompts
-
-### `16:9`
-
-```text
-Create a premium 16:9 editorial news cover image, recommended size 1600x900.
-Preferred output format is high-quality WebP. If WebP is unavailable, export PNG; if both WebP and PNG are unavailable, use an event-specific SVG.
-Use one clear focal point, strong contrast, premium lighting, and restrained details.
-Keep the composition readable for a mobile-first feed card.
-Do not add Feeds Hub branding, source badges, category labels, watermarks, or unsupported readable metadata.
-```
-
-### `4:5`
-
-```text
-Create a premium vertical editorial poster, aspect ratio 4:5, recommended size 1440x1800.
-Preferred output format is high-quality WebP. If WebP is unavailable, export PNG; if both WebP and PNG are unavailable, use an event-specific SVG.
-Use strong mobile poster hierarchy: clear top zone, dominant middle focal point, and structured lower information area.
-Use cinematic lighting, realistic depth, rich details, and high-end poster finish.
-Only include short factual visual labels when those facts are supplied by the current feed.
-```
-
-### `4:3`
-
-```text
-Create a premium 4:3 structured editorial information cover, recommended size 1600x1200.
-Preferred output format is high-quality WebP. If WebP is unavailable, export PNG; if both WebP and PNG are unavailable, use an event-specific SVG.
-Use a clean data, bracket, dashboard, map, timeline, workflow, or architecture composition.
-Charts, brackets, panels, and timelines must be symbolic unless exact facts are supplied by the feed.
-Do not render fake numbers, fake dates, fake tickers, fake team names, fake official logos, or fake source marks.
-```
-
-## Card Type Prompts
+## Prompts
 
 ### `match_schedule`
 
@@ -216,15 +139,4 @@ Data marks must be symbolic unless exact facts are supplied by the feed.
 ```text
 Use a high-quality editorial visual poster with stronger hierarchy than normal news.
 Use only when the feed is intended to be image-led.
-```
-
-## Negative Constraints
-
-```text
-No 1:1 feed cover.
-No reusable generic template applied to multiple unrelated feeds.
-No script-drawn placeholder, Canvas, HTML screenshot, or CSS-generated poster.
-No generic SVG fallback; SVG is allowed only when it is event-specific and visually designed for the current feed.
-No Feeds Hub logo, Feeds Hub wordmark, watermark, category tag, source tag, or status pill inside the image.
-No fake official logo, team badge, company logo, government seal, ticker, score, date, chart value, API screenshot, or document text.
 ```

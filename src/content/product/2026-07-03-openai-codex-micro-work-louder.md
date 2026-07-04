@@ -7,7 +7,7 @@ topic: "OpenAI Codex Micro"
 date: "2026-07-03T10:57:00+08:00"
 eventAt: "2026-07-01T00:26:30+08:00"
 eventKey: "product:hot_topic:openai-codex-micro-work-louder:2026-07-01T00:26:30+08:00"
-cover: "/images/product/2026-07-03-meta-pocket-gizmos-ai-app.webp"
+cover: "/images/product/2026-07-03-openai-codex-micro-work-louder.webp"
 tags:
   - "OpenAI"
   - "Codex"
