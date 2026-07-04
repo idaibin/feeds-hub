@@ -50,18 +50,14 @@ Feeds Hub 最终主题色固定为蓝青信息流体系，不再引入多主色�
 ## Template Flow
 
 ```text
-category -> kind -> poster ratio -> topic rule -> poster prompt -> poster DSL -> image generation -> WebP cover -> page reads cover
+task entry -> topic -> card type -> poster prompt -> image generation -> WebP cover -> page reads cover
 ```
 
-`Poster DSL` 只定义结构约束，例如 `ratio`、`size`、`layout`、`focus` 和 `maxLines`。主题级海报语义、话题线索、热度表达、风格提示词和负面约束维护在 `docs/posters/`。
+`docs/topics/<category>.md` 负责主题、可用类型、信息来源和主题海报提示词。
 
-自动任务生成主封面前必须读取：
+`docs/card-types/README.md` 负责根据信息内容选择 `kind`、图片比例、尺寸和通用海报类型提示词。
 
-```text
-docs/posters/README.md
-docs/posters/type-matrix.md
-docs/posters/<category>.md
-```
+生成主封面前只组合：card type 提示词、topic 提示词和当前事件事实。
 
 图片只表达主题和氛围。比分、时间、日期、来源、公司名、队伍名、价格等精确事实必须由 frontmatter 和页面文本承担，不能依赖图片内文字。
 
@@ -160,7 +156,7 @@ const topicCardMap = {
 
 - `topicCardMap` 必须覆盖 `src/lib/feeds.ts` 的全部 `CATEGORIES`。
 - `topicCardMap` 必须覆盖 `src/content.config.ts` 的全部 `feedCategorySchema`。
-- 新增主题时，必须同时补齐 `docs/topics/`、`docs/posters/`、`docs/sources/` 和本表映射。
+- 新增主题时，必须同时补齐 `docs/topics/`、`docs/card-types/` 和本表映射。
 - Card Type 映射只决定内容表达优先级和图片比例，不决定 card 宽度、列表列数或主题专属布局。
 
 默认规则：
@@ -196,7 +192,7 @@ const topicCardMap = {
 ## Poster DSL
 
 - `ratio`: `16:9` | `4:5` | `4:3`。
-- `size`: follows `docs/posters/type-matrix.md`.
+- `size`: follows `docs/card-types/README.md`.
 - `layout`: hero / scoreboard / split / poster / bracket / timeline / dashboard / map / workflow。
 - `focus`: title / score / schedule / player / bracket / market / policy / product / code / data。
 - `maxLines`: 不超过 2 行，除非是 `4:3` 结构化信息图且事实由 feed 明确提供。

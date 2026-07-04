@@ -5,7 +5,8 @@ import process from 'node:process';
 
 const root = process.cwd();
 const contentRoot = path.join(root, 'src', 'content');
-const postersRoot = path.join(root, 'docs', 'posters');
+const topicsRoot = path.join(root, 'docs', 'topics');
+const cardTypesRoot = path.join(root, 'docs', 'card-types');
 
 const categories = ['worldcup', 'lol', 'stock', 'ai', 'global', 'rust', 'product'];
 const kinds = [
@@ -252,11 +253,11 @@ function validateCover(file, data) {
   }
 }
 
-function validatePosterDoc(file, data) {
+function validateTopicDoc(file, data) {
   if (!data.category) return;
-  const posterDoc = path.join(postersRoot, `${data.category}.md`);
-  if (!existsSync(posterDoc)) {
-    addError(file, `missing poster prompt document: docs/posters/${data.category}.md`);
+  const topicDoc = path.join(topicsRoot, `${data.category}.md`);
+  if (!existsSync(topicDoc)) {
+    addError(file, `missing topic document: docs/topics/${data.category}.md`);
   }
 }
 
@@ -338,7 +339,7 @@ async function validateFile(file) {
   validateKind(relative, data);
   validateDates(relative, data);
   validateCover(relative, data);
-  validatePosterDoc(relative, data);
+  validateTopicDoc(relative, data);
   validateTags(relative, data);
   validateReviewedAndPriority(relative, data);
   validateSource(relative, data);
@@ -353,18 +354,18 @@ async function main() {
     addError('src/content/feeds', 'legacy feeds directory must not exist');
   }
 
-  if (!existsSync(path.join(postersRoot, 'README.md'))) {
-    addError('docs/posters/README.md', 'poster prompt index must exist');
+  if (!existsSync(path.join(topicsRoot, 'README.md'))) {
+    addError('docs/topics/README.md', 'topics index must exist');
   }
 
-  if (!existsSync(path.join(postersRoot, 'type-matrix.md'))) {
-    addError('docs/posters/type-matrix.md', 'poster type ratio matrix must exist');
+  if (!existsSync(path.join(cardTypesRoot, 'README.md'))) {
+    addError('docs/card-types/README.md', 'card type prompt index must exist');
   }
 
   for (const category of categories) {
-    const posterDoc = path.join(postersRoot, `${category}.md`);
-    if (!existsSync(posterDoc)) {
-      addError(`docs/posters/${category}.md`, 'poster prompt document must exist for every category');
+    const topicDoc = path.join(topicsRoot, `${category}.md`);
+    if (!existsSync(topicDoc)) {
+      addError(`docs/topics/${category}.md`, 'topic document must exist for every category');
     }
   }
 

@@ -44,7 +44,7 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
       </form>
     </header>
     <main><slot /></main>
-    <footer class="site-footer">Feeds Hub · ChatGPT 自动更新</footer>
+    <footer class="site-footer">Feeds Hub · AI 信息流更新</footer>
     <script>
       const topicSelect = document.querySelector<HTMLSelectElement>('#topic-select');
       topicSelect?.addEventListener('change', () => {
@@ -75,6 +75,7 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
     --amber: #F59E0B;
     --feed-card-min-width: 480px;
     --feed-card-gap: 24px;
+    --feed-card-row-gap: 28px;
     --content-max-width: 960px;
     --mono: "SFMono-Regular", "Cascadia Mono", "Menlo", "Consolas", monospace;
     --shadow-card: 0 16px 34px rgba(31, 45, 65, 0.08);
@@ -145,24 +146,29 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
   p { color: var(--muted); line-height: 1.75; }
   .feed-section { margin-top: 10px; }
   .masonry-feed {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--feed-card-min-width)), 1fr));
-    gap: var(--feed-card-gap);
+    column-width: var(--feed-card-min-width);
+    column-gap: var(--feed-card-gap);
     width: 100%;
-    align-items: stretch;
+  }
+  .masonry-feed > .feed-card {
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 var(--feed-card-row-gap);
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
   }
   .empty-state { padding: 42px; text-align: center; background: rgba(255, 255, 255, 0.78); border-radius: 8px; border: 1px dashed var(--border); color: var(--muted); }
   .content-panel { position: relative; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.82); border-radius: 8px; box-shadow: var(--shadow-card); backdrop-filter: blur(18px); }
   .site-footer { position: relative; width: min(1160px, calc(100% - 32px)); margin: 0 auto 32px; padding-top: 24px; color: var(--muted); border-top: 1px solid var(--border); font-size: 14px; }
   @media (max-width: 1100px) {
     main { width: min(100% - 32px, 960px); }
-    .masonry-feed { grid-template-columns: 1fr; }
+    .masonry-feed { column-width: auto; column-count: 1; }
   }
   @media (max-width: 640px) {
     main { width: min(100% - 16px, 960px); padding-top: 14px; }
     .site-header { padding: 10px 12px; }
     .brand small { display: none; }
     .topic-switcher { flex-basis: min(54vw, 190px); }
-    .masonry-feed { gap: 16px; }
+    .masonry-feed { --feed-card-row-gap: 18px; }
   }
 </style>

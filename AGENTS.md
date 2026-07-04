@@ -1,11 +1,11 @@
 # AGENTS.md
 
-Feeds Hub 已升级为模板引擎系统。所有任务必须遵循 ui-spec 与 template-engine。主题规则维护在 `docs/topics/`，普通内容更新不得和规则/UI调整混在一起提交。
+Feeds Hub 已升级为模板引擎系统。所有任务必须遵循 `docs/rules/ui-spec.md` 与 template-engine。主题规则维护在 `docs/topics/`，普通内容更新不得和规则/UI调整混在一起提交。
 
 ## 分层
 Content层：category/kind/title/subtitle/summary/eventAt/eventKey
 Template层：worldcup_schedule/worldcup_result/esports_event/ai_news/stock_brief/global_news
-Poster DSL层：ratio(16:9), size(推荐1600x900，最低1280x720), layout(hero/scoreboard/split), focus(title/score/schedule), maxLines<=2, 由 AI 图片生成后保存为 WebP（当前 demo 可用 ChatGPT 执行）
+Poster DSL层：ratio(16:9), size(推荐1600x900，最低1280x720), layout(hero/scoreboard/split), focus(title/score/schedule), maxLines<=2, 由执行者使用可用图像生成能力生成后保存为 WebP
 
 ## 核心规则
 1 feed = 1 event

@@ -2,19 +2,19 @@
 
 ## Role
 
-`idaibin/feeds-hub` is a short-cycle AI information feed automation product and example site.
+`idaibin/feeds-hub` is a short-cycle AI information feed product and example site.
 
-It demonstrates how AI scheduled tasks can search information, review topics, deduplicate events, generate summaries, create covers, write structured Markdown, and publish through a static site.
+It demonstrates how an AI feed update workflow can search information, review topics, deduplicate events, generate summaries, create covers, write structured Markdown, and publish through a static site.
 
 ## Owns
 
 - Short-cycle feed entries.
 - Category cards.
 - Feed summaries.
-- ChatGPT-generated feed posters and covers.
+- AI-generated feed posters and covers.
 - Repository-specific feed frontmatter.
 - Repository-specific feed content paths.
-- Feeds Hub automation task spec under `docs/automation/`.
+- Feeds Hub update task entry under `docs/automation/`.
 
 ## Does Not Own
 
@@ -34,20 +34,19 @@ Long-form publishing belongs in `idaibin/blog`.
 This repository consumes shared standards from:
 
 ```text
-idaibin/aicraft/docs/standards/cron-automation.md
 idaibin/aicraft/docs/standards/github-branching.md
 idaibin/aicraft/docs/standards/ai-content-quality.md
 ```
 
-## Automation Rules
+## Update Rules
 
-Feeds Hub automation task specs live under:
+Feeds Hub update task entries live under:
 
 ```text
 docs/automation/
 ```
 
-The current scheduled task is:
+The current update entry is:
 
 ```text
 docs/automation/feeds-hub-update.md
@@ -61,20 +60,19 @@ docs/topics/
 
 ## Allowed Paths
 
-The `Feeds Hub 更新` task may modify only:
+The `Feeds Hub 更新` flow may modify only:
 
 ```text
 src/content/<category>/*.md
 public/images/<category>/*.webp
 ```
 
-It may modify automation documentation only when the user explicitly asks to update rules:
+It may modify update documentation only when the user explicitly asks to update rules:
 
 ```text
 docs/automation/**
-docs/repo-scope.md
+docs/rules/**
 docs/topics/**
-docs/ui-spec.md
 AGENTS.md
 README.md
 ```

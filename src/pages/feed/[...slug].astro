@@ -54,7 +54,7 @@ function getPosterRatioClass(categoryId: string, kind: string) {
 
 <style>
   .feed-detail {
-    width: min(100%, var(--content-max-width));
+    width: min(100%, 820px);
     margin: 10px auto 0;
     overflow: hidden;
     border-radius: 22px;
@@ -62,20 +62,15 @@ function getPosterRatioClass(categoryId: string, kind: string) {
   }
 
   .detail-cover {
-    max-width: min(760px, 100%);
-    margin: 0 auto;
-    padding: clamp(18px, 3vw, 34px) clamp(18px, 3vw, 34px) 0;
+    width: 100%;
   }
-
-  .poster-ratio-4x5 .detail-cover { max-width: min(520px, 92vw); }
-  .poster-ratio-4x3 .detail-cover { max-width: min(700px, 92vw); }
 
   .detail-cover img {
     display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    border-radius: 18px;
+    border-radius: 22px 22px 0 0;
     object-fit: cover;
     background: #0f172a;
   }
@@ -85,14 +80,15 @@ function getPosterRatioClass(categoryId: string, kind: string) {
   .meta-line { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); margin-bottom: 18px; }
   .meta-line a { color: var(--primary-strong); font-weight: 850; }
   .meta-line time { font-family: var(--mono); font-size: 12px; }
-  h1 { max-width: 860px; font-size: clamp(30px, 5vw, 54px); line-height: 1.08; letter-spacing: -.02em; }
-  .subtitle { max-width: 860px; font-size: 20px; color: var(--muted-strong); font-weight: 820; }
+  h1 { max-width: 760px; font-size: clamp(30px, 5vw, 50px); line-height: 1.08; letter-spacing: -.02em; }
+  .subtitle { max-width: 760px; font-size: 20px; color: var(--muted-strong); font-weight: 820; }
   .summary { padding: 16px 18px; border-radius: 14px; border: 1px solid var(--border); background: #f8fafc; color: var(--muted-strong); }
   .markdown-body { margin-top: 28px; line-height: 1.85; }
   .markdown-body :global(a), .source-line a { color: var(--primary-strong); text-decoration: underline; text-underline-offset: 3px; }
   .source-line { margin-top: 28px; font-size: 14px; }
   @media (max-width: 640px) {
     .feed-detail { border-radius: 24px; }
+    .detail-cover img { border-radius: 24px 24px 0 0; }
     .meta-line { flex-direction: column; }
   }
 </style>

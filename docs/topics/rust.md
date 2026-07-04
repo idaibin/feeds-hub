@@ -17,15 +17,35 @@
 - Title should identify the crate, project, tool, advisory, RFC, or ecosystem event.
 - Summary should explain the engineering change and why it matters to developers.
 - `eventKey` should include repository or project name, event type, and version/date when available.
-- Cover should be a WebP developer/open-source poster following `docs/ui-spec.md`.
+- Cover should be a WebP developer/open-source poster following `docs/rules/ui-spec.md`.
+
+## Card Types
+
+- `hot_topic`: release, RFC, crate, toolchain, ecosystem or adoption event.
+- `policy_update`: security advisory, governance, language policy, standards or project process.
+- `data`: dependency graph, migration structure, build pipeline, benchmark context, architecture.
+- `news` / `breaking` / `insight`: default Rust ecosystem news or source-backed technical context.
+
+## Title Guidance
+
+Title should identify the crate, project, tool, advisory, RFC, release, repository, or ecosystem event.
 
 ## Sources
 
-Sources are optional, but every factual claim must be traceable. Prefer:
+If this topic lists preferred sources, use them first. If not enough information is available there, search other public and verifiable sources. Every factual claim must be traceable. Prefer:
 
 1. Rust official blog, release notes, RFC repository, crates.io, docs.rs, GitHub releases, and security advisories.
 2. Maintainer blogs or project documentation.
 3. Established engineering publications when they link to primary technical evidence.
+
+## Topic Poster Prompt
+
+```text
+Use an open-source engineering editorial style.
+Show code terminals, dependency graphs, compiler pipelines, package registries, CI/build systems, repository maps, or security advisory context.
+Keep the image technical, precise, and practical.
+Avoid fake Rust logos, fake repository names, invented benchmark values, mascot-style illustrations, or generic hacker imagery.
+```
 
 ## Skip Conditions
 

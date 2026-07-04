@@ -6,7 +6,7 @@ Feeds Hub 是一个面向 AI Agent 和 AI 自动化系统的可复制信息流�
 
 你可以用它持续追踪自己关心的主题，例如 AI 科技、股市、世界杯、LOL 赛事、开源项目、创业与产品设计等。信息不再散落在新闻网站、社交媒体和搜索结果里，而是被整理成一个可访问、可沉淀、可部署的网站。
 
-本仓库的主定位是通用 AI 信息流自动化案例，不绑定具体工具。当前 demo 可用 ChatGPT 自动任务执行，但 ChatGPT 只是作者当前实际使用方式；任何具备定时执行、联网查询、内容生成、图片生成和文件写入能力的 AI Agent 或自动化系统，都可以接入这套流程。
+本仓库的主定位是通用 AI 信息流生成案例，不绑定具体执行者。任何具备联网查询、内容生成、图片生成和文件写入能力的 AI Agent 或自动化系统，都可以接入这套流程。
 
 通用 Prompt、Skill、Workflow 和自动化规范由 [`idaibin/aicraft`](https://github.com/idaibin/aicraft) 维护。
 
@@ -28,19 +28,17 @@ Feeds Hub 是一个面向 AI Agent 和 AI 自动化系统的可复制信息流�
 - 生成或更新 WebP 封面图
 - 使用 Astro 构建静态站点
 - 支持部署到 Vercel
-- 主题、来源、频率、内容格式、海报提示词和页面样式都可以自定义
+- 主题、来源、频率、内容格式、card type、海报提示词和页面样式都可以自定义
 
-本仓库的仓库边界、自动化流程、主题规则、来源规则、正文格式和海报提示词分别维护在：
+本仓库的仓库边界、自动化流程、主题规则、card type、正文格式和页面规范分别维护在：
 
 ```text
-docs/repo-scope.md
+docs/rules/repo-scope.md
 docs/automation/feeds-hub-update.md
 docs/topics/README.md
-docs/sources/README.md
-docs/editorial/README.md
-docs/posters/README.md
-docs/posters/quality.md
-docs/ui-spec.md
+docs/card-types/README.md
+docs/rules/content-format.md
+docs/rules/ui-spec.md
 ```
 
 ## 这不是固定模板
@@ -64,12 +62,12 @@ Feeds Hub 不是一个只能按默认主题运行的信息流站点模板。你�
 - 详情页：海报、摘要、正文、来源。
 - 内容更新由 AI 自动化任务执行，不在仓库内配置 RSS 抓取任务。
 - 每一类主题由 AI 自动化任务更新前独立审查，没有有效内容则跳过。
-- 每一类主题有独立来源策略，维护在 `docs/sources/<category>.md`。
-- 正文采用事实型格式，维护在 `docs/editorial/content-format.md`。
-- WebP 主封面由 AI 图片生成能力生成，当前 demo 可使用 ChatGPT，保存到 `public/images/<category>`，页面引用路径使用 `/images/<category>/...`。
-- 前端展示 frontmatter `cover` 指向的 16:9 横图海报；推荐尺寸 `1600x900`，最低不低于 `1280x720`。CSS 只负责尺寸和裁切，不生成替代海报。
-- 主题级海报提示词维护在 `docs/posters/`，按 `Base prompt + Category prompt + Kind prompt + Event facts + Negative constraints` 组合生成。
-- 已生成海报的结构质量由 `docs/posters/quality.md` 和 `pnpm run validate:feeds` 约束。
+- 每一类主题的关注范围、可用类型、信息来源和主题海报提示词维护在 `docs/topics/<category>.md`。
+- Card type 分类、比例和通用海报类型提示词维护在 `docs/card-types/README.md`。
+- 正文采用事实型格式，维护在 `docs/rules/content-format.md`。
+- WebP 主封面由执行者使用可用图像生成能力生成，保存到 `public/images/<category>`，页面引用路径使用 `/images/<category>/...`。
+- 前端展示 frontmatter `cover` 指向的图片海报；比例只允许 `16:9`、`4:5` 和 `4:3`。CSS 只负责尺寸和裁切，不生成替代海报。
+- 海报提示词按 `Card type prompt + Topic poster prompt + Event facts + Negative constraints` 组合生成。
 
 ## 默认主题
 
@@ -98,37 +96,33 @@ pnpm run check
 pnpm run build
 ```
 
-## AI 自动更新模式
+## AI 更新模式
 
-本仓库只负责展示处理后的结果。信息获取、审查、摘要、海报生成和 GitHub 写入由 AI 自动化任务完成；当前 demo 基于作者实际使用方式，可采用 ChatGPT 自动任务执行。
+本仓库只负责展示处理后的结果。信息获取、审查、摘要、海报生成和 GitHub 写入由执行者按更新任务入口完成。
 
-自动任务只保留 bootstrap prompt。具体执行时必须先读取：
+任务入口只保留最小流程。具体执行时按需参考：
 
 ```text
-idaibin/aicraft/docs/standards/cron-automation.md
 idaibin/aicraft/docs/standards/github-branching.md
 idaibin/aicraft/docs/standards/ai-content-quality.md
-idaibin/feeds-hub/docs/repo-scope.md
+idaibin/feeds-hub/docs/rules/repo-scope.md
 idaibin/feeds-hub/docs/automation/feeds-hub-update.md
-idaibin/feeds-hub/docs/ui-spec.md
+idaibin/feeds-hub/docs/rules/ui-spec.md
 idaibin/feeds-hub/docs/topics/README.md
-idaibin/feeds-hub/docs/sources/README.md
-idaibin/feeds-hub/docs/editorial/README.md
-idaibin/feeds-hub/docs/posters/README.md
-idaibin/feeds-hub/docs/posters/quality.md
+idaibin/feeds-hub/docs/card-types/README.md
+idaibin/feeds-hub/docs/rules/content-format.md
 ```
 
-自动任务应执行：
+更新任务执行：
 
-1. 读取主题规则、来源规则、正文格式规则和海报提示词规则。
-2. 搜索当前最新信息。
-3. 按主题分别审查。
-4. 按来源等级、事实新鲜度和网络热度判断是否写入。
-5. 没有有效内容时跳过对应主题。
-6. 有有效内容时写入事实型 Markdown。
-7. 读取对应 `docs/posters/<category>.md`，使用 AI 图片生成能力生成或更新对应 WebP 主封面；当前 demo 可使用 ChatGPT 执行。
-8. 执行 `pnpm run validate:feeds`、`pnpm run check`、`pnpm run build`。
-9. 按规范提交到指定内容分支或生产分支。
+1. 读取任务入口、主题、card type、正文格式和 UI 规则。
+2. 按 `docs/topics/<category>.md` 获取主题信息和来源规则。
+3. 搜索当前最新信息，审查事实、时间、来源和去重。
+4. 按 `docs/card-types/README.md` 根据信息内容选择 `kind`、比例和通用海报提示词。
+5. 生成事实型 Markdown。
+6. 组合 card type 提示词、topic 提示词和事件事实，生成或更新 WebP 主封面。
+7. 执行 `pnpm run validate:feeds`、`pnpm run check`、`pnpm run build`；不能本地执行时等待 CI / Vercel。
+8. 按规范提交到指定内容分支或生产分支。
 
 ## 内容结构
 
@@ -162,17 +156,14 @@ public/images/<category>/<file>.webp
 ```text
 docs/automation/feeds-hub-update.md
 docs/topics/README.md
-docs/sources/README.md
-docs/editorial/README.md
-docs/posters/README.md
-docs/posters/quality.md
-docs/ui-spec.md
+docs/card-types/README.md
+docs/rules/content-format.md
+docs/rules/ui-spec.md
 ```
 
-通用自动化规范见：
+通用执行规范见：
 
 ```text
-idaibin/aicraft/docs/standards/cron-automation.md
 idaibin/aicraft/docs/standards/github-branching.md
 idaibin/aicraft/docs/standards/ai-content-quality.md
 ```
