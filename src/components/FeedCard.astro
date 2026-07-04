@@ -2,7 +2,9 @@
 import type { CollectionEntry } from 'astro:content';
 import { getCategoryMeta } from '@/lib/feeds';
 
-interface Props { entry: CollectionEntry<'feeds'>; }
+interface Props {
+  entry: CollectionEntry<'feeds'>;
+}
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
 const href = `/feed/${entry.id}/`;
@@ -21,7 +23,7 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
   </a>
 </article>
 
-<style>
+<style is:global>
   .feed-card {
     --accent: var(--primary);
     position: relative;
@@ -41,26 +43,26 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     box-shadow: 0 24px 56px rgba(15, 23, 42, .14);
   }
 
-  .category-worldcup,
-  .category-lol,
-  .category-ai,
-  .category-global {
+  .feed-card.category-worldcup,
+  .feed-card.category-lol,
+  .feed-card.category-ai,
+  .feed-card.category-global {
     --accent: var(--primary);
   }
 
-  .category-stock,
-  .category-rust,
-  .category-product {
+  .feed-card.category-stock,
+  .feed-card.category-rust,
+  .feed-card.category-product {
     --accent: var(--signal);
   }
 
-  .card-link {
+  .feed-card .card-link {
     display: block;
     color: inherit;
     text-decoration: none;
   }
 
-  .poster-shell {
+  .feed-card .poster-shell {
     display: block;
     aspect-ratio: 16 / 9;
     border-radius: 22px 22px 0 0;
@@ -68,7 +70,7 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     background: #0f172a;
   }
 
-  .poster-shell img {
+  .feed-card .poster-shell img {
     display: block;
     width: 100%;
     height: 100%;
@@ -76,12 +78,12 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     object-position: center;
   }
 
-  .feed-body {
+  .feed-card .feed-body {
     position: relative;
     padding: 15px 18px 18px;
   }
 
-  .category-chip {
+  .feed-card .category-chip {
     position: absolute;
     top: 15px;
     right: 18px;
@@ -95,7 +97,7 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     white-space: nowrap;
   }
 
-  .category-chip::before {
+  .feed-card .category-chip::before {
     content: '';
     display: inline-block;
     width: 8px;
@@ -106,7 +108,7 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     vertical-align: 1px;
   }
 
-  h2 {
+  .feed-card h2 {
     display: -webkit-box;
     margin: 0 0 8px;
     padding-right: min(42%, 132px);
@@ -119,13 +121,13 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     -webkit-line-clamp: 2;
   }
 
-  .summary {
+  .feed-card .summary {
     display: -webkit-box;
     overflow: hidden;
     -webkit-box-orient: vertical;
   }
 
-  .summary {
+  .feed-card .summary {
     margin: 0;
     color: var(--muted);
     line-height: 1.62;
@@ -135,15 +137,15 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
 
   @media (max-width: 640px) {
     .feed-card { border-radius: 24px; }
-    .poster-shell { border-radius: 24px 24px 0 0; }
-    .feed-body { padding: 16px 16px 19px; }
-    .category-chip {
+    .feed-card .poster-shell { border-radius: 24px 24px 0 0; }
+    .feed-card .feed-body { padding: 16px 16px 19px; }
+    .feed-card .category-chip {
       top: 16px;
       right: 16px;
       max-width: 36%;
       font-size: 12px;
     }
-    h2 { font-size: 18px; }
-    .summary { font-size: 14px; -webkit-line-clamp: 2; }
+    .feed-card h2 { font-size: 18px; }
+    .feed-card .summary { font-size: 14px; -webkit-line-clamp: 2; }
   }
 </style>

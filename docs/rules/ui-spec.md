@@ -50,12 +50,12 @@ Feeds Hub 最终主题色固定为蓝青信息流体系，不再引入多主色�
 ## Template Flow
 
 ```text
-task entry -> topic -> card type -> poster prompt -> image generation -> WebP cover -> page reads cover
+task entry -> topic -> card type -> poster prompt -> image generation -> WebP/PNG/SVG cover -> page reads cover
 ```
 
 `docs/topics/<category>.md` 负责主题、可用类型、信息来源和主题海报提示词。
 
-`docs/card-types/README.md` 负责根据信息内容选择 `kind`、图片比例、尺寸和通用海报类型提示词。
+`docs/card-types/README.md` 负责根据信息内容选择 `kind`、图片比例、尺寸、格式优先级和通用海报类型提示词。
 
 生成主封面前只组合：card type 提示词、topic 提示词和当前事件事实。
 
@@ -176,7 +176,10 @@ const topicCardMap = {
 
 ## Images
 
-- 图片默认使用 WebP。
+- 图片格式优先级为 `webp` -> `png` -> `svg`。
+- `webp` 为默认首选，优先高质量、高尺寸输出。
+- `png` 可在 WebP 不可用、无法导出或质量不达标时使用。
+- `svg` 仅作为第三优先级，用于当前 feed 专属的矢量海报、信息图或结构图；不得作为通用模板或占位图。
 - 图片比例只允许 `16:9`、`4:5` 和 `4:3`。
 - 默认新闻主封面使用 `16:9`，推荐尺寸为 `1600x900`，最低不低于 `1280x720`。
 - 体育 / 电竞赛事海报使用 `4:5`，推荐尺寸为 `1440x1800`，最低不低于 `1120x1400`。
@@ -193,6 +196,7 @@ const topicCardMap = {
 
 - `ratio`: `16:9` | `4:5` | `4:3`。
 - `size`: follows `docs/card-types/README.md`.
+- `format`: `webp` | `png` | `svg`，按 `webp` -> `png` -> `svg` 优先级选择。
 - `layout`: hero / scoreboard / split / poster / bracket / timeline / dashboard / map / workflow。
 - `focus`: title / score / schedule / player / bracket / market / policy / product / code / data。
 - `maxLines`: 不超过 2 行，除非是 `4:3` 结构化信息图且事实由 feed 明确提供。
@@ -206,3 +210,4 @@ const topicCardMap = {
 - 使用 `1:1` 作为 feed 主封面。
 - 海报与卡片正文重复表达同一段信息。
 - 海报图片中带站点品牌、分类角标、来源角标、水印或状态标签。
+- 使用通用 SVG、空白图、纯色图或脚本占位图冒充事件海报。

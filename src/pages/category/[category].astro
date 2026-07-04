@@ -1,5 +1,5 @@
 ---
-import FeedCard from '@/components/FeedCard.astro';
+import FeedList from '@/components/FeedList.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { CATEGORIES, getAllFeeds, getFeedsByCategory } from '@/lib/feeds';
 
@@ -12,7 +12,5 @@ const allFeeds = await getAllFeeds();
 const feeds = getFeedsByCategory(allFeeds, category.id);
 ---
 <BaseLayout title={`${category.name}｜Feeds Hub`} description={category.description}>
-  <section class="feed-section" aria-label={`${category.name}信息`}>
-    {feeds.length > 0 ? <div class="masonry-feed">{feeds.map((entry) => <FeedCard entry={entry} />)}</div> : <div class="empty-state">暂无内容。</div>}
-  </section>
+  <FeedList entries={feeds} ariaLabel={`${category.name}信息`} listId={category.id} />
 </BaseLayout>

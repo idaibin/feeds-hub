@@ -25,7 +25,7 @@ Feeds Hub 是一个面向 AI Agent 和 AI 自动化系统的可复制信息流�
 - 对内容做有效性审查，过滤低价值信息
 - 按来源等级、事实新鲜度和网络热度判断是否写入
 - 生成结构化 Markdown 内容
-- 生成或更新 WebP 封面图
+- 按 WebP、PNG、SVG 优先级生成或更新封面图
 - 使用 Astro 构建静态站点
 - 支持部署到 Vercel
 - 主题、来源、频率、内容格式、card type、海报提示词和页面样式都可以自定义
@@ -65,7 +65,7 @@ Feeds Hub 不是一个只能按默认主题运行的信息流站点模板。你�
 - 每一类主题的关注范围、可用类型、信息来源和主题海报提示词维护在 `docs/topics/<category>.md`。
 - Card type 分类、比例和通用海报类型提示词维护在 `docs/card-types/README.md`。
 - 正文采用事实型格式，维护在 `docs/rules/content-format.md`。
-- WebP 主封面由执行者使用可用图像生成能力生成，保存到 `public/images/<category>`，页面引用路径使用 `/images/<category>/...`。
+- 主封面由执行者使用可用图像生成能力生成，优先保存为高质量高尺寸 WebP；WebP 不可用时使用 PNG；WebP 和 PNG 都不可用时才使用当前 feed 专属 SVG。图片保存到 `public/images/<category>`，页面引用路径使用 `/images/<category>/...`。
 - 前端展示 frontmatter `cover` 指向的图片海报；比例只允许 `16:9`、`4:5` 和 `4:3`。CSS 只负责尺寸和裁切，不生成替代海报。
 - 海报提示词按 `Card type prompt + Topic poster prompt + Event facts + Negative constraints` 组合生成。
 
@@ -120,7 +120,7 @@ idaibin/feeds-hub/docs/rules/content-format.md
 3. 搜索当前最新信息，审查事实、时间、来源和去重。
 4. 按 `docs/card-types/README.md` 根据信息内容选择 `kind`、比例和通用海报提示词。
 5. 生成事实型 Markdown。
-6. 组合 card type 提示词、topic 提示词和事件事实，生成或更新 WebP 主封面。
+6. 组合 card type 提示词、topic 提示词和事件事实，按 WebP、PNG、SVG 优先级生成或更新主封面。
 7. 执行 `pnpm run validate:feeds`、`pnpm run check`、`pnpm run build`；不能本地执行时等待 CI / Vercel。
 8. 按规范提交到指定内容分支或生产分支。
 
@@ -142,13 +142,13 @@ src/content/
 封面图存放在：
 
 ```text
-public/images/<category>/<file>.webp
+public/images/<category>/<file>.<webp|png|svg>
 ```
 
 页面和 frontmatter 中的 `cover` 使用：
 
 ```text
-/images/<category>/<file>.webp
+/images/<category>/<file>.<webp|png|svg>
 ```
 
 当前仓库的自动化执行细节见：

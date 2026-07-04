@@ -1,0 +1,161 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import FeedCard from '@/components/FeedCard.astro';
+
+interface Props {
+  entries: CollectionEntry<'feeds'>[];
+  ariaLabel: string;
+  listId: string;
+  emptyLabel?: string;
+  pageSize?: number;
+}
+
+const { entries, ariaLabel, listId, emptyLabel = '暂无内容。', pageSize = 10 } = Astro.props;
+const initialEntries = entries.slice(0, pageSize);
+---
+
+<section class="feed-section" aria-label={ariaLabel} data-feed-section>
+  {entries.length > 0 ? (
+    <>
+      <div
+        class="masonry-feed"
+        data-feed-list
+        data-feed-page-size={pageSize}
+        data-feed-next-page="2"
+        data-feed-source={`/feed-pages/${listId}/`}
+      >
+        {initialEntries.map((entry) => <FeedCard entry={entry} />)}
+      </div>
+      <div class="feed-load-sentinel" data-feed-sentinel hidden={entries.length <= pageSize} aria-hidden="true"></div>
+    </>
+  ) : (
+    <div class="empty-state">{emptyLabel}</div>
+  )}
+</section>
+
+<script>
+  interface FeedCardPayload {
+    href: string;
+    category: string;
+    categoryShortName: string;
+    title: string;
+    summary: string;
+    cover: string;
+    fallbackCover: string;
+  }
+
+  function initializeFeedLists() {
+    document.querySelectorAll('[data-feed-section]').forEach((section) => {
+      if (section instanceof HTMLElement && section.dataset.feedInitialized === 'true') return;
+      if (!(section instanceof HTMLElement)) return;
+
+      const list = section.querySelector('[data-feed-list]');
+      const sentinel = section.querySelector('[data-feed-sentinel]');
+      if (!(list instanceof HTMLElement) || !(sentinel instanceof HTMLElement)) return;
+
+      section.dataset.feedInitialized = 'true';
+
+      const pageSize = Number(list.dataset.feedPageSize) || 10;
+      const source = list.dataset.feedSource;
+      if (!source) return;
+
+      let nextPage = Number(list.dataset.feedNextPage) || 2;
+      let isLoading = false;
+      let isComplete = sentinel.hidden;
+
+      if (isComplete) {
+        sentinel.hidden = true;
+        return;
+      }
+
+      const createCard = (item: FeedCardPayload) => {
+        const article = document.createElement('article');
+        article.className = `feed-card category-${item.category}`;
+        article.dataset.feedCard = '';
+
+        const link = document.createElement('a');
+        link.className = 'card-link';
+        link.href = item.href;
+        link.setAttribute('aria-label', item.title);
+
+        const posterShell = document.createElement('div');
+        posterShell.className = 'poster-shell';
+
+        const image = document.createElement('img');
+        image.src = item.cover;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.dataset.coverImage = '';
+        image.onerror = () => {
+          image.onerror = null;
+          image.src = item.fallbackCover;
+        };
+
+        const body = document.createElement('div');
+        body.className = 'feed-body';
+
+        const category = document.createElement('span');
+        category.className = 'category-chip';
+        category.textContent = item.categoryShortName;
+
+        const title = document.createElement('h2');
+        title.textContent = item.title;
+
+        const summary = document.createElement('p');
+        summary.className = 'summary';
+        summary.textContent = item.summary;
+
+        posterShell.append(image);
+        body.append(category, title, summary);
+        link.append(posterShell, body);
+        article.append(link);
+
+        return article;
+      };
+
+      const loadNextBatch = async () => {
+        if (isLoading || isComplete) return;
+        isLoading = true;
+
+        try {
+          const response = await fetch(`${source}${nextPage}.json`, { headers: { Accept: 'application/json' } });
+          if (!response.ok) throw new Error(`Feed page ${nextPage} failed`);
+
+          const payload = await response.json();
+          const items = Array.isArray(payload.items) ? payload.items : [];
+
+          list.append(...items.map(createCard));
+          nextPage += 1;
+          list.dataset.feedNextPage = String(nextPage);
+
+          isComplete = !payload.hasMore || items.length < pageSize;
+          sentinel.hidden = isComplete;
+          if (isComplete) observer?.disconnect();
+        } catch {
+          isComplete = true;
+          sentinel.hidden = true;
+          observer?.disconnect();
+        } finally {
+          isLoading = false;
+        }
+      };
+
+      let observer: IntersectionObserver | undefined;
+
+      if (!('IntersectionObserver' in window)) {
+        loadNextBatch();
+        return;
+      }
+
+      observer = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        loadNextBatch();
+      }, { rootMargin: '640px 0px' });
+
+      observer.observe(sentinel);
+    });
+  }
+
+  initializeFeedLists();
+  document.addEventListener('astro:page-load', initializeFeedLists);
+</script>

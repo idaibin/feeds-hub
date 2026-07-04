@@ -157,6 +157,8 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
   }
+  .masonry-feed > .feed-card[hidden] { display: none; }
+  .feed-load-sentinel { width: 100%; height: 1px; }
   .empty-state { padding: 42px; text-align: center; background: rgba(255, 255, 255, 0.78); border-radius: 8px; border: 1px dashed var(--border); color: var(--muted); }
   .content-panel { position: relative; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.82); border-radius: 8px; box-shadow: var(--shadow-card); backdrop-filter: blur(18px); }
   .site-footer { position: relative; width: min(1160px, calc(100% - 32px)); margin: 0 auto 32px; padding-top: 24px; color: var(--muted); border-top: 1px solid var(--border); font-size: 14px; }

@@ -21,6 +21,7 @@
 kind
 poster ratio
 poster size
+poster format
 card type prompt
 ```
 
@@ -33,6 +34,16 @@ card type prompt
 | `4:3` | `1600x1200` | 数据图、bracket、时间线、结构化图表 |
 
 禁止使用 `1:1` 作为 feed 主封面。
+
+## 格式优先级
+
+主封面格式按以下顺序选择：
+
+1. `webp`：默认首选，优先高质量、高尺寸输出。
+2. `png`：当 WebP 无法生成、导出或质量不达标时使用。
+3. `svg`：第三优先级，仅用于当前 feed 专属的矢量海报、信息图或结构图；不得作为通用模板、占位图或脚本生成的低质替代品。
+
+无论格式如何，主封面必须保持当前事件相关、比例正确、主体清晰，并符合本文件的 card type prompt 和 negative constraints。
 
 ## 选择规则
 
@@ -75,7 +86,8 @@ Base ratio / size prompt
 ### `16:9`
 
 ```text
-Create a premium 16:9 editorial news cover image, 1600x900 WebP.
+Create a premium 16:9 editorial news cover image, recommended size 1600x900.
+Preferred output format is high-quality WebP. If WebP is unavailable, export PNG; if both WebP and PNG are unavailable, use an event-specific SVG.
 Use one clear focal point, strong contrast, premium lighting, and restrained details.
 Keep the composition readable for a mobile-first feed card.
 Do not add Feeds Hub branding, source badges, category labels, watermarks, or unsupported readable metadata.
@@ -84,7 +96,8 @@ Do not add Feeds Hub branding, source badges, category labels, watermarks, or un
 ### `4:5`
 
 ```text
-Create a premium vertical editorial poster, aspect ratio 4:5, 1440x1800 WebP.
+Create a premium vertical editorial poster, aspect ratio 4:5, recommended size 1440x1800.
+Preferred output format is high-quality WebP. If WebP is unavailable, export PNG; if both WebP and PNG are unavailable, use an event-specific SVG.
 Use strong mobile poster hierarchy: clear top zone, dominant middle focal point, and structured lower information area.
 Use cinematic lighting, realistic depth, rich details, and high-end poster finish.
 Only include short factual visual labels when those facts are supplied by the current feed.
@@ -93,7 +106,8 @@ Only include short factual visual labels when those facts are supplied by the cu
 ### `4:3`
 
 ```text
-Create a premium 4:3 structured editorial information cover, 1600x1200 WebP.
+Create a premium 4:3 structured editorial information cover, recommended size 1600x1200.
+Preferred output format is high-quality WebP. If WebP is unavailable, export PNG; if both WebP and PNG are unavailable, use an event-specific SVG.
 Use a clean data, bracket, dashboard, map, timeline, workflow, or architecture composition.
 Charts, brackets, panels, and timelines must be symbolic unless exact facts are supplied by the feed.
 Do not render fake numbers, fake dates, fake tickers, fake team names, fake official logos, or fake source marks.
@@ -209,7 +223,8 @@ Use only when the feed is intended to be image-led.
 ```text
 No 1:1 feed cover.
 No reusable generic template applied to multiple unrelated feeds.
-No script-drawn placeholder, SVG, Canvas, HTML screenshot, or CSS-generated poster.
+No script-drawn placeholder, Canvas, HTML screenshot, or CSS-generated poster.
+No generic SVG fallback; SVG is allowed only when it is event-specific and visually designed for the current feed.
 No Feeds Hub logo, Feeds Hub wordmark, watermark, category tag, source tag, or status pill inside the image.
 No fake official logo, team badge, company logo, government seal, ticker, score, date, chart value, API screenshot, or document text.
 ```
