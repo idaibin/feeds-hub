@@ -27,11 +27,11 @@
 
 Priority:
 
-- Primary: official blogs, docs, model cards, system cards, API docs, release notes, and changelogs from OpenAI, Anthropic / Claude, Google DeepMind / Gemini, Meta AI, Microsoft AI, xAI, Zhipu AI / GLM, Alibaba Cloud / Qwen, Moonshot AI / Kimi, Baidu ERNIE, Tencent Hunyuan, DeepSeek, and other head AI companies.
-- Secondary: GitHub releases, Hugging Face model pages, research papers, arXiv, standards bodies, and official benchmark or safety reports.
-- CN Reference: 机器之心 or 量子位 for Chinese expression and local attention reference.
+- Primary: Reuters technology reporting.
+- Secondary: GitHub releases, official model or product pages, research papers, or arXiv.
+- Reference: X or Reddit for AI attention and discussion context only.
 
-If model name, release status, API availability, benchmark, pricing, or safety claim conflicts across Primary and Secondary, skip the item.
+If model name, release status, API availability, benchmark, pricing, or safety claim cannot be confirmed by Primary or Secondary sources, skip the item.
 
 ## Poster Prompt
 

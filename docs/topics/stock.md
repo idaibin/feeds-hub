@@ -27,11 +27,11 @@
 
 Priority:
 
-- Primary: exchange announcements, SEC/company filings, 巨潮资讯, company investor relations, official regulator notices, earnings releases, and central-bank publications.
-- Secondary: Reuters for market context, cross-market background, and confirmed reporting.
-- CN Reference: 财联社 or 财新 for Chinese expression and domestic market attention reference.
+- Primary: Reuters markets reporting.
+- Secondary: exchange announcements, filings, company investor relations, or official regulator notices.
+- Reference: X or Reddit for market attention and discussion context only.
 
-If company filing, market data, trading date, index move, earnings fact, or policy fact conflicts across Primary and Secondary, skip the item.
+If company, market data, trading date, index move, earnings fact, or policy fact cannot be confirmed by Primary or Secondary sources, skip the item.
 
 ## Poster Prompt
 

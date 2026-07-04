@@ -41,10 +41,10 @@ Do not force all three states for one match in one run.
 Priority:
 
 - Primary: FIFA official match center, schedule, or match report.
-- Secondary: ESPN or BBC Sport for background, confirmed context, and match reporting.
-- CN Reference: 懂球帝 or 央视体育 for Chinese expression and local attention reference.
+- Secondary: Reuters for confirmed match reporting and tournament context.
+- Reference: X or Reddit for match attention and discussion context only.
 
-If score, kickoff time, venue, bracket, or match status conflicts across Primary and Secondary, skip the item.
+If score, kickoff time, venue, bracket, or match status cannot be confirmed by FIFA or Reuters, skip the item.
 
 ## Poster Prompt
 

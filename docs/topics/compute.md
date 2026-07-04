@@ -28,11 +28,11 @@
 
 Priority:
 
-- Primary: company investor relations, earnings releases, official blogs, filings, regulator notices, and official announcements from TSMC, NVIDIA, AMD, Broadcom, Microsoft, Google, Amazon, cloud providers, grid operators, utilities, and relevant suppliers.
-- Secondary: Reuters or SemiAnalysis for confirmed market, supply-chain, cloud capex, chip, and infrastructure context.
-- CN Reference: 半导体行业观察 or 财联社 for Chinese expression and domestic market attention reference.
+- Primary: Reuters technology or markets reporting.
+- Secondary: company investor relations, earnings releases, filings, official blogs, or official announcements from major chip, cloud, power, and infrastructure suppliers.
+- Reference: X or Reddit for compute-infrastructure attention and discussion context only.
 
-If capex, capacity, chip availability, project status, revenue guidance, power requirement, policy scope, or shipment timing conflicts across Primary and Secondary, skip the item.
+If capex, capacity, chip availability, project status, revenue guidance, power requirement, policy scope, or shipment timing cannot be confirmed by Primary or Secondary sources, skip the item.
 
 ## Poster Prompt
 

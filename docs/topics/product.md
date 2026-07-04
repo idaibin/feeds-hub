@@ -28,11 +28,11 @@
 
 Priority:
 
-- Primary: official blogs, changelogs, release notes, pricing pages, product docs, help-center pages, app store notes, or founder/company announcements.
-- Secondary: Product Hunt, public product pages, onboarding flows, app listings, developer docs, platform policy pages, or visible release artifacts.
-- CN Reference: 36氪 or 晚点 LatePost for Chinese expression and market attention reference.
+- Primary: official blogs, changelogs, release notes, pricing pages, product docs, or help-center pages.
+- Secondary: Reuters for company, policy, pricing, launch, or market-context reporting; GitHub when the product event is a release or repository change.
+- Reference: X or Reddit for product attention and discussion context only.
 
-If launch status, pricing, availability, feature scope, or platform policy conflicts across Primary and Secondary, skip the item.
+If launch status, pricing, availability, feature scope, or platform policy cannot be confirmed by Primary or Secondary sources, skip the item.
 
 ## Poster Prompt
 

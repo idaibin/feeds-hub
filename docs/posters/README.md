@@ -46,7 +46,7 @@ pending
 | `4:5` | `1440x1800` | `1120x1400` | 人物焦点、强视觉专题、图片主导海报 |
 | `4:3` | `1600x1200` | `1280x960` | 数据图、bracket、时间线、结构化图表 |
 
-禁止 `1:1` 主封面。原始生成使用推荐尺寸或更高同等比例尺寸；最终写入仓库的 WebP 必须控制在 `200 KB` 到 `1000 KB` 之间。
+禁止 `1:1` 主封面。原始生成使用推荐尺寸或更高同等比例尺寸。
 
 ## Execution Flow
 
@@ -189,21 +189,20 @@ Negative Constraints
 
 1. 确认 `content/<task-name>` 存在；不存在时从当前 `origin/main` commit 创建。
 2. 按 `kind` 比例生成高清真实图片。
-3. 后处理为 WebP：保持比例、移除 metadata，并通过 quality、method、resize 等方式把文件控制在 `200 KB` 到 `1000 KB` 之间。
-4. 如无法在最低尺寸要求和可接受画质内进入 `200 KB` 到 `1000 KB` 区间，保持 `coverStatus: "pending"`，不得写入区间外图片。
+3. 后处理为 WebP：保持比例、移除 metadata，统一使用 `quality 95`。
+4. 如无法生成或写入合规 WebP，保持 `coverStatus: "pending"`。
 5. 将最终 WebP 二进制转纯 Base64，禁止 `data:image/webp;base64,` 前缀。
 6. 用 `GitHub.create_blob` 创建图片 blob，`encoding=base64`。
 7. 读取目标分支最新 `HEAD` commit 和 tree。
-8. 用 `GitHub.create_tree` 一次性完成：
-   - 新增或替换 `public/images/<category>/<file>.webp`。
-   - 修改 `src/content/<category>/<file>.md` 的 `cover`。
-   - 设置 `coverStatus: "generated_webp"`。
+8. 用 `GitHub.create_tree` 写入本次实际产物：
+   - 生成阶段可只写 Markdown，并保持 `coverStatus: "pending"` 和未来 WebP 路径。
+   - 补图阶段新增或替换 `public/images/<category>/<file>.webp`，并将对应 Markdown 设置为 `coverStatus: "generated_webp"`。
    - 删除同名旧 `.svg` 或 `.png`，如存在。
 9. 用 `GitHub.create_commit` 创建提交，parent 为目标分支最新 `HEAD`。
 10. 用 `GitHub.update_ref` 更新 `refs/heads/content/<task-name>`。
-11. 重新读取 Markdown 和 WebP 验证，并查询 Vercel commit status。
+11. 重新读取本次变更的 Markdown 或 WebP 验证，并查询 Vercel commit status。
 
-Markdown 和图片必须处于同一个 commit。禁止只有 Markdown 或只有图片的不完整提交。
+Markdown 和图片允许分步提交。图片生成失败或暂未生成时，Markdown 可先以 `coverStatus: "pending"` 写入；后续补图提交必须同时写入 WebP 并把对应 Markdown 更新为 `coverStatus: "generated_webp"`。
 
 ## Failure Handling
 
@@ -213,7 +212,6 @@ Markdown 和图片必须处于同一个 commit。禁止只有 Markdown 或只有
 - 不创建 PR。
 - 不写入 SVG/PNG fallback。
 - 不写入 data URL 前缀。
-- 不创建不完整 tree。
 - Markdown 可继续写入，但必须设置 `coverStatus: "pending"` 并保留未来 WebP 路径。
 - 汇报失败点。
 

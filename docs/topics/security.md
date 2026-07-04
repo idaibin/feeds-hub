@@ -27,11 +27,11 @@
 
 Priority:
 
-- Primary: CISA KEV, GitHub Security Advisory, NVD, RustSec, official vendor advisories, maintainer security releases, package-registry advisories, and cloud provider security bulletins.
-- Secondary: BleepingComputer or The Hacker News for confirmed security reporting and incident context.
-- CN Reference: 奇安信攻防社区 or FreeBuf for Chinese expression and security-community attention reference.
+- Primary: GitHub Security Advisory.
+- Secondary: CISA KEV, NVD, or official vendor advisories.
+- Reference: X or Reddit for security-community attention and discussion context only.
 
-If CVE identifier, affected version, exploit status, mitigation, patch availability, package name, or vendor status conflicts across Primary and Secondary, skip the item.
+If CVE identifier, affected version, exploit status, mitigation, patch availability, package name, or vendor status cannot be confirmed by Primary or Secondary sources, skip the item.
 
 ## Poster Prompt
 

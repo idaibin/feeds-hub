@@ -8,9 +8,37 @@
 - `kind` 选择、单类海报提示词、海报生成和写入看 `docs/posters/`。
 - 正文格式看 `docs/rules/content-format.md`。
 - 自动更新必须遍历下方全部主题；每个主题独立判断，没有合格信息就跳过。
-- 来源优先级固定为 `Primary > Secondary > CN Reference`；Primary 和 Secondary 冲突时跳过。
-- CN Reference 只用于中文表达、热度参考或线索发现；除非它本身是官方中文账号或权威媒体，否则不作为唯一事实源。
+- 默认信息源固定为 Reuters、GitHub、FIFA、LoL Esports、X、Reddit；各 topic 可保留 1-3 个主题来源。
+- X / Reddit 只用于发现、热度和讨论上下文；除非讨论本身就是事件，否则不作为最终事实源。
+- 最终 `sourceUrl` 优先写 Reuters、GitHub、FIFA 或 LoL Esports 中的裁决链接。
+- 默认信息源和 topic 来源都无法确认时跳过，不自动扩展来源，不临时补来源。
 - 海报只接收最终结构化 facts，不读取原始新闻正文或来源全文。
+
+## Default Sources
+
+| Source | Role |
+| --- | --- |
+| Reuters | markets, technology, compute, global, company and policy reporting |
+| GitHub | releases, repository changes, open-source development, security advisories |
+| FIFA | World Cup schedules, scores, advancement and match reports |
+| LoL Esports | LoL esports schedules, scores, standings and tournament updates |
+| X | discovery and discussion context only |
+| Reddit | discovery and discussion context only |
+
+## Topic Routing
+
+| Topic | Default source |
+| --- | --- |
+| `worldcup` | FIFA |
+| `lol` | LoL Esports |
+| `stock` | Reuters |
+| `ai` | Reuters, GitHub for open-source releases |
+| `compute` | Reuters |
+| `global` | Reuters |
+| `rust` | GitHub |
+| `dev` | GitHub |
+| `security` | GitHub |
+| `product` | Reuters, GitHub when the product event is a GitHub release or repository change |
 
 ## Files
 

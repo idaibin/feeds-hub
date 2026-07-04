@@ -27,11 +27,11 @@
 
 Priority:
 
-- Primary: official government, court, regulator, central-bank, UN agency, standards-body, ministry, emergency-management, public-health, meteorological, election, treaty, or sanctions publication.
-- Secondary: Reuters or AP for confirmed international reporting and background.
-- CN Reference: 新华社 or 央视新闻 for Chinese expression and domestic attention reference.
+- Primary: Reuters global reporting.
+- Secondary: official government, court, regulator, UN agency, ministry, emergency-management, public-health, meteorological, election, treaty, or sanctions publication.
+- Reference: X or Reddit for public attention and discussion context only.
 
-If official decision, event time, location, casualty/damage number, policy scope, or institutional status conflicts across Primary and Secondary, skip the item.
+If event time, location, casualty/damage number, policy scope, or institutional status cannot be confirmed by Primary or Secondary sources, skip the item.
 
 ## Poster Prompt
 

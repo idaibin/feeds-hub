@@ -26,11 +26,11 @@
 
 Priority:
 
-- Primary: Rust Blog, Rust release notes, Rust project team announcements, RFC repository, and RustSec advisories.
-- Secondary: GitHub releases, crates.io, docs.rs, maintainer changelogs, and project documentation.
-- CN Reference: InfoQ 中文 for Chinese expression and engineering attention reference.
+- Primary: Rust Blog, Rust release notes, and Rust project team announcements.
+- Secondary: GitHub releases, crates.io, docs.rs, maintainer changelogs, or RustSec advisories.
+- Reference: X or Reddit for Rust ecosystem attention and discussion context only.
 
-If version, advisory, RFC status, release scope, or migration requirement conflicts across Primary and Secondary, skip the item.
+If version, advisory, RFC status, release scope, or migration requirement cannot be confirmed by Primary or Secondary sources, skip the item.
 
 ## Poster Prompt
 

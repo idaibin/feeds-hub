@@ -28,11 +28,11 @@
 
 Priority:
 
-- Primary: official blogs, changelogs, release notes, GitHub releases, RFCs, docs, status pages, and platform announcements from the project or vendor.
-- Secondary: The New Stack or InfoQ for confirmed engineering context and ecosystem background.
-- CN Reference: InfoQ 中文 or 掘金 for Chinese expression and developer attention reference.
+- Primary: GitHub releases, tags, issues, pull requests, or advisories from configured developer-tool repositories.
+- Secondary: official blogs, changelogs, release notes, RFCs, docs, status pages, or platform announcements from the project or vendor.
+- Reference: X or Reddit for developer ecosystem attention and discussion context only.
 
-If version, support status, release scope, migration requirement, API behavior, deprecation date, benchmark, or incident status conflicts across Primary and Secondary, skip the item.
+If version, support status, release scope, migration requirement, API behavior, deprecation date, benchmark, or incident status cannot be confirmed by Primary or Secondary sources, skip the item.
 
 ## Poster Prompt
 

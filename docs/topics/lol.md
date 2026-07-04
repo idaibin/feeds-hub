@@ -39,11 +39,11 @@ Do not force all three states for one match in one run.
 
 Priority:
 
-- Primary: LoL Esports, Riot Games official esports pages, or official league/tournament announcements.
-- Secondary: Leaguepedia for schedule, bracket, roster, and result verification.
-- CN Reference: 虎扑电竞 for Chinese expression and esports attention reference.
+- Primary: LoL Esports official schedule, standings, match pages, or tournament updates.
+- Secondary: Leaguepedia for schedule, bracket, roster, and result cross-checks.
+- Reference: X or Reddit for match attention and discussion context only.
 
-If schedule, bracket, roster, score, or match status conflicts across Primary and Secondary, skip the item.
+If schedule, bracket, roster, score, or match status cannot be confirmed by LoL Esports or Leaguepedia, skip the item.
 
 ## Poster Prompt
 
