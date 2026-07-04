@@ -37,19 +37,21 @@ Do not force all three states for one match in one run.
 
 ## Sources
 
-Prefer:
+Priority:
 
-1. Riot Games official esports pages, LoL Esports schedule, or team announcements.
-2. Leaguepedia or recognized esports data references for schedule and bracket verification.
-3. Established esports reporting when it links to primary evidence.
+- Primary: LoL Esports, Riot Games official esports pages, or official league/tournament announcements.
+- Secondary: Leaguepedia for schedule, bracket, roster, and result verification.
+- CN Reference: 虎扑电竞 for Chinese expression and esports attention reference.
+
+If schedule, bracket, roster, score, or match status conflicts across Primary and Secondary, skip the item.
 
 ## Poster Prompt
 
 ```text
-Use a premium esports editorial poster style.
-Show arena stage lighting, player stations, abstract team sides, bracket energy, tactical map mood, and neon blue/cyan competitive atmosphere.
-Use verified team names, scores, stages, or times only when supplied by the feed.
-Avoid copying champion art, Riot assets, team logos, broadcast graphics, real player faces, or fake scoreboards.
+Use a premium esports editorial cover for a mobile-first news card, with an arena stage, player stations, draft desk mood, tactical map abstraction, bracket energy, and deep slate with neon blue or cyan lighting.
+For match_schedule, show a structured pre-match fixture composition with two abstract competitive sides and stage readiness. For match_flow, show ban-pick rhythm, map pressure, and verified turning-point panels without copying broadcast UI. For match_result, show decisive arena energy, advancement pressure, or elimination tone. For knockout_update or data, show symbolic bracket paths, standings modules, or schedule panels.
+Use verified tournament names, team names, scores, stages, patch context, and times only when supplied by the feed.
+Avoid champion art, Riot assets, team logos, broadcast graphics, real player faces, fake scoreboards, fake UI text, invented match data, and unrelated multi-match collages.
 ```
 
 ## Skip

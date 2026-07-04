@@ -20,9 +20,9 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 | `docs/automation/feeds-hub-update.md` | AI 更新任务入口 |
 | `docs/topics/README.md` | 主题列表和主题文档格式 |
 | `docs/topics/<category>.md` | 单主题范围、来源、跳过条件 |
-| `docs/card-types/README.md` | `kind` 选择和通用海报提示词 |
 | `docs/rules/content-format.md` | frontmatter、标题、摘要、正文格式 |
-| `docs/rules/poster-spec.md` | WebP 海报、GitHub 写入、pending cover |
+| `docs/posters/README.md` | 海报规则总入口、`kind` 选择、比例映射、提示词拼装和图片写入 |
+| `docs/posters/<kind>.md` | 可直接拼入模板的单类海报提示词 |
 | `docs/rules/ui-spec.md` | 页面、card、详情页和图片展示规则 |
 
 ## 默认主题
@@ -33,9 +33,12 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 | `lol` | LOL 赛事赛程、进程、赛果、阵容和规则 |
 | `stock` | 股市、宏观、财报、监管和板块简报 |
 | `ai` | AI 模型、产品、论文、工具、政策和公司动态 |
-| `global` | 全球范围高信号公共事件 |
+| `compute` | AI 基础设施、芯片、HBM、数据中心、电力和云资本开支 |
 | `rust` | Rust、开源、工具链、crate、RFC 和安全公告 |
+| `dev` | TypeScript、Node、前端框架、运行时、云平台和开发工具 |
+| `security` | CVE、安全公告、供应链风险、开源依赖和云安全事件 |
 | `product` | 创业、产品设计、增长、定价、平台和商业化 |
+| `global` | 全球范围高信号公共事件 |
 
 ## 更新流程
 
@@ -51,7 +54,7 @@ topics -> sources -> dedupe -> kind -> markdown -> optional webp -> validation
 - 信息生成优先于图片生成。
 - 无法生成合规 WebP 时，保留内容并设置 `coverStatus: "pending"`。
 - 海报只允许 WebP，禁止 SVG/PNG 主封面。
-- 图片写入 GitHub 必须按 `docs/rules/poster-spec.md` 的 blob/tree/commit/ref 流程。
+- 图片写入 GitHub 必须按 `docs/posters/README.md` 的 blob/tree/commit/ref 流程。
 
 ## 内容结构
 
@@ -78,7 +81,6 @@ pnpm run dev
 ## 校验
 
 ```bash
-pnpm run validate:feeds
 pnpm run check
 pnpm run build
 ```

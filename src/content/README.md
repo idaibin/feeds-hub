@@ -3,10 +3,13 @@
 Feed markdown files live directly under category directories:
 
 - `ai`
+- `compute`
+- `dev`
 - `global`
 - `lol`
 - `product`
 - `rust`
+- `security`
 - `stock`
 - `worldcup`
 
@@ -26,6 +29,6 @@ New feed frontmatter must include `coverStatus`:
 generated_webp | pending
 ```
 
-Poster generation, binary image writes, fallback, and pending cover rules are maintained in `docs/rules/poster-spec.md`.
+Poster generation, binary image writes, fallback, and pending cover rules are maintained in `docs/posters/README.md`.
 
 Do not include `public` or `/feeds/` in `cover`.

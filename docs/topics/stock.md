@@ -25,19 +25,21 @@
 
 ## Sources
 
-Prefer:
+Priority:
 
-1. Exchange announcements, company filings, official regulator notices, earnings releases, and central-bank publications.
-2. Reuters, Bloomberg, Wall Street Journal, Financial Times, Nikkei, Caixin, or established financial reporting.
-3. Market data pages only when data point and timestamp are clear.
+- Primary: exchange announcements, SEC/company filings, 巨潮资讯, company investor relations, official regulator notices, earnings releases, and central-bank publications.
+- Secondary: Reuters for market context, cross-market background, and confirmed reporting.
+- CN Reference: 财联社 or 财新 for Chinese expression and domestic market attention reference.
+
+If company filing, market data, trading date, index move, earnings fact, or policy fact conflicts across Primary and Secondary, skip the item.
 
 ## Poster Prompt
 
 ```text
-Use a neutral financial editorial style.
-Show institutional research desks, market dashboards, sector rotation, macro screens, filings, exchange context, or company earnings environment.
-Use verified market names, numbers, dates, and tickers only when supplied by the feed.
-Avoid buy/sell signals, profit promises, panic-crash visuals, fake candlestick values, and personalized investment advice.
+Use a neutral financial editorial cover for a mobile-first news card, with an institutional research desk, market dashboard environment, sector rotation wall, macro screen, exchange context, filing review, or earnings analysis room.
+For market_brief, show structured index or sector modules, analyst screens, and calm market context without directional trading signals. For policy_update, show regulator, central-bank, exchange, filing, or policy-document review context. For hot_topic, focus on one company, sector, IPO, earnings, or macro event. For data, show symbolic dashboards, flow maps, or earnings tables only when the feed supplies the factual labels.
+Use verified market names, company names, tickers, dates, numbers, index names, and macro terms only when supplied by the feed.
+Avoid buy/sell/hold cues, profit promises, panic-crash visuals, fake candlestick values, fake tickers, fake price charts, invented percentages, and personalized investment advice.
 ```
 
 ## Skip

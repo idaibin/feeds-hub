@@ -59,12 +59,24 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     --accent: #0569ed;
   }
 
+  .feed-card.category-compute {
+    --accent: #0891b2;
+  }
+
   .feed-card.category-global {
     --accent: #0f8b8d;
   }
 
   .feed-card.category-rust {
     --accent: #b45309;
+  }
+
+  .feed-card.category-dev {
+    --accent: #2563eb;
+  }
+
+  .feed-card.category-security {
+    --accent: #475569;
   }
 
   .feed-card.category-product {
@@ -101,7 +113,7 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
   .feed-card .category-chip {
     position: absolute;
     top: 12px;
-    left: 12px;
+    right: 12px;
     z-index: 2;
     max-width: calc(100% - 24px);
     overflow: hidden;
@@ -160,7 +172,7 @@ const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category
     .feed-card .feed-body { padding: 16px 16px 19px; }
     .feed-card .category-chip {
       top: 12px;
-      left: 12px;
+      right: 12px;
       max-width: calc(100% - 24px);
       font-size: 12px;
     }

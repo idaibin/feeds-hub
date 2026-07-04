@@ -26,19 +26,21 @@
 
 ## Sources
 
-Prefer:
+Priority:
 
-1. Official announcements, changelogs, pricing pages, app store notes, founder posts, or company blogs.
-2. Reputable business, product, design, or technology reporting.
-3. Public user-facing product pages or release artifacts showing the change.
+- Primary: official blogs, changelogs, release notes, pricing pages, product docs, help-center pages, app store notes, or founder/company announcements.
+- Secondary: Product Hunt, public product pages, onboarding flows, app listings, developer docs, platform policy pages, or visible release artifacts.
+- CN Reference: 36氪 or 晚点 LatePost for Chinese expression and market attention reference.
+
+If launch status, pricing, availability, feature scope, or platform policy conflicts across Primary and Secondary, skip the item.
 
 ## Poster Prompt
 
 ```text
-Use a polished product and design editorial style.
-Show product surfaces, user journeys, interface abstractions, launch rooms, growth dashboards, pricing tables, or workflow diagrams.
-Keep the visual grounded in a concrete product event or operator lesson.
-Avoid fake app screens, copied UI, generic SaaS templates, unreadable dense text, or advice-poster aesthetics.
+Use a polished product and design editorial cover for a mobile-first news card, with product surfaces, journey abstractions, launch context, growth dashboards, structured comparison panels, workflow diagrams, or platform ecosystem scenes.
+For hot_topic, focus on one launch, pricing change, product move, platform shift, or founder/operator signal. For market_brief, show business-model, monetization, growth, or platform-economics context. For policy_update, show platform rules, app-store policy, privacy, pricing, or regulation impact context. For data or visual, show a clear funnel, journey, comparison, workflow, or product detail.
+Keep the visual grounded in a concrete product event or operator lesson. Use verified product names, company names, feature names, pricing facts, dates, and platform terms only when supplied by the feed.
+Avoid fake product screens, copied interface layouts, generic SaaS templates, advice-poster aesthetics, invented metrics, fake pricing tables, unreadable dense text, and unrelated product lessons mixed into one cover.
 ```
 
 ## Skip

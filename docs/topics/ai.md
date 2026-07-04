@@ -25,19 +25,21 @@
 
 ## Sources
 
-Prefer:
+Priority:
 
-1. Official company blogs, product docs, model cards, GitHub repositories, standards bodies, research papers, arXiv.
-2. Reputable technology and business reporting when primary sources are unavailable or add context.
-3. Secondary summaries only when they link to verifiable primary material.
+- Primary: official blogs, docs, model cards, system cards, API docs, release notes, and changelogs from OpenAI, Anthropic / Claude, Google DeepMind / Gemini, Meta AI, Microsoft AI, xAI, Zhipu AI / GLM, Alibaba Cloud / Qwen, Moonshot AI / Kimi, Baidu ERNIE, Tencent Hunyuan, DeepSeek, and other head AI companies.
+- Secondary: GitHub releases, Hugging Face model pages, research papers, arXiv, standards bodies, and official benchmark or safety reports.
+- CN Reference: 机器之心 or 量子位 for Chinese expression and local attention reference.
+
+If model name, release status, API availability, benchmark, pricing, or safety claim conflicts across Primary and Secondary, skip the item.
 
 ## Poster Prompt
 
 ```text
-Use a modern AI technology editorial style.
-Show model infrastructure, developer workflow, research dashboard, code terminal, chip substrate, data center, governance review, or product launch context.
-Use clean high-tech visual language with blue, graphite, white, and subtle luminous accents.
-Avoid generic robots, AGI hype, fake product UI, fake company logos, and readable benchmark numbers unless supplied by the feed.
+Use a modern AI technology editorial cover for a mobile-first news card, with model infrastructure, developer workflow, research dashboard, code terminal, chip substrate, data center, governance review, or product launch context depending on the feed.
+For hot_topic or ai, show one focused technology subject such as a model release, agent workflow, API console abstraction, or infrastructure scene. For policy_update, show formal review rooms, document tables, compliance workflows, or standards boards. For data, show symbolic evaluation grids, architecture maps, or benchmark dashboards without invented numbers.
+Use clean high-tech visual language with blue, graphite, white, slate, and subtle luminous accents. Keep readable text minimal and include exact model names, tool names, policy names, dates, or benchmark labels only when supplied by the feed.
+Avoid generic robots, AGI hype, fake product UI, fake company logos, invented benchmark values, fake API screenshots, unreadable dense dashboards, and unsourced capability claims.
 ```
 
 ## Skip

@@ -24,19 +24,21 @@
 
 ## Sources
 
-Prefer:
+Priority:
 
-1. Rust official blog, release notes, RFC repository, crates.io, docs.rs, GitHub releases, and security advisories.
-2. Maintainer blogs or project documentation.
-3. Established engineering publications when they link to primary technical evidence.
+- Primary: Rust Blog, Rust release notes, Rust project team announcements, RFC repository, and RustSec advisories.
+- Secondary: GitHub releases, crates.io, docs.rs, maintainer changelogs, and project documentation.
+- CN Reference: InfoQ 中文 for Chinese expression and engineering attention reference.
+
+If version, advisory, RFC status, release scope, or migration requirement conflicts across Primary and Secondary, skip the item.
 
 ## Poster Prompt
 
 ```text
-Use an open-source engineering editorial style.
-Show code terminals, dependency graphs, compiler pipelines, package registries, CI/build systems, repository maps, or security advisory context.
-Keep the image technical, precise, and practical.
-Avoid fake Rust logos, fake repository names, invented benchmark values, mascot-style illustrations, or generic hacker imagery.
+Use an open-source engineering editorial cover for a mobile-first news card, with code terminals, dependency graphs, compiler pipelines, package registry context, CI/build systems, repository maps, or security advisory review scenes.
+For hot_topic, focus on one release, RFC, crate, toolchain, ecosystem update, or adoption event. For policy_update, show advisory boards, security review tables, language governance, or standards/process context. For data, show symbolic build pipelines, dependency graphs, architecture panels, or benchmark context without invented numbers.
+Keep the visual technical, precise, practical, and grounded in developer workflow. Use verified project names, crate names, versions, advisory identifiers, RFC numbers, release dates, and repository names only when supplied by the feed.
+Avoid fake Rust logos, mascot-style illustrations, fake repository names, invented benchmark values, generic hacker imagery, unreadable code dumps, and overstated safety or performance claims.
 ```
 
 ## Skip

@@ -8,8 +8,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "check": "astro check",
-    "preview": "astro preview",
-    "validate:feeds": "node scripts/validate-feeds.mjs"
+    "preview": "astro preview"
   },
   "dependencies": {
     "astro": "^7.0.4"

@@ -1,6 +1,6 @@
 # UI Spec
 
-Feeds Hub 页面和组件展示规则。内容格式看 `content-format.md`，海报生成和图片写入看 `poster-spec.md`。
+Feeds Hub 页面和组件展示规则。内容格式看 `content-format.md`，海报生成和图片写入看 `docs/posters/README.md`。
 
 ## Principles
 
@@ -50,14 +50,13 @@ Rules:
 ## Flow
 
 ```text
-task entry -> topic -> card type -> poster prompt -> cover path -> page reads cover or fallback
+task entry -> topic -> kind -> poster prompt -> cover path -> page reads cover or fallback
 ```
 
 职责：
 
 - `docs/topics/<category>.md`：主题、来源、标题倾向、跳过条件、主题海报气质。
-- `docs/card-types/README.md`：`kind` 选择和通用海报类型提示词。
-- `docs/rules/poster-spec.md`：比例、尺寸、格式、写入、fallback、prompt 组合和禁止项。
+- `docs/posters/`：`kind` 选择、比例映射、单类海报提示词、尺寸、格式、写入、fallback、prompt 组合和禁止项。
 
 ## Header
 
@@ -88,11 +87,11 @@ task entry -> topic -> card type -> poster prompt -> cover path -> page reads co
 - 同一行 card 等宽，PC 等宽网格，窄屏单列。
 - 首页、分类页、详情入口视觉语言一致。
 - 不按横图、竖图、主题或内容类型分配不同宽度。
-- 图片比例由 `category + kind` 推导；允许值见 `poster-spec.md`。
-- 默认新闻 `16:9`，体育/电竞海报 `4:5`，数据/时间线/结构图 `4:3`。
+- 图片比例由 `kind` 推导；映射和尺寸要求见 `docs/posters/README.md`。
+- 默认新闻、赛程预告和比赛战报使用 `16:9`；人物焦点和强视觉专题使用 `4:5`；数据/时间线/结构图使用 `4:3`。
 - 禁止 `1:1` 主封面。
 - CSS 只负责容器比例、裁切、响应式和交互状态。
-- 左上角 tag 使用半透明黑底、彩色点和分类文字。
+- 右上角 tag 使用半透明黑底、彩色点和分类文字。
 
 ## Detail Page
 
@@ -104,9 +103,9 @@ task entry -> topic -> card type -> poster prompt -> cover path -> page reads co
 4. subtitle、summary、正文。
 5. 主体居中，最大宽度 `960px`。
 
-## Card Type Map
+## Kind Map
 
-Card Type 是信息表达方式，不是主题名称。
+`kind` 是信息表达方式，不是主题名称。
 
 ```ts
 type FeedCardType =
@@ -133,8 +132,11 @@ const topicCardMap = {
   lol: ['match_result', 'match_schedule', 'match_flow', 'player_spotlight', 'knockout_update', 'data', 'visual', 'news', 'insight'],
   stock: ['market_brief', 'data', 'policy_update', 'breaking', 'insight', 'news'],
   ai: ['news', 'insight', 'ai', 'breaking', 'policy_update', 'data', 'visual'],
+  compute: ['market_brief', 'hot_topic', 'data', 'insight', 'news', 'policy_update'],
   global: ['news', 'breaking', 'policy_update', 'insight', 'data', 'visual'],
   rust: ['news', 'insight', 'breaking', 'policy_update', 'data', 'visual'],
+  dev: ['hot_topic', 'news', 'insight', 'data', 'policy_update', 'ai'],
+  security: ['breaking', 'policy_update', 'data', 'insight', 'news', 'hot_topic'],
   product: ['news', 'insight', 'data', 'visual', 'breaking', 'policy_update', 'market_brief'],
 };
 ```
@@ -143,7 +145,7 @@ Map requirements:
 
 - 覆盖 `src/lib/feeds.ts` 的全部 `CATEGORIES`。
 - 覆盖 `src/content.config.ts` 的全部 `feedCategorySchema`。
-- 新增主题时补齐 `docs/topics/`、`docs/card-types/` 和本映射。
+- 新增主题时补齐 `docs/topics/`、`src/content.config.ts`、`src/lib/feeds.ts` 和本映射；不新增海报类型时无需修改 `docs/posters/`。
 - 只决定表达优先级和图片比例，不决定 card 宽度或主题专属布局。
 
 ## Images
@@ -151,7 +153,7 @@ Map requirements:
 - 页面读取 frontmatter `cover`。
 - 图片缺失时使用组件 fallback。
 - 品牌、分类、来源或状态标识只能由组件或 CSS 覆盖层承载，不能烘焙进图片。
-- 海报生成、格式、比例、尺寸、二进制写入、pending cover 和禁止项统一以 `poster-spec.md` 为准。
+- 海报格式、尺寸、二进制写入、pending cover、禁止项、`kind` 比例映射和提示词统一以 `docs/posters/` 为准。
 
 ## Forbidden
 
@@ -160,4 +162,4 @@ Map requirements:
 - 重复装饰。
 - 卡片宽度按主题变化。
 - 海报与卡片正文重复表达同一段信息。
-- 违反 `poster-spec.md` 的主封面、生成或 fallback 规则。
+- 违反 `docs/posters/README.md` 的主封面、生成或 fallback 规则。

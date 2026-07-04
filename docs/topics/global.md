@@ -25,19 +25,21 @@
 
 ## Sources
 
-Prefer:
+Priority:
 
-1. Official government, court, regulator, central-bank, UN, or standards-body publications.
-2. Reuters, AP, BBC, Financial Times, The Guardian, Nikkei, or established international reporting.
-3. Local reputable outlets when they provide primary local detail.
+- Primary: official government, court, regulator, central-bank, UN agency, standards-body, ministry, emergency-management, public-health, meteorological, election, treaty, or sanctions publication.
+- Secondary: Reuters or AP for confirmed international reporting and background.
+- CN Reference: 新华社 or 央视新闻 for Chinese expression and domestic attention reference.
+
+If official decision, event time, location, casualty/damage number, policy scope, or institutional status conflicts across Primary and Secondary, skip the item.
 
 ## Poster Prompt
 
 ```text
-Use a serious global-news editorial style.
-Show formal institutions, city-scale context, maps, public documents, diplomatic rooms, climate or public-safety scenes, or infrastructure.
-Keep the tone factual, restrained, and non-partisan.
-Avoid fake official seals, invented maps, readable document text, flags used as decoration without relevance, or sensational disaster imagery.
+Use a serious global-news editorial cover for a mobile-first news card, with formal institutions, city-scale context, map abstraction, public documents, diplomatic rooms, climate scenes, infrastructure, or public-safety environments depending on the feed.
+For policy_update, show formal review, governance, court, central-bank, UN, regulator, or standards-body context. For breaking, show clear urgency with restrained composition and abstract secondary details. For hot_topic, focus on one bounded global event. For data or insight, show symbolic maps, timelines, institution structures, or public-impact panels without invented values.
+Keep the tone factual, restrained, and non-partisan. Use verified country names, institution names, decision names, dates, locations, and report labels only when supplied by the feed.
+Avoid fake official seals, invented maps, unreadable document text, decorative flags without relevance, sensational disaster imagery, partisan framing, fake statistics, and multi-event collages.
 ```
 
 ## Skip

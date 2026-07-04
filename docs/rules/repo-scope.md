@@ -1,6 +1,6 @@
 # Repository Scope
 
-`idaibin/feeds-hub` owns the static feed site, feed content schema, repository-specific update entry, topic rules, card type rules, UI rules, and generated feed cover assets.
+`idaibin/feeds-hub` owns the static feed site, feed content schema, repository-specific update entry, topic rules, poster rules, UI rules, and generated feed cover assets.
 
 ## Owns
 
@@ -9,7 +9,7 @@
 - Repository-specific frontmatter and content paths.
 - AI-generated feed posters under `public/images/<category>/`.
 - Update task entry under `docs/automation/`.
-- Repository-specific rules under `docs/rules/`, `docs/topics/`, and `docs/card-types/`.
+- Repository-specific rules under `docs/rules/`, `docs/topics/`, and `docs/posters/`.
 
 ## Does Not Own
 
@@ -41,7 +41,7 @@ Rule updates require an explicit user request and may touch:
 docs/automation/**
 docs/rules/**
 docs/topics/**
-docs/card-types/**
+docs/posters/**
 AGENTS.md
 README.md
 ```

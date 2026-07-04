@@ -17,7 +17,7 @@ const posterRatioClass = getPosterRatioClass(entry.data.category, entry.data.kin
 function getPosterRatioClass(categoryId: string, kind: string) {
   const isMatchCategory = categoryId === 'worldcup' || categoryId === 'lol';
 
-  if (isMatchCategory && ['match_result', 'match_schedule', 'player_spotlight'].includes(kind)) {
+  if (isMatchCategory && kind === 'player_spotlight') {
     return 'poster-ratio-4x5';
   }
 
@@ -81,12 +81,24 @@ function getPosterRatioClass(categoryId: string, kind: string) {
     --accent: #0569ed;
   }
 
+  .feed-detail.category-compute {
+    --accent: #0891b2;
+  }
+
   .feed-detail.category-global {
     --accent: #0f8b8d;
   }
 
   .feed-detail.category-rust {
     --accent: #b45309;
+  }
+
+  .feed-detail.category-dev {
+    --accent: #2563eb;
+  }
+
+  .feed-detail.category-security {
+    --accent: #475569;
   }
 
   .feed-detail.category-product {

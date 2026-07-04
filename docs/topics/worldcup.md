@@ -38,19 +38,21 @@ Do not force all three states for one match in one run.
 
 ## Sources
 
-Prefer:
+Priority:
 
-1. FIFA official match center, schedule, or match report.
-2. Reliable sports data sources.
-3. Reuters, AP, ESPN, The Guardian, BBC Sport, or established sports reporting.
+- Primary: FIFA official match center, schedule, or match report.
+- Secondary: ESPN or BBC Sport for background, confirmed context, and match reporting.
+- CN Reference: 懂球帝 or 央视体育 for Chinese expression and local attention reference.
+
+If score, kickoff time, venue, bracket, or match status conflicts across Primary and Secondary, skip the item.
 
 ## Poster Prompt
 
 ```text
-Use a premium football editorial poster style.
-Show cinematic stadium lights, pitch texture, matchday atmosphere, national color cues, structured bracket or scoreboard energy, and clear tournament hierarchy.
-Use verified team names, scores, kickoff times, stages, and advancement facts only when supplied by the feed.
-Avoid fake FIFA marks, team crests, player face copies, betting language, odds boards, or forecast visuals.
+Use a premium football editorial cover for a mobile-first news card, with a realistic stadium atmosphere, cinematic floodlights, pitch texture, tunnel or touchline context, and abstract national color cues.
+For match_schedule, show a clean fixture-board composition with two abstract team sides, stadium readiness, and anticipation without invented scores. For match_flow, show timeline panels, pressure zones, and verified match rhythm. For match_result, show a decisive post-match focal point with score or advancement only when supplied by the feed. For knockout_update, worldcup_feed, or data, use symbolic bracket, table, timeline, or stage hierarchy modules.
+Keep readable text minimal and use only verified team names, scores, kickoff times, stages, venues, goal events, and advancement facts supplied by the feed.
+Avoid fake FIFA marks, official tournament logos, team crests, copied player faces, invented flags, betting language, odds boards, forecast visuals, fake scoreboards, unsupported readable text, and reusable generic sports templates.
 ```
 
 ## Skip
