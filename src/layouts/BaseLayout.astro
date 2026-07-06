@@ -44,7 +44,12 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
       </form>
     </header>
     <main><slot /></main>
-    <footer class="site-footer">Feeds Hub · AI 信息流更新</footer>
+    <footer class="site-footer">
+      <span>Feeds Hub · AI 信息流更新</span>
+      <nav class="footer-links" aria-label="站点链接">
+        <a href="https://github.com/idaibin/feeds-hub" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </footer>
     <script>
       const topicSelect = document.querySelector<HTMLSelectElement>('#topic-select');
       topicSelect?.addEventListener('change', () => {
@@ -161,7 +166,36 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
   .feed-load-sentinel { width: 100%; height: 1px; }
   .empty-state { padding: 42px; text-align: center; background: rgba(255, 255, 255, 0.78); border-radius: 8px; border: 1px dashed var(--border); color: var(--muted); }
   .content-panel { position: relative; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.82); border-radius: 8px; box-shadow: var(--shadow-card); backdrop-filter: blur(18px); }
-  .site-footer { position: relative; width: min(1160px, calc(100% - 32px)); margin: 0 auto 32px; padding-top: 24px; color: var(--muted); border-top: 1px solid var(--border); font-size: 14px; }
+  .site-footer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    width: min(1160px, calc(100% - 32px));
+    margin: 0 auto 32px;
+    padding-top: 24px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .site-footer span { display: block; line-height: 1.6; }
+  .footer-links { display: flex; align-items: center; flex-wrap: nowrap; justify-content: flex-end; gap: 8px; }
+  .footer-links a {
+    display: inline;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    color: var(--muted-strong);
+    background: transparent;
+    font-size: 14px;
+    font-weight: 650;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+  }
+  .footer-links a:hover { color: var(--primary-strong); }
   @media (max-width: 1100px) {
     main { width: min(100% - 32px, 960px); }
     .masonry-feed { column-width: auto; column-count: 1; }
@@ -172,5 +206,7 @@ const currentItem = navItems.find((item) => isActive(item.href)) ?? navItems[0];
     .brand small { display: none; }
     .topic-switcher { flex-basis: min(54vw, 190px); }
     .masonry-feed { --feed-card-row-gap: 18px; }
+    .site-footer { align-items: flex-start; flex-direction: column; gap: 14px; }
+    .footer-links { justify-content: flex-start; }
   }
 </style>

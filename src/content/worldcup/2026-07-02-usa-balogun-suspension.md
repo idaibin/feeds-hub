@@ -8,6 +8,7 @@ date: "2026-07-02T12:57:00+08:00"
 eventAt: "2026-07-02T10:52:37+08:00"
 eventKey: "worldcup:hot_topic:usa-balogun-suspension:2026-07-02T10:52:37+08:00"
 cover: "/images/worldcup/2026-07-02-usa-balogun-suspension.webp"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "美国"

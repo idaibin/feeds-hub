@@ -29,6 +29,6 @@ New feed frontmatter must include `coverStatus`:
 generated_webp | pending
 ```
 
-Poster generation, binary image writes, fallback, and pending cover rules are maintained in `docs/posters/README.md`.
+Poster generation, binary image writes, fallback, and pending cover rules are maintained in `docs/posters/README.md`; profile prompts are maintained in `docs/posters/<profile>.md`.
 
 Do not include `public` or `/feeds/` in `cover`.

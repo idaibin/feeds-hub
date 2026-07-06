@@ -8,7 +8,7 @@ date: "2026-07-04T07:00:00Z"
 eventAt: "2026-07-04T00:55:21Z"
 eventKey: "worldcup:2026:r32:argentina-cape-verde:result-3-2-extra-time:2026-07-04"
 cover: "/images/worldcup/2026-07-04-argentina-cape-verde-extra-time-result.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "阿根廷"

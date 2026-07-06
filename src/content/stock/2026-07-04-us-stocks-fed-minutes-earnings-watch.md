@@ -8,7 +8,7 @@ date: "2026-07-04T07:00:00Z"
 eventAt: "2026-07-03T10:23:47Z"
 eventKey: "stock:us-equities:fed-minutes-earnings-tech-wobbles:2026-07-03"
 cover: "/images/stock/2026-07-04-us-stocks-fed-minutes-earnings-watch.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "美股"
   - "Fed"

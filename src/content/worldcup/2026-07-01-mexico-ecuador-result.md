@@ -8,6 +8,7 @@ date: "2026-07-01T18:55:00+08:00"
 eventAt: "2026-07-01T18:55:00+08:00"
 eventKey: "worldcup:match_result:2026-07-01-mexico-ecuador-result:2026-07-01T18:55:00+08:00"
 cover: "/images/worldcup/2026-07-01-mexico-ecuador-result.webp"
+coverStatus: "generated_webp"
 tags: ["世界杯2026", "墨西哥", "厄瓜多尔", "16强", "阿兹特克"]
 summary: "墨西哥在阿兹特克球场2-0厄瓜多尔，Julián Quiñones和Raúl Jiménez在上半场进球。东道主进入16强，主场热度继续上升。"
 source: "Reuters"

@@ -8,7 +8,7 @@ date: "2026-07-04T05:00:00Z"
 eventAt: "2026-07-03T00:00:00Z"
 eventKey: "stock:global-equity-fund-inflows-tech:2026-07-03"
 cover: "/images/stock/2026-07-04-global-equity-fund-inflows-tech.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "全球股票基金"
   - "科技股"

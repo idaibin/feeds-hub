@@ -8,7 +8,7 @@ date: "2026-07-04T11:01:00+08:00"
 eventAt: "2026-07-03T20:57:00+08:00"
 eventKey: "stock:fund-flows:us-equity-tech-inflows:2026-07-03"
 cover: "/images/stock/2026-07-04-us-equity-fund-inflows-tech.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "美国股票基金"
   - "科技股"

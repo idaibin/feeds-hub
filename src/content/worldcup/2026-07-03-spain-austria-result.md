@@ -8,6 +8,7 @@ date: "2026-07-03T05:56:00+08:00"
 eventAt: "2026-07-03T03:00:00+08:00"
 eventKey: "worldcup:match_result:spain-austria:2026-07-03T03:00:00+08:00"
 cover: "/images/worldcup/2026-07-03-spain-austria-result.webp"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "32强"

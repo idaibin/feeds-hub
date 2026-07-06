@@ -8,6 +8,7 @@ date: "2026-07-02T07:55:00+08:00"
 eventAt: "2026-07-03T03:00:00+08:00"
 eventKey: "worldcup:match_schedule:spain-austria:2026-07-03T03:00:00+08:00"
 cover: "/images/worldcup/2026-07-02-spain-austria-schedule.webp"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "32强"

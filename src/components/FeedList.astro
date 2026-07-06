@@ -42,6 +42,11 @@ const initialEntries = entries.slice(0, pageSize);
     summary: string;
     cover: string;
     fallbackCover: string;
+    coverStatus: string;
+    hasGeneratedCover: boolean;
+    eventAt: string;
+    eventAtLabel: string;
+    posterRatioClass: string;
   }
 
   function initializeFeedLists() {
@@ -70,7 +75,7 @@ const initialEntries = entries.slice(0, pageSize);
 
       const createCard = (item: FeedCardPayload) => {
         const article = document.createElement('article');
-        article.className = `feed-card category-${item.category}`;
+        article.className = `feed-card category-${item.category} ${item.posterRatioClass}${item.hasGeneratedCover ? ' has-cover' : ''}`;
         article.dataset.feedCard = '';
 
         const link = document.createElement('a');
@@ -78,36 +83,52 @@ const initialEntries = entries.slice(0, pageSize);
         link.href = item.href;
         link.setAttribute('aria-label', item.title);
 
-        const posterShell = document.createElement('div');
-        posterShell.className = 'poster-shell';
-
-        const image = document.createElement('img');
-        image.src = item.cover;
-        image.alt = '';
-        image.loading = 'lazy';
-        image.dataset.coverImage = '';
-        image.onerror = () => {
-          image.onerror = null;
-          image.src = item.fallbackCover;
-        };
-
         const body = document.createElement('div');
         body.className = 'feed-body';
+
+        const meta = document.createElement('div');
+        meta.className = 'feed-meta';
 
         const category = document.createElement('span');
         category.className = 'category-chip';
         category.textContent = item.categoryShortName;
 
+        const time = document.createElement('time');
+        time.textContent = item.eventAtLabel;
+        time.dateTime = item.eventAt;
+
         const title = document.createElement('h2');
         title.textContent = item.title;
 
-        const summary = document.createElement('p');
-        summary.className = 'summary';
-        summary.textContent = item.summary;
+        meta.append(category, time);
+        body.append(meta, title);
 
-        posterShell.append(image, category);
-        body.append(title, summary);
-        link.append(posterShell, body);
+        if (item.summary) {
+          const summary = document.createElement('p');
+          summary.className = 'summary';
+          summary.textContent = item.summary;
+          body.append(summary);
+        }
+        link.append(body);
+
+        if (item.hasGeneratedCover) {
+          const posterShell = document.createElement('div');
+          posterShell.className = 'poster-shell';
+
+          const image = document.createElement('img');
+          image.src = item.cover;
+          image.alt = '';
+          image.loading = 'lazy';
+          image.dataset.coverImage = '';
+          image.onerror = () => {
+            image.onerror = null;
+            image.src = item.fallbackCover;
+          };
+
+          posterShell.append(image);
+          link.append(posterShell);
+        }
+
         article.append(link);
 
         return article;

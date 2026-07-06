@@ -8,6 +8,7 @@ date: "2026-07-01T18:55:00+08:00"
 eventAt: "2026-07-01T18:55:00+08:00"
 eventKey: "worldcup:match_result:2026-07-01-france-sweden-mbappe:2026-07-01T18:55:00+08:00"
 cover: "/images/worldcup/2026-07-01-france-sweden-mbappe.webp"
+coverStatus: "generated_webp"
 tags:
   - "世界杯2026"
   - "法国"

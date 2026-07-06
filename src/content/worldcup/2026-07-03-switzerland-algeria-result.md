@@ -8,6 +8,7 @@ date: "2026-07-03T12:57:00+08:00"
 eventAt: "2026-07-03T11:00:00+08:00"
 eventKey: "worldcup:match_result:switzerland-algeria:2026-07-03T11:00:00+08:00"
 cover: "/images/worldcup/2026-07-03-switzerland-algeria-result.webp"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "瑞士"

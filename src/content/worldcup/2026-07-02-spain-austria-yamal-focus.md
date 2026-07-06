@@ -8,6 +8,7 @@ date: "2026-07-02T11:54:00+08:00"
 eventAt: "2026-07-02T09:31:21+08:00"
 eventKey: "worldcup:hot_topic:spain-austria-yamal-rangnick:2026-07-02T09:31:21+08:00"
 cover: "/images/worldcup/2026-07-02-spain-austria-yamal-focus.webp"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "32强"

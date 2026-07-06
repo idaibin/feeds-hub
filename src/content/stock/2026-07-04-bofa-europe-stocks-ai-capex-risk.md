@@ -8,7 +8,7 @@ date: "2026-07-04T11:59:00+08:00"
 eventAt: "2026-07-03T21:11:00+08:00"
 eventKey: "stock:europe:bofa-growth-ai-capex-risk:2026-07-03"
 cover: "/images/stock/2026-07-04-bofa-europe-stocks-ai-capex-risk.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "欧洲股市"
   - "BofA"

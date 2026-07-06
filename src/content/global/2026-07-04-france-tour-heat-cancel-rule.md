@@ -8,7 +8,7 @@ date: "2026-07-04T11:59:00+08:00"
 eventAt: "2026-07-04T03:31:00+08:00"
 eventKey: "global:france:tour-de-france-heat-cancel-authority:2026-07-03"
 cover: "/images/global/2026-07-04-france-tour-heat-cancel-rule.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "法国"
   - "环法"

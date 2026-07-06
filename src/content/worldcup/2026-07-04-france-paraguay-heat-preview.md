@@ -8,7 +8,7 @@ date: "2026-07-04T11:01:00+08:00"
 eventAt: "2026-07-05T05:00:00+08:00"
 eventKey: "worldcup:2026:r16:france-paraguay:2026-07-04T21:00:00Z"
 cover: "/images/worldcup/2026-07-04-france-paraguay-heat-preview.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "法国"
   - "巴拉圭"

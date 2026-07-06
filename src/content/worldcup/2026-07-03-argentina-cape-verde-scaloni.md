@@ -8,6 +8,7 @@ date: "2026-07-03T06:57:00+08:00"
 eventAt: "2026-07-03T04:24:00+08:00"
 eventKey: "worldcup:hot_topic:argentina-cape-verde-scaloni:2026-07-03T04:24:00+08:00"
 cover: "/images/worldcup/2026-07-03-argentina-cape-verde-scaloni.webp"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "32强"

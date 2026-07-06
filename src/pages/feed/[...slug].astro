@@ -1,7 +1,9 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getDisplaySubtitle, getDisplaySummary } from '@/lib/feed-display';
 import { formatDate, getCategoryMeta } from '@/lib/feeds';
+import { getFallbackCover, getPosterRatioClass, getResolvedCover } from '@/lib/poster-display';
 
 export async function getStaticPaths() {
   const entries = await getCollection('feeds', ({ data }) => data.reviewed === true);
@@ -11,41 +13,22 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const category = getCategoryMeta(entry.data.category);
-const fallbackCover = entry.data.fallbackCover ?? `/images/${entry.data.category}/init.webp`;
+const fallbackCover = getFallbackCover(entry.data.category, entry.data.fallbackCover);
+const cover = getResolvedCover(entry.data.category, entry.data.cover, entry.data.coverStatus, entry.data.fallbackCover);
 const posterRatioClass = getPosterRatioClass(entry.data.category, entry.data.kind);
-
-function getPosterRatioClass(categoryId: string, kind: string) {
-  const isMatchCategory = categoryId === 'worldcup' || categoryId === 'lol';
-
-  if (isMatchCategory && kind === 'player_spotlight') {
-    return 'poster-ratio-4x5';
-  }
-
-  if (['ai', 'product'].includes(categoryId) && kind === 'visual') {
-    return 'poster-ratio-4x5';
-  }
-
-  if (isMatchCategory && kind === 'visual') {
-    return 'poster-ratio-4x5';
-  }
-
-  if (['match_flow', 'knockout_update', 'worldcup_feed', 'data'].includes(kind)) {
-    return 'poster-ratio-4x3';
-  }
-
-  return 'poster-ratio-16x9';
-}
+const subtitle = getDisplaySubtitle(entry.data.subtitle, entry.data.source);
+const summary = getDisplaySummary(entry.data.summary, entry.data.title, entry.data.source);
 ---
-<BaseLayout title={`${entry.data.title}｜Feeds Hub`} description={entry.data.summary}>
+<BaseLayout title={`${entry.data.title}｜Feeds Hub`} description={summary || entry.data.title}>
   <article class={`content-panel feed-detail category-${entry.data.category} ${posterRatioClass}`}>
     <div class="detail-cover">
-      <img src={entry.data.cover} alt="" onerror={`this.onerror=null;this.src='${fallbackCover}';`} />
+      <img src={cover} alt="" onerror={`this.onerror=null;this.src='${fallbackCover}';`} />
       <a class="category-chip" href={`/category/${category.id}/`}>{category.shortName}</a>
     </div>
     <div class="detail-body">
       <h1>{entry.data.title}</h1>
-      <p class="subtitle">{entry.data.subtitle}</p>
-      <p class="summary">{entry.data.summary}</p>
+      {subtitle && <p class="subtitle">{subtitle}</p>}
+      {summary && <p class="summary">{summary}</p>}
       <div class="markdown-body"><Content /></div>
       <p class="source-line">
         <time datetime={entry.data.eventAt.toISOString()}>{formatDate(entry.data.eventAt)}</time>
@@ -121,11 +104,10 @@ function getPosterRatioClass(categoryId: string, kind: string) {
     object-fit: cover;
   }
   .poster-ratio-4x5 .detail-cover img { aspect-ratio: 4 / 5; }
-  .poster-ratio-4x3 .detail-cover img { aspect-ratio: 4 / 3; }
   .detail-cover .category-chip {
     position: absolute;
     top: 16px;
-    left: 16px;
+    right: 16px;
     z-index: 2;
     max-width: calc(100% - 32px);
     overflow: hidden;
@@ -151,13 +133,15 @@ function getPosterRatioClass(categoryId: string, kind: string) {
     background: currentColor;
     vertical-align: 1px;
   }
-  .detail-body { padding: clamp(22px, 4vw, 42px); }
+  .detail-body {
+    padding: clamp(22px, 4vw, 38px) clamp(22px, 4vw, 42px) clamp(16px, 3vw, 24px);
+  }
   h1 { max-width: 760px; margin-bottom: 16px; font-size: clamp(30px, 5vw, 50px); line-height: 1.08; letter-spacing: 0; }
   .subtitle { max-width: 760px; font-size: 20px; color: var(--muted-strong); font-weight: 820; }
   .summary { padding: 16px 18px; border-radius: 14px; border: 1px solid var(--border); background: #f8fafc; color: var(--muted-strong); }
-  .markdown-body { margin-top: 28px; line-height: 1.85; }
+  .markdown-body { margin-top: 24px; line-height: 1.8; }
   .markdown-body :global(a), .source-line a { color: var(--primary-strong); text-decoration: underline; text-underline-offset: 3px; }
-  .source-line { margin-top: 28px; font-size: 14px; }
+  .source-line { margin: 20px 0 0; font-size: 14px; }
   .source-line time { font-family: var(--mono); font-size: 12px; }
   @media (max-width: 640px) {
     .feed-detail { border-radius: 24px; }

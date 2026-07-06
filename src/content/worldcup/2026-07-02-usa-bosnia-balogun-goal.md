@@ -8,6 +8,7 @@ date: "2026-07-02T08:54:00+08:00"
 eventAt: "2026-07-02T08:45:00+08:00"
 eventKey: "worldcup:hot_topic:usa-bosnia-balogun-45:2026-07-02T08:45:00+08:00"
 cover: "/images/worldcup/2026-07-02-usa-bosnia-balogun-goal.webp"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "32强"

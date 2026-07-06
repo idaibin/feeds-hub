@@ -8,7 +8,7 @@ date: "2026-07-04T11:01:00+08:00"
 eventAt: "2026-07-03T19:03:00+08:00"
 eventKey: "global:climate:world-cup-heat-wwa:2026-07-03"
 cover: "/images/global/2026-07-04-world-cup-heat-climate-report.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "气候变化"
   - "高温"

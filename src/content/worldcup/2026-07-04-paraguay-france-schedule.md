@@ -8,7 +8,7 @@ date: "2026-07-04T21:35:00+08:00"
 eventAt: "2026-07-05T05:00:00+08:00"
 eventKey: "worldcup:match_schedule:53452509:paraguay-france:2026-07-05T05:00:00+08:00"
 cover: "/images/worldcup/2026-07-04-paraguay-france-schedule.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "16强"

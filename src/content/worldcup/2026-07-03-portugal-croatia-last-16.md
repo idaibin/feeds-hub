@@ -8,6 +8,7 @@ date: "2026-07-03T11:56:00+08:00"
 eventAt: "2026-07-03T07:00:00+08:00"
 eventKey: "worldcup:match_result:portugal-croatia:2026-07-03T07:00:00+08:00"
 cover: "/images/worldcup/2026-07-03-portugal-croatia-last-16.webp"
+coverStatus: "generated_webp"
 tags:
   - "葡萄牙"
   - "克罗地亚"

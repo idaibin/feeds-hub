@@ -8,7 +8,7 @@ date: "2026-07-04T11:59:00+08:00"
 eventAt: "2026-07-04T07:39:00+08:00"
 eventKey: "worldcup:2026:r32:australia-egypt:penalties-4-2:2026-07-03"
 cover: "/images/worldcup/2026-07-04-egypt-australia-penalty-result.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "埃及"

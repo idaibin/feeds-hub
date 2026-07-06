@@ -8,7 +8,7 @@ date: "2026-07-04T05:00:00Z"
 eventAt: "2026-07-03T00:00:00Z"
 eventKey: "worldcup:2026:expanded-format-upsets-heavyweights:2026-07-03"
 cover: "/images/worldcup/2026-07-04-expanded-format-upsets-data.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "2026 世界杯"
   - "48 队赛制"

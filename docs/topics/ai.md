@@ -1,50 +1,36 @@
-# AI Topic
+---
+id: ai
+type: realtime
+flows:
+  - realtime
+sources:
+  primary:
+    - Reuters
+  secondary:
+    - GitHub releases
+    - official model pages
+    - official product pages
+    - research papers
+    - arXiv
+    - OpenAI
+    - Anthropic
+    - 阿里/通义千问
+    - 智谱 GLM
+  supplemental:
+    - Reddit
+    - official X
+contentDir: src/content/ai/
+coverPrefix: /images/ai/
+allowedKinds:
+  - hot_topic
+  - policy_update
+  - data
+  - ai
+  - news
+  - breaking
+  - insight
+---
 
-## ID
+# AI Topic Config
 
-`ai`
-
-## Focus
-
-- AI model releases, product launches, research papers, benchmark updates, developer tools, infrastructure, policy, safety, and company strategy.
-- Open-source model and framework updates with a clear release, repository change, paper, or official announcement.
-- One feed item describes one release, paper, product update, funding or policy event, or engineering signal.
-
-## Kinds
-
-- `hot_topic`: model release, product launch, developer tool, funding, company strategy.
-- `policy_update`: AI policy, safety, standards, governance, public-sector adoption.
-- `data`: benchmark, architecture, model evaluation, ecosystem comparison.
-- `ai`: structured AI technology update.
-- `news` / `breaking` / `insight`: fallback for verified AI news that does not fit above.
-
-## Title / Event Key
-
-- Title names the model, product, company, paper, repository, policy event, or tool update.
-- `eventKey` combines entity, event type, and date or release identifier.
-
-## Sources
-
-Priority:
-
-- Primary: Reuters technology reporting.
-- Secondary: GitHub releases, official model or product pages, research papers, or arXiv.
-- Reference: X or Reddit for AI attention and discussion context only.
-
-If model name, release status, API availability, benchmark, pricing, or safety claim cannot be confirmed by Primary or Secondary sources, skip the item.
-
-## Poster Prompt
-
-```text
-Use a modern AI technology editorial cover for a mobile-first news card, with model infrastructure, developer workflow, research dashboard, code terminal, chip substrate, data center, governance review, or product launch context depending on the feed.
-For hot_topic or ai, show one focused technology subject such as a model release, agent workflow, API console abstraction, or infrastructure scene. For policy_update, show formal review rooms, document tables, compliance workflows, or standards boards. For data, show symbolic evaluation grids, architecture maps, or benchmark dashboards without invented numbers.
-Use clean high-tech visual language with blue, graphite, white, slate, and subtle luminous accents. Keep readable text minimal and include exact model names, tool names, policy names, dates, or benchmark labels only when supplied by the feed.
-Avoid generic robots, AGI hype, fake product UI, fake company logos, invented benchmark values, fake API screenshots, unreadable dense dashboards, and unsourced capability claims.
-```
-
-## Skip
-
-- Unsupported social-media discussion or vague rumor.
-- Release, paper, repository, or policy item cannot be verified.
-- Low-value rewrite of an existing item without a new fact.
-- Capability, safety, or performance claims overstate the source.
+Uses `docs/types/realtime.md`; hard facts must be confirmed by configured primary or secondary sources.

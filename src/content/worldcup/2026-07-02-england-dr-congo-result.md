@@ -8,6 +8,7 @@ date: "2026-07-02T09:57:00+08:00"
 eventAt: "2026-07-02T02:33:00+08:00"
 eventKey: "worldcup:match_result:england-dr-congo:2026-07-02T02:33:00+08:00"
 cover: "/images/worldcup/2026-07-02-england-dr-congo-result.webp"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "32强"
