@@ -1,6 +1,6 @@
 ---
-title: "MSI 队伍线索：Gen.G 卫冕，BLG 带着 FST 热度"
-subtitle: "LCK 卫冕背景对上 LPL 国际赛热度，队伍关注度开始升温"
+title: "MSI 队伍线索：BLG、HLE 与 T1 进入正赛视野"
+subtitle: "LPL 与 LCK 队伍在 Bracket Stage 前成为主要关注对象"
 category: "lol"
 kind: "hot_topic"
 topic: "2026 MSI"
@@ -10,24 +10,18 @@ eventKey: "lol:hot_topic:2026-07-01-msi-team-watch:2026-07-01T09:25:00+08:00"
 cover: "/images/lol/2026-07-01-msi-team-watch.webp"
 coverStatus: "generated_webp"
 tags:
-  - "GenG"
+  - "HLE"
+  - "T1"
   - "BLG"
   - "MSI"
   - "LPL"
-summary: "Gen.G 以 MSI 卫冕背景进入讨论，BLG 带着 First Stand 冠军热度成为 LPL 线索。具体比赛安排与正赛席位另见赛程卡。"
-source: "2026 Mid-Season Invitational / First Stand 赛事资料"
-sourceUrl: "https://en.wikipedia.org/wiki/2026_Mid-Season_Invitational"
+summary: "LoL Esports 公布的参赛名单显示，BLG、Top Esports、HLE 与 T1 都进入 MSI 正赛关注线。"
+source: "LoL Esports"
+sourceUrl: "https://lolesports.com/news/msi-2026-primer"
 reviewed: true
 priority: 29
 ---
 
-## 关键信息
+LoL Esports 公布的 MSI 2026 参赛名单显示，LPL 由 Bilibili Gaming 与 Top Esports 出战，LCK 由 Hanwha Life Esports 与 T1 出战。正赛阶段采用 8 队双败 BO5，是本届赛事的主要竞争窗口。
 
-- Gen.G：MSI 卫冕背景，是 LCK 线核心关注点。
-- BLG：2026 First Stand 冠军，带来 LPL 国际赛热度。
-- 赛程和席位信息已拆到赛事安排卡。
-- 正赛名单和具体对阵应以 Riot 官方赛程为准。
-
-## 视觉重点
-
-GEN、BLG 两个自制徽章对立摆放，中间放 MSI 杯赛视觉，避免和赛程卡重复。
+这条更新只记录队伍名单和赛区线索，不替代后续单场赛程或赛果。对阵、晋级、淘汰和下一轮关系以官方赛程页及后续比赛结果为准。

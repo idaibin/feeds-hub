@@ -1,16 +1,20 @@
 ---
 import FeedList from '@/components/FeedList.astro';
 import BaseLayout from '@/components/BaseLayout.astro';
-import { CATEGORIES, getAllFeeds, getFeedsByCategory } from '@/lib/feeds';
+import { CATEGORIES, FEED_GROUPS, getAllFeeds, getFeedGroupMeta, getFeedTopicMeta, getFeedsByList } from '@/lib/feeds';
 
 export function getStaticPaths() {
-  return CATEGORIES.map((category) => ({ params: { category: category.id }, props: { category } }));
+  return [...CATEGORIES, ...FEED_GROUPS].map((category) => ({ params: { category: category.id }, props: { category } }));
 }
 
 const { category } = Astro.props;
 const allFeeds = await getAllFeeds();
-const feeds = getFeedsByCategory(allFeeds, category.id);
+const feeds = getFeedsByList(allFeeds, category.id);
+const topic = getFeedTopicMeta(category.id);
+const group = getFeedGroupMeta(category.id);
+const listLabel = topic?.name ?? group?.name ?? category.name;
+const listDescription = topic?.description ?? group?.description ?? category.description;
 ---
-<BaseLayout title={`${category.name}｜Feeds Hub`} description={category.description}>
-  <FeedList entries={feeds} ariaLabel={`${category.name}信息`} listId={category.id} />
+<BaseLayout title={`${listLabel}｜Feeds Hub`} description={listDescription} hideFooter>
+  <FeedList entries={feeds} ariaLabel={`${listLabel}信息`} listId={category.id} />
 </BaseLayout>

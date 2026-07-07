@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Avenir Next", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "SFMono-Regular", "Cascadia Mono", "Menlo", "Consolas", monospace;
+  --color-feed-bg: #f8fafc;
+  --color-feed-text: #0f172a;
+  --color-feed-muted: #64748b;
+  --color-feed-primary: #0569ed;
+  --color-feed-primary-strong: #034a9a;
+  --color-feed-signal: #069fb4;
+}

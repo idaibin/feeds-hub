@@ -1,7 +1,7 @@
 ---
 title: "世界杯补水暂停引发比赛节奏讨论"
 subtitle: "Reuters 报道，FIFA 在本届世界杯每场比赛设置补水暂停"
-summary: "Reuters 报道称，世界杯补水暂停已成为球员保护、战术沟通和转播节奏的讨论焦点。"
+summary: "世界杯补水暂停已成为球员保护、战术沟通和转播节奏的讨论焦点。"
 category: "worldcup"
 kind: "hot_topic"
 topic: "世界杯补水暂停"
@@ -11,7 +11,7 @@ eventKey: "worldcup:hydration-breaks:match-rhythm:2026-07-03"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/more-water-less-flow-hydration-breaks-fuel-debate-game-rhythm-put-test-2026-07-03/"
 cover: "/images/worldcup/2026-07-05-world-cup-hydration-breaks.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "补水暂停"

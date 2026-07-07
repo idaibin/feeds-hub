@@ -15,7 +15,7 @@ tags:
   - "葡萄牙"
   - "克罗地亚"
 summary: "葡萄牙与克罗地亚的32强淘汰赛将在北京时间7月3日07:00开球，欧洲强队提前相遇，胜者进入16强。"
-source: "World Cup Round of 32 schedule"
+source: "SB Nation"
 sourceUrl: "https://www.sbnation.com/soccer/1120771/world-cup-schedule-scores-round-32"
 reviewed: true
 priority: 96

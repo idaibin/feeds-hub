@@ -1,6 +1,6 @@
 ---
 title: "阿根廷赛前称不会低估 Cape Verde"
-subtitle: "Reuters 报道称，Scaloni 提到对手防守和反击威胁"
+subtitle: "Scaloni 提到对手防守和反击威胁"
 category: "worldcup"
 kind: "hot_topic"
 topic: "阿根廷 vs Cape Verde"
@@ -15,7 +15,7 @@ tags:
   - "阿根廷"
   - "Cape Verde"
   - "赛前焦点"
-summary: "Reuters 报道称，阿根廷主帅 Scaloni 在对阵 Cape Verde 前表示不会低估对手。"
+summary: "阿根廷主帅 Scaloni 在对阵 Cape Verde 前表示不会低估对手。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/scaloni-wary-world-cup-surprise-package-cape-verde-despite-argentinas-form-2026-07-02/"
 reviewed: true

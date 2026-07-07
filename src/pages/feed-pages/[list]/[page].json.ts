@@ -1,5 +1,5 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
-import { CATEGORIES, getAllFeeds, getFeedsByCategory } from '@/lib/feeds';
+import { CATEGORIES, FEED_GROUPS, getAllFeeds, getFeedsByList } from '@/lib/feeds';
 import { toFeedCardData, type FeedCardData } from '@/lib/feed-card-data';
 
 const PAGE_SIZE = 10;
@@ -15,7 +15,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
     { id: 'all', entries: allFeeds },
     ...CATEGORIES.map((category) => ({
       id: category.id,
-      entries: getFeedsByCategory(allFeeds, category.id)
+      entries: getFeedsByList(allFeeds, category.id)
+    })),
+    ...FEED_GROUPS.map((group) => ({
+      id: group.id,
+      entries: getFeedsByList(allFeeds, group.id)
     }))
   ];
 

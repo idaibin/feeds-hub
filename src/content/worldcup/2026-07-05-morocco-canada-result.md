@@ -1,7 +1,7 @@
 ---
 title: "摩洛哥 3-0 淘汰加拿大晋级世界杯八强"
 subtitle: "Reuters 报道，Ounahi 梅开二度，摩洛哥将在四分之一决赛等待巴拉圭与法国胜者"
-summary: "Reuters 报道称，摩洛哥 3-0 击败加拿大，连续两届世界杯进入八强。"
+summary: "摩洛哥 3-0 击败加拿大，连续两届世界杯进入八强。"
 category: "worldcup"
 kind: "match_result"
 topic: "加拿大 vs 摩洛哥"
@@ -11,7 +11,7 @@ eventKey: "worldcup:match_result:canada-morocco:2026-07-04"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/morocco-beat-canada-3-0-reach-world-cup-quarter-finals-2026-07-04/"
 cover: "/images/worldcup/2026-07-05-morocco-canada-result.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "摩洛哥"

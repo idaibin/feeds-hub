@@ -1,6 +1,6 @@
 ---
 title: "加拿大队长戴维斯对阵摩洛哥时替补开场"
-subtitle: "Reuters 报道称，加拿大在世界杯 16 强赛首发中做出三处调整"
+subtitle: "加拿大在世界杯 16 强赛首发中做出三处调整"
 category: "worldcup"
 kind: "match_flow"
 topic: "FIFA World Cup"
@@ -8,13 +8,13 @@ date: "2026-07-04T17:00:00Z"
 eventAt: "2026-07-04T15:52:42Z"
 eventKey: "worldcup:canada-morocco:last16-davies-bench:2026-07-04"
 cover: "/images/worldcup/2026-07-05-canada-morocco-davies-bench.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "加拿大"
   - "摩洛哥"
   - "16强"
-summary: "Reuters 报道称，加拿大队长戴维斯在对阵摩洛哥的 16 强赛中替补开场。"
+summary: "加拿大队长戴维斯在对阵摩洛哥的 16 强赛中替补开场。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/captain-davies-bench-canada-last-16-clash-with-morocco-2026-07-04/"
 reviewed: true

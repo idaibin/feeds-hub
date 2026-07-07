@@ -1,6 +1,6 @@
 ---
 title: "西班牙对奥地利首发调整，Porro 与 Olmo 进入阵容"
-subtitle: "Reuters 报道称，32强战开赛前西班牙做出两处首发变化"
+subtitle: "32强战开赛前西班牙做出两处首发变化"
 category: "worldcup"
 kind: "hot_topic"
 topic: "西班牙 vs 奥地利"
@@ -15,7 +15,7 @@ tags:
   - "西班牙"
   - "奥地利"
   - "首发阵容"
-summary: "Reuters 报道称，西班牙对奥地利首发调整，Pedro Porro 与 Dani Olmo 进入阵容。"
+summary: "西班牙对奥地利首发调整，Pedro Porro 与 Dani Olmo 进入阵容。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/spain-bring-porro-olmo-austria-world-cup-clash-2026-07-02/"
 reviewed: true

@@ -1,6 +1,6 @@
 ---
 title: "扩军后的世界杯出现更多爆冷样本"
-subtitle: "Reuters 报道称，48 队赛制增加不确定性，但传统强队仍占据淘汰赛结构优势"
+subtitle: "48 队赛制增加不确定性，但传统强队仍占据淘汰赛结构优势"
 category: "worldcup"
 kind: "data"
 topic: "世界杯赛制"
@@ -14,7 +14,7 @@ tags:
   - "48 队赛制"
   - "淘汰赛"
   - "赛制"
-summary: "Reuters 报道称，扩军后的世界杯增加爆冷机会，但长期竞争结构仍更有利于传统强队。"
+summary: "扩军后的世界杯增加爆冷机会，但长期竞争结构仍更有利于传统强队。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/its-all-numbers-expanded-world-cup-brings-more-shocks-heavyweights-still-rule-2026-07-03/"
 reviewed: true

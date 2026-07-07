@@ -27,6 +27,7 @@ const initialEntries = entries.slice(0, pageSize);
         {initialEntries.map((entry) => <FeedCard entry={entry} />)}
       </div>
       <div class="feed-load-sentinel" data-feed-sentinel hidden={entries.length <= pageSize} aria-hidden="true"></div>
+      <p class="feed-end-state" data-feed-end hidden={entries.length > pageSize}>没有更多了</p>
     </>
   ) : (
     <div class="empty-state">{emptyLabel}</div>
@@ -40,13 +41,8 @@ const initialEntries = entries.slice(0, pageSize);
     categoryShortName: string;
     title: string;
     summary: string;
-    cover: string;
-    fallbackCover: string;
-    coverStatus: string;
-    hasGeneratedCover: boolean;
     eventAt: string;
     eventAtLabel: string;
-    posterRatioClass: string;
   }
 
   function initializeFeedLists() {
@@ -56,7 +52,9 @@ const initialEntries = entries.slice(0, pageSize);
 
       const list = section.querySelector('[data-feed-list]');
       const sentinel = section.querySelector('[data-feed-sentinel]');
+      const endState = section.querySelector('[data-feed-end]');
       if (!(list instanceof HTMLElement) || !(sentinel instanceof HTMLElement)) return;
+      if (!(endState instanceof HTMLElement)) return;
 
       section.dataset.feedInitialized = 'true';
 
@@ -70,12 +68,13 @@ const initialEntries = entries.slice(0, pageSize);
 
       if (isComplete) {
         sentinel.hidden = true;
+        endState.hidden = false;
         return;
       }
 
       const createCard = (item: FeedCardPayload) => {
         const article = document.createElement('article');
-        article.className = `feed-card category-${item.category} ${item.posterRatioClass}${item.hasGeneratedCover ? ' has-cover' : ''}`;
+        article.className = `feed-card category-${item.category}`;
         article.dataset.feedCard = '';
 
         const link = document.createElement('a');
@@ -111,24 +110,6 @@ const initialEntries = entries.slice(0, pageSize);
         }
         link.append(body);
 
-        if (item.hasGeneratedCover) {
-          const posterShell = document.createElement('div');
-          posterShell.className = 'poster-shell';
-
-          const image = document.createElement('img');
-          image.src = item.cover;
-          image.alt = '';
-          image.loading = 'lazy';
-          image.dataset.coverImage = '';
-          image.onerror = () => {
-            image.onerror = null;
-            image.src = item.fallbackCover;
-          };
-
-          posterShell.append(image);
-          link.append(posterShell);
-        }
-
         article.append(link);
 
         return article;
@@ -151,10 +132,12 @@ const initialEntries = entries.slice(0, pageSize);
 
           isComplete = !payload.hasMore || items.length < pageSize;
           sentinel.hidden = isComplete;
+          endState.hidden = !isComplete;
           if (isComplete) observer?.disconnect();
         } catch {
           isComplete = true;
           sentinel.hidden = true;
+          endState.hidden = false;
           observer?.disconnect();
         } finally {
           isLoading = false;

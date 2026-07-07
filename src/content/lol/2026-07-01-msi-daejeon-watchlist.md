@@ -11,8 +11,8 @@ cover: "/images/lol/2026-07-01-msi-daejeon-watchlist.webp"
 coverStatus: "generated_webp"
 tags: ["MSI2026", "LOL赛事", "大田", "BO5", "国际赛"]
 summary: "2026季中冠军赛已在韩国大田进行，赛程从6月28日持续到7月12日。当前阶段的关注点是各赛区队伍对版本节奏、换线处理和BO5准备质量的适应速度，而不是单一明星选手叙事。"
-source: "2026 Mid-Season Invitational 资料汇总"
-sourceUrl: "https://en.wikipedia.org/wiki/2026_Mid-Season_Invitational"
+source: "LoL Esports"
+sourceUrl: "https://lolesports.com/news/msi-2026-primer"
 reviewed: true
 priority: 88
 ---

@@ -1,6 +1,6 @@
 ---
 title: "法国 3-0 瑞典进入 16 强"
-subtitle: "Reuters 报道称，姆巴佩完成两粒进球"
+subtitle: "姆巴佩完成两粒进球"
 category: "worldcup"
 kind: "match_result"
 topic: "世界杯 2026 32强赛"
@@ -22,6 +22,6 @@ reviewed: true
 priority: 93
 ---
 
-Reuters 报道称，法国 3-0 战胜瑞典进入 16 强，Kylian Mbappé 完成两粒进球。
+法国 3-0 战胜瑞典进入 16 强，Kylian Mbappé 完成两粒进球。
 
 法国下一轮将面对巴拉圭，具体赛程以 FIFA 官方赛程为准。

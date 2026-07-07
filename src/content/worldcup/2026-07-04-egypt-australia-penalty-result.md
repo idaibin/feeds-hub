@@ -1,6 +1,6 @@
 ---
 title: "埃及点球战淘汰澳大利亚晋级 16 强"
-subtitle: "Reuters 报道称，埃及在 1-1 后通过点球大战 4-2 取胜"
+subtitle: "埃及在 1-1 后通过点球大战 4-2 取胜"
 category: "worldcup"
 kind: "match_result"
 topic: "世界杯 2026"
@@ -14,7 +14,7 @@ tags:
   - "埃及"
   - "澳大利亚"
   - "点球大战"
-summary: "Reuters 报道称，埃及点球大战淘汰澳大利亚，晋级世界杯 16 强。"
+summary: "埃及点球大战淘汰澳大利亚，晋级世界杯 16 强。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/penalties-taken-in-zone-put-egypt-world-cup-round-16-2026-07-03/"
 reviewed: true

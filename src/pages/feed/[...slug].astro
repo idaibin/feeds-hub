@@ -8,11 +8,6 @@ import {
     getDisplayTitle,
 } from "@/lib/feed-display";
 import { formatDate, getCategoryMeta } from "@/lib/feeds";
-import {
-    getFallbackCover,
-    getPosterRatioClass,
-    getResolvedCover,
-} from "@/lib/poster-display";
 
 export async function getStaticPaths() {
     const entries = await getCollection(
@@ -27,20 +22,6 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
-const fallbackCover = getFallbackCover(
-    entry.data.category,
-    entry.data.fallbackCover,
-);
-const cover = getResolvedCover(
-    entry.data.category,
-    entry.data.cover,
-    entry.data.coverStatus,
-    entry.data.fallbackCover,
-);
-const posterRatioClass = getPosterRatioClass(
-    entry.data.category,
-    entry.data.kind,
-);
 const title = getDisplayTitle(entry.data.title, entry.data.source);
 const subtitle = getDisplaySubtitle(entry.data.subtitle, entry.data.source, [
     title,
@@ -54,40 +35,40 @@ const summary = getDisplaySummary(
 const metaSummary = summary || subtitle;
 ---
 
-<BaseLayout
-    title={`${title}｜Feeds Hub`}
-    description={metaSummary || title}
->
+<BaseLayout title={`${title}｜Feeds Hub`} description={metaSummary || title}>
     <article
-        class={`content-panel feed-detail category-${entry.data.category} ${posterRatioClass}`}
+        class={`feed-detail category-${entry.data.category} mx-auto flex w-full max-w-[760px] flex-col self-start rounded-2xl border border-[var(--border)] bg-white/95 shadow-[var(--shadow-card)]`}
     >
-        <div class="detail-cover">
-            <img
-                src={cover}
-                alt=""
-                onerror={`this.onerror=null;this.src='${fallbackCover}';`}
-            />
-            <a class="category-chip" href={`/category/${category.id}/`}
-                >{category.shortName}</a
+        <div class="flex flex-none flex-col gap-4 p-4 md:p-6 md:pb-4">
+            <a
+                class="detail-category-link inline-flex max-w-full items-center gap-2 self-start overflow-hidden text-[13px] font-black leading-none text-[var(--accent)] no-underline"
+                href={`/category/${category.id}/`}
             >
-        </div>
-        <div class="detail-body">
-            <h1>{title}</h1>
-            <div class="markdown-body">
-                <FeedMarkdownBody
-                    body={entry.body}
-                    source={entry.data.source}
-                    title={title}
-                    subtitle={subtitle}
-                    summary={summary}
-                />
-            </div>
-            <p class="source-line">
-                <span class="source-meta">
+                <span class="h-2 w-2 shrink-0 rounded-full bg-current"></span>
+                <span class="truncate">{category.shortName}</span>
+            </a>
+            <h1
+                class="m-0 flex-none text-[clamp(30px,5vw,50px)] font-black leading-[1.08] tracking-normal text-feed-text"
+            >
+                {title}
+            </h1>
+            <FeedMarkdownBody
+                class="flex flex-col gap-2 text-[clamp(16px,2.3vw,22px)] leading-[1.8] text-feed-muted [&_a]:text-feed-primary-strong [&_code]:rounded-md [&_code]:bg-slate-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.92em] [&_h2]:m-0 [&_h2]:pt-2 [&_h2]:text-[22px] [&_h2]:font-extrabold [&_h2]:leading-tight [&_h3]:m-0 [&_h3]:pt-1 [&_h3]:text-lg [&_h3]:font-bold [&_li]:my-1 [&_p]:m-0 [&_strong]:font-extrabold [&_ul]:m-0 [&_ul]:pl-5"
+                body={entry.body}
+                source={entry.data.source}
+                title={title}
+                subtitle={subtitle}
+                summary={summary}
+            />
+            <p
+                class="m-0 flex w-full flex-none items-baseline justify-between gap-4 text-xs leading-normal text-feed-muted"
+            >
+                <span class="min-w-0">
                     来源：
                     {
                         entry.data.sourceUrl ? (
                             <a
+                                class="inline-flex items-center gap-1 text-feed-primary-strong no-underline"
                                 href={entry.data.sourceUrl}
                                 target="_blank"
                                 rel="noreferrer"
@@ -95,9 +76,8 @@ const metaSummary = summary || subtitle;
                                 <span>{entry.data.source ?? "查看原文"}</span>
                                 <svg
                                     aria-hidden="true"
+                                    class="h-3 w-3 shrink-0"
                                     viewBox="0 0 24 24"
-                                    width="12"
-                                    height="12"
                                 >
                                     <path d="M7 17L17 7" />
                                     <path d="M9 7h8v8" />
@@ -108,10 +88,12 @@ const metaSummary = summary || subtitle;
                         )
                     }
                 </span>
-
-                <time datetime={entry.data.eventAt.toISOString()}
-                    >{formatDate(entry.data.eventAt)}</time
+                <time
+                    class="shrink-0 whitespace-nowrap text-right font-mono"
+                    datetime={entry.data.eventAt.toISOString()}
                 >
+                    {formatDate(entry.data.eventAt)}
+                </time>
             </p>
         </div>
     </article>
@@ -120,11 +102,6 @@ const metaSummary = summary || subtitle;
 <style>
     .feed-detail {
         --accent: var(--primary);
-        width: min(100%, 820px);
-        margin: 8px auto 0;
-        overflow: hidden;
-        border-radius: 16px;
-        background: rgba(255, 255, 255, 0.96);
     }
 
     .feed-detail.category-worldcup {
@@ -167,164 +144,11 @@ const metaSummary = summary || subtitle;
         --accent: #db2777;
     }
 
-    .detail-cover {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-        border-radius: 16px 16px 0 0;
-        background: #0f172a;
-    }
-
-    .detail-cover img {
-        display: block;
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        overflow: hidden;
-        object-fit: cover;
-    }
-    .poster-ratio-4x5 .detail-cover img {
-        aspect-ratio: 4 / 5;
-    }
-    .detail-cover .category-chip {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        z-index: 2;
-        max-width: calc(100% - 32px);
-        overflow: hidden;
-        border-radius: 999px;
-        padding: 4px 8px;
-        color: var(--accent);
-        background: rgba(0, 0, 0, 0.8);
-        font-size: 13px;
-        font-weight: 950;
-        letter-spacing: 0;
-        line-height: 1.2;
-        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .detail-cover .category-chip::before {
-        content: "";
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        margin-right: 8px;
-        border-radius: 999px;
-        background: currentColor;
-        vertical-align: 1px;
-    }
-    .detail-body {
-        padding: 24px 24px 16px;
-    }
-    h1 {
-        max-width: 760px;
-        margin-bottom: 16px;
-        font-size: clamp(30px, 5vw, 50px);
-        line-height: 1.08;
-        letter-spacing: 0;
-    }
-    .markdown-body {
-        margin-top: 16px;
-        line-height: 1.8;
-    }
-    .markdown-body :global(p) {
-        margin: 0 0 16px;
-    }
-    .markdown-body :global(p:last-child) {
-        margin-bottom: 8px;
-    }
-    .markdown-body :global(h2) {
-        margin: 24px 0 8px;
-        font-size: 22px;
-        line-height: 1.28;
-        letter-spacing: 0;
-    }
-    .markdown-body :global(h3) {
-        margin: 16px 0 8px;
-        font-size: 18px;
-        line-height: 1.35;
-        letter-spacing: 0;
-    }
-    .markdown-body :global(ul) {
-        margin: 8px 0 16px;
-        padding-left: 1.25rem;
-    }
-    .markdown-body :global(li) {
-        margin: 4px 0;
-    }
-    .markdown-body :global(code) {
-        border-radius: 6px;
-        padding: 2px 4px;
-        background: #eef2f7;
-        font-family: var(--mono);
-        font-size: 0.92em;
-    }
-    .markdown-body :global(strong) {
-        font-weight: 850;
-    }
-    .markdown-body :global(a),
-    .source-line a {
-        color: var(--primary-strong);
-        text-decoration: underline;
-        text-underline-offset: 3px;
-    }
-    .source-line a {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        text-decoration: none;
-    }
-    .source-line svg {
-        flex: 0 0 auto;
+    svg {
         stroke: currentColor;
         stroke-width: 1.8;
         stroke-linecap: round;
         stroke-linejoin: round;
         fill: none;
-        opacity: 0.72;
-    }
-    .source-line {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 16px;
-        width: 100%;
-        margin: 16px 0 0;
-        padding-top: 16px;
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 1.5;
-    }
-    .source-meta {
-        min-width: 0;
-    }
-    .source-line time {
-        flex: 0 0 auto;
-        margin-left: auto;
-        font-family: var(--mono);
-        font-size: 12px;
-        text-align: right;
-        white-space: nowrap;
-    }
-    :global(main) {
-        padding-bottom: 16px;
-    }
-    @media (max-width: 640px) {
-        .feed-detail {
-            border-radius: 16px;
-        }
-        .detail-cover {
-            border-radius: 16px 16px 0 0;
-        }
-        .detail-body {
-            padding: 16px 16px 12px;
-        }
-        h1 {
-            margin-bottom: 16px;
-        }
-        .source-line {
-            gap: 8px;
-        }
     }
 </style>

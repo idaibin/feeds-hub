@@ -6,7 +6,7 @@
 
 - 适用于 `worldcup`、`lol` 和未来新增的赛事类 topic。
 - 1 feed = 1 match state, 1 player story, 1 bracket/path update, or 1 clearly bounded tournament event.
-- 官方赛事日先覆盖硬事实：赛程、进行中状态、赛果、晋级、淘汰、下一轮关系；完成后才写话题、热度或背景内容。
+- 官方赛事日先覆盖硬事实：赛前一天必须有预告，当天必须有赛程或进行中状态，赛后必须有赛果、晋级、淘汰和下一轮关系；完成后才写话题、热度或背景内容。
 
 ## Shared Kinds
 
@@ -25,6 +25,8 @@ For each official match in the task window, check whether the latest official st
 - `match_schedule` may be followed later by `match_flow`.
 - `match_schedule` or `match_flow` may be followed later by `match_result`.
 - A completed official match should produce `match_result` even if a previous `match_schedule` feed already exists.
+- For scheduled official matches, create or keep a `match_schedule` preview no later than the previous calendar day in the event venue timezone when the fixture is known.
+- On match day, create `match_flow` only when an official live/in-progress state, postponement, pause, remake, walkover, or other state change is verified; otherwise keep the latest `match_schedule` as the current state until a result is confirmed.
 - A bracket-changing result may also produce a separate `knockout_update` when the path, next opponent, elimination, or final route is the main event.
 - Do not force all states in one run; do not skip a newer verified state because an older state already exists.
 
@@ -70,6 +72,7 @@ Do not skip a verified match update only because:
 ## Source Rules
 
 - Hard facts must come from official schedule, official match center, official results, official standings/stage pages, official embedded match data, official statements, or an allowed authoritative reporting source for that topic.
+- `source` must be the short publisher name that matches `sourceUrl`; keep tournament names, stage names, and source-comparison notes in `topic`, `tags`, or body text instead of the source display field.
 - Community and Chinese sports/esports sites may supplement player evaluation, local context, fan reaction, discussion heat, social mood, or poster atmosphere.
 - Community discussion, comments, hot takes, and social reactions cannot override score, schedule, winner, match status, advancement, lineup, roster, or next-round relationships.
 - If official pages are dynamic, inspect embedded official data before skipping. Do not rely only on the page title, meta description, old feed text, or visible shell content.

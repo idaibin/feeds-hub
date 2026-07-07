@@ -15,7 +15,7 @@ tags:
   - "西班牙"
   - "奥地利"
 summary: "西班牙与奥地利的32强淘汰赛将在北京时间7月3日03:00开球，胜者进入16强，洛杉矶赛场关注度较高。"
-source: "World Cup Round of 32 schedule"
+source: "SB Nation"
 sourceUrl: "https://www.sbnation.com/soccer/1120771/world-cup-schedule-scores-round-32"
 reviewed: true
 priority: 96

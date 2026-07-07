@@ -10,8 +10,8 @@
 
 - 从公开、可核验来源获取新信息。
 - 每条 feed 只描述一个独立事件。
-- 生成 Markdown 内容。
-- 为每条新增 feed 尝试生成真实 WebP 海报。
+- 生成信息准确、正文完整的 Markdown 内容。
+- 默认隐藏海报生成；图片只在用户明确要求或维护 `content/generate-posters` 时处理。
 - 通过 GitHub 写入内容分支。
 - 验证产物后 squash 合并到 `main`。
 - 不创建 PR。
@@ -23,6 +23,7 @@
 - 不创建空提交。
 - 不混合多个事件到一条 feed。
 - 不使用历史记忆替代本文件。
+- 不因海报缺失阻塞已核验文本发布。
 - 不把未验证图片标记为 `generated_webp`。
 - 不写入 SVG、PNG、HTML 截图、Canvas、CSS 绘图或 data URL 作为主封面。
 - 不把 fallback、模板占位图、重复图、空白图、错误比例图或带 prompt 痕迹的图片标记为成功海报。
@@ -36,7 +37,6 @@
 - `docs/topics/*.md`，读取全部 topic frontmatter，排除 `README.md`。
 - topic frontmatter 中每个 `flows` 对应的 `docs/types/<flow>.md`。
 - 现有 `src/content/<category>/`，用于去重。
-- 现有 `public/images/<category>/`，用于避免覆盖非本轮资产。
 
 可以读取其它仓库文件辅助理解当前站点，但本文件是定时任务规则入口。
 
@@ -46,7 +46,8 @@
 - 内容分支名：`content/feeds-hub-update-<yyyyMMdd-HHmm>`。
 - 同一轮任务只使用一个内容分支。
 - 如果同名分支已存在，读取该分支最新 `HEAD` 并在其基础上继续，不覆盖已有提交。
-- 所有 Markdown 和 WebP 先写内容分支。
+- 内容分支只写 Markdown。
+- 图片生成分支固定保留为 `content/generate-posters`；主流程不得删除该分支。
 - 只有本轮产物验证通过后，才 squash 合并到 `main`。
 - squash commit message：`content: update feeds <yyyyMMdd-HHmm>`。
 - 推送 `main` 后删除已合并内容分支，并刷新远端分支列表。
@@ -75,7 +76,7 @@ allowedKinds: []
 1. 遍历全部 topic 配置。
 2. 对每个 topic 读取 `flows` 中的全部 `docs/types/<flow>.md`。
 3. 按 topic `sources` 搜索、读取和核实信息。
-4. 先写已核验文本 feed，再尝试海报。
+4. 写入已核验文本 feed；默认不生成海报。
 5. 对每个 topic 报告新增、跳过或待补原因。
 
 ## Discovery And Deduplication
@@ -83,6 +84,8 @@ allowedKinds: []
 每个 topic 默认最多新增 1 到 3 条，高质量优先。无合格信息则跳过，但必须报告跳过原因。
 
 `flows` 包含 `sports` 的 topic 在官方赛事日不受 1 到 3 条上限限制：必须先完整检查官方赛程、官方比赛中心、官方赛果、standings/stage 页面和页面内嵌官方数据，覆盖任务窗口内每场已验证的赛程、进行中状态或赛果；完成这些赛事硬事实后，才选择其它新闻或话题内容。
+
+赛事状态覆盖是硬要求：比赛前一天必须有 `match_schedule` 预告；比赛当天必须有最新赛程状态，若官方数据提供 live/in-progress、暂停、延期、重赛、walkover 或其它状态变化则补 `match_flow`；比赛结束后必须补 `match_result`，并写明已核验的比分、胜负、晋级、淘汰和下一轮关系。已有赛前稿不能阻止赛后结果稿，已有同源 stage 页面不能阻止同日其它比赛。
 
 信息类型规则以 `docs/types/*.md` 为准；topic 文件只补充来源、目录、kind 和少量特有差异。
 
@@ -137,36 +140,29 @@ priority: 90
 ---
 ```
 
-正文默认 2 段，最多 3 段，直接写段落，不要使用 `## 关键信息`、`## 视觉重点`、`returns`、prompt 字段名、YAML/JSON 字段名或模板说明作为正文内容：
+正文默认 3 到 5 段，直接写自然段，不要使用 `## 关键信息`、`## 视觉重点`、`returns`、prompt 字段名、YAML/JSON 字段名或模板说明作为正文内容：
 
 - 第一段写已核验事实。
 - 第二段写当前状态、下一步、市场情绪、赛程节点、影响范围或待确认信息。
-- 第三段只在需要说明来源差异或未确认范围时使用。
+- 第三段写来源中可核验的背景、时间线、关键数据、下一步或限制条件。
+- 第四到第五段只在来源提供更多事实、需要说明来源差异、未确认范围或已排期节点时使用。
 
 禁止标题党、预测、投资建议、赛事预测、夸大判断、无来源路线图和社交热度当事实。
 
-## Poster Profile
+## Hidden Poster Branch
 
-先根据 category、kind 和结构化输入选择 profile：
+主流程默认不生成、不验收、不展示图片。Markdown 仍保留 `cover` 和 `coverStatus` 字段以兼容 schema；没有已验收图片时写：
 
-```text
-if topic flows does not include sports and kind is not sports-like:
-  profile = default
-else if kind is knockout_update or worldcup_feed or input contains paths/bracket/multiple matches:
-  profile = sports_bracket
-else:
-  profile = sports_card
+```yaml
+cover: "/images/<category>/<yyyy-mm-dd>-<slug>.webp"
+coverStatus: "pending"
 ```
 
-Profile 映射：
-
-- `default`：非体育新闻、AI、股市、开发、政策、产品、全球、Rust、安全、compute，16:9。
-- `sports_card`：单场赛程、单场前瞻、单场进度、单场结果、足球赛果、LOL BO5 赛果，4:5。
-- `sports_bracket`：淘汰图、晋级路径、多场比赛进度、上下半区、决赛路径，16:9。
+只有用户明确要求生成图片，或任务目标是维护 `content/generate-posters` 时，才读取 `docs/posters/README.md`、对应 `docs/posters/<profile>.md`、`docs/posters/visual-hierarchy.md` 和 `docs/posters/quality-gate.md`。图片分支产物不得自动同步回 `main`；同步前必须由用户确认。
 
 ## Poster Input
 
-图片生成只接收最终结构化 facts，不读取原始新闻全文来编造事实。
+仅在图片分支启用。图片生成只接收最终结构化 facts，不读取原始新闻全文来编造事实。
 
 基础输入：
 
@@ -227,7 +223,7 @@ paths: []
 
 ## Poster Generation
 
-每条新增 feed 都必须尝试生成真实 WebP 海报，除非当前环境明确无法生成图片。
+仅在图片分支启用。主流程必须跳过本节。
 
 生成图片前必须读取 `docs/posters/README.md`、对应 `docs/posters/<profile>.md`、`docs/posters/visual-hierarchy.md` 和 `docs/posters/quality-gate.md`。图片输入必须来自结构化 facts 和压缩后的视觉层级，不要把原始新闻全文、网页全文或长 Markdown 直接交给图片模型。
 
@@ -252,6 +248,8 @@ Markdown `cover` 写入：
 必须生成真实 WebP 二进制。WebP blob 可用 base64 写入 GitHub，但禁止 `data:image/webp;base64,` 前缀进入文件或 frontmatter。
 
 ## Visual Acceptance
+
+仅在图片分支启用。主流程必须跳过本节，并保持 `coverStatus: "pending"`。
 
 只有全部满足时，才允许：
 
@@ -292,12 +290,9 @@ coverStatus: "pending"
 1. 读取目标分支最新 `HEAD` commit 和 tree。
 2. 创建或继续内容分支。
 3. 用 blob/tree/commit/ref 写 Markdown。
-4. 图片成功时写 WebP blob，并同步 Markdown `coverStatus: "generated_webp"`。
-5. 图片失败时写 Markdown，`coverStatus: "pending"`。
-6. WebP blob 使用 base64，禁止 data URL 前缀。
-7. 每次写入后重新读取本轮 Markdown 和 WebP，确认路径、frontmatter、二进制、尺寸和视觉验收结论。
+4. 重新读取本轮 Markdown，确认路径、frontmatter、正文完整性、来源和去重结果。
 
-Markdown 和图片允许分步提交，但最终合并前必须报告每条的图片状态。
+Markdown 和图片分离提交。主流程只写 Markdown；图片只写入 `content/generate-posters` 或用户指定的图片分支。图片成功后是否同步回 `main` 需要用户明确确认。
 
 ## Merge Gate
 
@@ -307,8 +302,8 @@ Markdown 和图片允许分步提交，但最终合并前必须报告每条的�
 - frontmatter 符合 schema。
 - `eventKey` 和 `sourceUrl` 去重完成。
 - 每条 feed 都有 `coverStatus`。
-- 每条 `generated_webp` 都有 WebP 验收证据。
-- 每条 `pending` 都有明确 `pendingReason`。
+- 每条正文符合 3 到 5 段优先的信息完整性要求，来源没有更多可核验事实被无故遗漏。
+- `coverStatus: generated_webp` 只允许出现在已有图片分支验收证据并经用户确认同步的内容中。
 - `main` 与 `origin/main` 同步。
 
 不满足任一条件时，不推送 `main`，保留内容分支并报告失败点。
@@ -339,18 +334,13 @@ markdownPath:
 posterProfile:
 cover:
 coverStatus:
-qualityGate: passed | failed | skipped
-imageGenerationCalled: yes/no
-webpWritten: yes/no
-webpBytes:
-webpDimensions:
-visualAccepted: yes/no
-pendingReason:
+bodySupplement:
+imageGeneration: skipped | branch-only | synced-after-confirmation
 branch:
 commit:
 ```
 
-如果报告缺少 `qualityGate`、`imageGenerationCalled`、`webpWritten`、`webpBytes`、`webpDimensions`、`visualAccepted` 或 `pendingReason`，本次任务视为未完成。
+如果报告缺少正文补充范围、图片生成状态或内容验证结论，本次任务视为未完成。
 
 ## Failure Report
 

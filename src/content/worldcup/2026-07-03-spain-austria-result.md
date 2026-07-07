@@ -1,6 +1,6 @@
 ---
 title: "西班牙 3-0 击败奥地利晋级 16 强"
-subtitle: "Reuters 与 El País 赛况显示，Oyarzabal 梅开二度，Porro 也取得进球"
+subtitle: "Oyarzabal 梅开二度，Porro 也取得进球"
 category: "worldcup"
 kind: "match_result"
 topic: "西班牙 3-0 奥地利"
@@ -15,13 +15,13 @@ tags:
   - "西班牙"
   - "奥地利"
   - "赛果"
-summary: "Reuters 与 El País 赛况显示，西班牙 3-0 击败奥地利并晋级 16 强。"
-source: "Reuters / El País"
+summary: "西班牙 3-0 击败奥地利并晋级 16 强。"
+source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/spain-sweep-aside-austria-3-0-reach-world-cup-last-16-2026-07-02/"
 reviewed: true
 priority: 98
 ---
 
-比赛状态：已结束。Reuters 与 El País 赛况显示，西班牙在世界杯 32 强战中 3-0 击败奥地利；Mikel Oyarzabal 梅开二度，Pedro Porro 也取得进球，西班牙晋级 16 强，奥地利出局。
+西班牙在世界杯 32 强战中 3-0 击败奥地利；Mikel Oyarzabal 梅开二度，Pedro Porro 也取得进球，西班牙晋级 16 强，奥地利出局。
 
-当前赛程节点：西班牙下一轮对阵葡萄牙。比赛时间按洛杉矶当地时间记录，原始赛程为 7 月 2 日 12:00 PDT。
+西班牙下一轮对阵葡萄牙。比赛时间按洛杉矶当地时间记录，原始赛程为 7 月 2 日 12:00 PDT。

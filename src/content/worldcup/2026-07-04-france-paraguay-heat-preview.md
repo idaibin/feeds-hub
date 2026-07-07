@@ -1,6 +1,6 @@
 ---
 title: "法国与巴拉圭 16 强赛面临高温考验"
-subtitle: "Reuters 报道称，比赛将在费城 5 p.m. ET 开球，赛前预报接近 38°C"
+subtitle: "比赛将在费城 5 p.m. ET 开球，赛前预报接近 38°C"
 category: "worldcup"
 kind: "match_schedule"
 topic: "2026 世界杯 16 强赛"
@@ -15,7 +15,7 @@ tags:
   - "世界杯"
   - "16强"
   - "高温"
-summary: "Reuters 报道称，法国对巴拉圭的 16 强赛将在费城高温和高湿环境下进行。"
+summary: "法国对巴拉圭的 16 强赛将在费城高温和高湿环境下进行。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/deschamps-warns-extreme-heat-could-test-france-against-paraguay-in-last-16-2026-07-03/"
 reviewed: true

@@ -5,6 +5,6 @@ import { getAllFeeds } from '@/lib/feeds';
 
 const feeds = await getAllFeeds();
 ---
-<BaseLayout title="Feeds Hub" description="全部中文资讯聚合。">
+<BaseLayout title="Feeds Hub" description="全部中文资讯聚合。" hideFooter>
   <FeedList entries={feeds} ariaLabel="全部信息" listId="all" />
 </BaseLayout>

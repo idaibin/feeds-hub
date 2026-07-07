@@ -8,7 +8,7 @@ date: "2026-07-07T09:00:26+08:00"
 eventAt: "2026-07-06T22:56:00Z"
 eventKey: "worldcup:match_flow:united-states-belgium:last16:lineups-balogun-start:2026-07-06"
 cover: "/images/worldcup/2026-07-07-us-belgium-balogun-lineup.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "世界杯"
   - "美国队"

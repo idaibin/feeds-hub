@@ -15,7 +15,7 @@ tags:
   - "瑞士"
   - "阿尔及利亚"
 summary: "瑞士与阿尔及利亚的32强淘汰赛将在北京时间7月3日11:00开球，比赛地位于温哥华，胜者进入16强。"
-source: "World Cup Round of 32 schedule"
+source: "SB Nation"
 sourceUrl: "https://www.sbnation.com/soccer/1120771/world-cup-schedule-scores-round-32"
 reviewed: true
 priority: 95

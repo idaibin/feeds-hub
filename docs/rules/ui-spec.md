@@ -7,9 +7,9 @@ Feeds Hub 页面和组件展示规则。内容格式看 `content-format.md`，�
 - 移动端优先。
 - 信息密度、可读性和触达效率优先于装饰。
 - 1 feed = 1 event。
-- 卡片不重复海报内容，详情页完整展开。
-- 页面读取 frontmatter `cover`；图片缺失时使用组件 fallback，不阻塞内容发布。
-- 同一断点内 card 宽度统一，内容高度可随海报比例自适应。
+- 列表和详情都以文字信息为主，不展示 feed 海报。
+- frontmatter `cover` 只保留 schema 兼容和图片分支资产引用，不作为 main 页面展示契约。
+- 同一断点内 card 宽度统一，内容高度由文本自然撑开。
 
 ## Color Tokens
 
@@ -50,7 +50,7 @@ Rules:
 ## Flow
 
 ```text
-task entry -> topic config -> type rule -> kind -> poster profile -> cover path -> page reads cover or text-only fallback
+task entry -> topic config -> type rule -> kind -> Markdown -> page renders text-first feed
 ```
 
 职责：
@@ -58,8 +58,8 @@ task entry -> topic config -> type rule -> kind -> poster profile -> cover path 
 - `docs/automation/feeds-hub-update.md`：任务计划、topic 遍历、分支、写入、验证、合并和清理。
 - `docs/topics/<category>.md`：主题 YAML 配置、信息类型、来源、`kind`、存储目录和路径。
 - `docs/types/<flow>.md`：信息生成、去重、来源核实和正文规则。
-- `docs/posters/README.md`：poster profile 选择、比例、尺寸、格式、pending cover 和图片禁止项。
-- `docs/posters/<profile>.md`：`default`、`sports_card`、`sports_bracket` 的具体 prompt。
+- `docs/posters/README.md`：仅在图片分支启用，定义 poster profile、比例、尺寸、格式、pending cover 和图片禁止项。
+- `docs/posters/<profile>.md`：仅在图片分支启用，定义 `default`、`sports_card`、`sports_bracket` 的具体 prompt。
 
 ## Header
 
@@ -90,26 +90,19 @@ task entry -> topic config -> type rule -> kind -> poster profile -> cover path 
 - 同一行 card 等宽，PC 等宽网格，窄屏单列。
 - 首页、分类页、详情入口视觉语言一致。
 - 不按横图、竖图、主题或内容类型分配不同宽度。
-- 卡片文本优先。标题、摘要、时间和分类先于图片；来源不在卡片显示。
-- `coverStatus: generated_webp` 时图片作为小型辅助缩略图显示。
-- `coverStatus: pending` 时不显示 fallback 大图，走纯文本卡片。
-- Cover 状态是展示契约：列表页 `pending` 等于 text-only，列表页 `generated_webp` 才允许辅助缩略图，详情页可以使用 fallback 承接海报区域。
-- PC 端有图卡片采用左文右图；移动端有图卡片采用海报在上、正文在下；无图卡片直接显示正文。
-- 图片比例由 poster profile 推导；映射和尺寸要求见 `docs/posters/README.md`。
-- `default` 和 `sports_bracket` 使用 `16:9`；`sports_card` 使用 `4:5`，但列表页不再自动 poster-only。
-- 禁止 `1:1` 主封面。
-- CSS 只负责容器比例、裁切、响应式和交互状态。
-- 右上角 tag 使用半透明黑底、彩色点和分类文字。
+- 卡片文本优先，只展示标题、摘要、时间和分类；来源不在卡片显示。
+- 列表页忽略 `cover` 和 `coverStatus`，不显示缩略图、fallback 大图或 poster-only 变体。
+- PC 和移动端都使用纯文本卡片；CSS 只负责文本排版、响应式和交互状态。
+- 分类 tag 使用文字与彩色点，不依赖图片覆盖层。
 
 ## Detail Page
 
-详情页沿用 Card Shell 语言：
+详情页沿用文本优先语言：
 
-1. 顶部海报。
-2. 海报右上角 tag。
-3. 海报下方标题。
-4. subtitle、summary、正文。
-5. 主体居中，最大宽度 `960px`。
+1. 分类 tag。
+2. 标题。
+3. subtitle、summary、正文。
+4. 主体居中，最大宽度 `960px`。
 
 ## Kind Map
 
@@ -158,12 +151,11 @@ Map requirements:
 
 ## Images
 
-- 页面读取 frontmatter `cover`。
-- 图片缺失时使用组件 fallback。
-- 列表页 pending cover 不显示 fallback 大图；详情页仍可使用 fallback 承接海报区域。
-- 品牌、分类或状态标识只能由组件或 CSS 覆盖层承载，不能烘焙进图片；来源只在详情正文最后显示。
-- 海报 profile、格式、尺寸、pending cover 和通用禁止项以 `docs/posters/README.md` 为准；具体提示词以 `docs/posters/<profile>.md` 为准。
-- 分支、提交、二进制写入仓库和合并统一以 `docs/automation/feeds-hub-update.md` 为准。
+- main 页面不读取、不展示 feed `cover`。
+- `cover` 和 `coverStatus` 只用于 schema 兼容、历史内容和图片分支资产管理。
+- 列表页和详情页都不显示 fallback 大图、缩略图或海报区域。
+- 图片分支的 profile、格式、尺寸、pending cover 和通用禁止项以 `docs/posters/README.md` 为准；具体提示词以 `docs/posters/<profile>.md` 为准。
+- 图片分支、提交、二进制写入仓库和同步到 main 的确认流程以 `docs/automation/feeds-hub-update.md` 为准。
 
 ## Forbidden
 
@@ -171,5 +163,5 @@ Map requirements:
 - PPT 风。
 - 重复装饰。
 - 卡片宽度按主题变化。
-- 海报与卡片正文重复表达同一段信息。
-- 违反 `docs/posters/README.md` 或 `docs/posters/<profile>.md` 的主封面、生成或 fallback 规则。
+- 列表或详情展示 feed 海报、缩略图、fallback 大图或 poster-only 变体。
+- 未经用户确认把图片分支产物同步为 main 页面展示能力。

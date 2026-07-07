@@ -2,7 +2,6 @@
 import type { CollectionEntry } from 'astro:content';
 import { formatDate, getCategoryMeta } from '@/lib/feeds';
 import { getDisplaySummary, getDisplayTitle } from '@/lib/feed-display';
-import { getFallbackCover, getPosterRatioClass } from '@/lib/poster-display';
 
 interface Props {
   entry: CollectionEntry<'feeds'>;
@@ -10,13 +9,10 @@ interface Props {
 const { entry } = Astro.props;
 const category = getCategoryMeta(entry.data.category);
 const href = `/feed/${entry.id}/`;
-const fallbackCover = getFallbackCover(entry.data.category, entry.data.fallbackCover);
-const posterRatioClass = getPosterRatioClass(entry.data.category, entry.data.kind);
-const hasGeneratedCover = entry.data.coverStatus === 'generated_webp';
 const title = getDisplayTitle(entry.data.title, entry.data.source);
 const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
 ---
-<article class:list={['feed-card', `category-${entry.data.category}`, posterRatioClass, { 'has-cover': hasGeneratedCover }]} data-feed-card>
+<article class:list={['feed-card', `category-${entry.data.category}`]} data-feed-card>
   <a class="card-link" href={href} aria-label={title}>
     <div class="feed-body">
       <div class="feed-meta">
@@ -26,11 +22,6 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
       <h2>{title}</h2>
       {summary && <p class="summary">{summary}</p>}
     </div>
-    {hasGeneratedCover && (
-      <div class="poster-shell" aria-hidden="true">
-        <img src={entry.data.cover} alt="" loading="lazy" data-cover-image onerror={`this.onerror=null;this.src='${fallbackCover}';`} />
-      </div>
-    )}
   </a>
 </article>
 
@@ -98,38 +89,11 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
   .feed-card .card-link {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
+    gap: 8px;
     min-height: 0;
-    padding: 16px;
+    padding: 12px;
     color: inherit;
     text-decoration: none;
-  }
-
-  .feed-card.has-cover .card-link {
-    grid-template-columns: minmax(0, 1fr) clamp(112px, 28%, 168px);
-    align-items: stretch;
-  }
-
-  .feed-card .poster-shell {
-    display: block;
-    position: relative;
-    align-self: stretch;
-    min-height: 124px;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #0f172a;
-  }
-
-  .feed-card.poster-ratio-4x5 .poster-shell {
-    aspect-ratio: 4 / 5;
-  }
-
-  .feed-card .poster-shell img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
   }
 
   .feed-card .feed-body {
@@ -173,7 +137,7 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     gap: 8px;
     min-width: 0;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     color: var(--muted);
     font-size: 12px;
     line-height: 1.5;
@@ -222,24 +186,9 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     .feed-card .card-link {
       grid-template-columns: minmax(0, 1fr);
       min-height: 0;
-      padding: 14px;
+      padding: 12px;
     }
 
-    .feed-card.has-cover .card-link {
-      grid-template-columns: minmax(0, 1fr);
-      min-height: 0;
-      padding: 14px;
-    }
-
-    .feed-card .poster-shell {
-      order: -1;
-      align-self: start;
-      width: 100%;
-      min-height: auto;
-      aspect-ratio: 16 / 9;
-    }
-
-    .feed-card.poster-ratio-4x5 .poster-shell { aspect-ratio: 16 / 9; }
     .feed-card h2 { font-size: 18px; }
     .feed-card .summary { font-size: 14px; -webkit-line-clamp: 3; }
     .feed-card .feed-meta { gap: 6px 8px; }

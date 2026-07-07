@@ -8,7 +8,7 @@ date: "2026-07-07T03:59:00+08:00"
 eventAt: "2026-07-06T17:55:50Z"
 eventKey: "worldcup:match_flow:portugal-spain:last16:lineups:2026-07-06"
 cover: "/images/worldcup/2026-07-06-portugal-spain-lineups.webp"
-coverStatus: "pending"
+coverStatus: "generated_webp"
 tags:
   - "葡萄牙"
   - "西班牙"

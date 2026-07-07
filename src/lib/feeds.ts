@@ -15,21 +15,115 @@ export const CATEGORIES = [
 
 export type CategoryId = (typeof CATEGORIES)[number]['id'];
 
+export const FEED_GROUPS = [
+  {
+    id: 'realtime',
+    name: '实时性',
+    shortName: '实时性',
+    description: '聚合 AI、股市、科技、开发、安全、产品和全球重点等高时效信息。',
+    categories: ['ai', 'stock', 'compute', 'rust', 'dev', 'security', 'product', 'global']
+  },
+  {
+    id: 'sports',
+    name: '赛事',
+    shortName: '赛事',
+    description: '聚合世界杯、LOL 等赛事赛程、进展、结果和焦点事件。',
+    categories: ['worldcup', 'lol']
+  }
+] as const;
+
+export const FEED_TOPIC_GROUPS = [
+  {
+    id: 'ai',
+    name: 'AI',
+    shortName: 'AI',
+    description: '聚合 AI 科技、模型、芯片、数据中心与基础设施动态。',
+    categories: ['ai', 'compute']
+  },
+  {
+    id: 'dev',
+    name: '开发者',
+    shortName: '开发者',
+    description: '聚合 GitHub、Rust、开源项目、工程工具、前端框架和开发者生态动态。',
+    categories: ['dev', 'rust']
+  }
+] as const;
+
+export const PRIMARY_FEED_NAV = [
+  { id: 'all', href: '/', label: '全部' },
+  { id: 'ai', href: '/category/ai/', label: 'AI' },
+  { id: 'stock', href: '/category/stock/', label: '股市' },
+  { id: 'dev', href: '/category/dev/', label: '开发者' },
+  { id: 'global', href: '/category/global/', label: '全球重点' },
+  { id: 'worldcup', href: '/category/worldcup/', label: '世界杯' },
+  { id: 'lol', href: '/category/lol/', label: 'LOL' }
+] as const;
+
 export function getCategoryMeta(category: string) {
   return CATEGORIES.find((item) => item.id === category) ?? CATEGORIES[0];
 }
 
 export async function getAllFeeds() {
   const feeds = await getCollection('feeds', ({ data }) => data.reviewed === true);
+  const now = Date.now();
+  const sportsCategories = new Set<string>(
+    FEED_GROUPS.find((group) => group.id === 'sports')?.categories ?? []
+  );
+  const isFutureSportsEvent = (entry: (typeof feeds)[number]) =>
+    sportsCategories.has(entry.data.category) && entry.data.eventAt.getTime() > now;
+
   return feeds.sort((a, b) => {
-    const timeDelta = b.data.date.getTime() - a.data.date.getTime();
-    if (timeDelta !== 0) return timeDelta;
-    return b.data.priority - a.data.priority;
+    const aFutureSportsEvent = isFutureSportsEvent(a);
+    const bFutureSportsEvent = isFutureSportsEvent(b);
+
+    if (aFutureSportsEvent !== bFutureSportsEvent) {
+      return Number(aFutureSportsEvent) - Number(bFutureSportsEvent);
+    }
+
+    if (aFutureSportsEvent && bFutureSportsEvent) {
+      const eventDelta = a.data.eventAt.getTime() - b.data.eventAt.getTime();
+      if (eventDelta !== 0) return eventDelta;
+    } else {
+      const eventDelta = b.data.eventAt.getTime() - a.data.eventAt.getTime();
+      if (eventDelta !== 0) return eventDelta;
+    }
+
+    const priorityDelta = b.data.priority - a.data.priority;
+    if (priorityDelta !== 0) return priorityDelta;
+
+    const dateDelta = b.data.date.getTime() - a.data.date.getTime();
+    if (dateDelta !== 0) return dateDelta;
+
+    return a.id.localeCompare(b.id);
   });
 }
 
 export function getFeedsByCategory(feeds: Awaited<ReturnType<typeof getAllFeeds>>, category: string) {
   return feeds.filter((entry) => entry.data.category === category);
+}
+
+export function getFeedGroupMeta(group: string) {
+  return FEED_GROUPS.find((item) => item.id === group);
+}
+
+export function getFeedTopicMeta(topic: string) {
+  return FEED_TOPIC_GROUPS.find((item) => item.id === topic);
+}
+
+export function getFeedsByList(feeds: Awaited<ReturnType<typeof getAllFeeds>>, list: string) {
+  if (list === 'all') return feeds;
+
+  const topic = getFeedTopicMeta(list);
+  if (topic) {
+    return feeds.filter((entry) => topic.categories.includes(entry.data.category as never));
+  }
+
+  const group = getFeedGroupMeta(list);
+  if (group) {
+    return feeds.filter((entry) => group.categories.includes(entry.data.category as never));
+  }
+
+  return getFeedsByCategory(feeds, list);
 }
 
 export function formatDate(value: Date) {
