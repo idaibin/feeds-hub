@@ -33,13 +33,16 @@ export function getFeedsByCategory(feeds: Awaited<ReturnType<typeof getAllFeeds>
 }
 
 export function formatDate(value: Date) {
-  return new Intl.DateTimeFormat('zh-CN', {
+  const parts = new Intl.DateTimeFormat('zh-CN', {
     timeZone: 'Asia/Shanghai',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false
-  }).format(value);
+    hourCycle: 'h23'
+  }).formatToParts(value);
+
+  const getPart = (type: Intl.DateTimeFormatPartTypes) => parts.find((part) => part.type === type)?.value ?? '';
+  return `${getPart('year')}-${getPart('month')}-${getPart('day')} ${getPart('hour')}:${getPart('minute')}`;
 }

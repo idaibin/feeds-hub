@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { formatDate, getCategoryMeta } from '@/lib/feeds';
-import { getDisplaySummary } from '@/lib/feed-display';
+import { getDisplaySummary, getDisplayTitle } from '@/lib/feed-display';
 import { getFallbackCover, getPosterRatioClass } from '@/lib/poster-display';
 
 interface Props {
@@ -13,16 +13,17 @@ const href = `/feed/${entry.id}/`;
 const fallbackCover = getFallbackCover(entry.data.category, entry.data.fallbackCover);
 const posterRatioClass = getPosterRatioClass(entry.data.category, entry.data.kind);
 const hasGeneratedCover = entry.data.coverStatus === 'generated_webp';
-const summary = getDisplaySummary(entry.data.summary, entry.data.title, entry.data.source);
+const title = getDisplayTitle(entry.data.title, entry.data.source);
+const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
 ---
 <article class:list={['feed-card', `category-${entry.data.category}`, posterRatioClass, { 'has-cover': hasGeneratedCover }]} data-feed-card>
-  <a class="card-link" href={href} aria-label={entry.data.title}>
+  <a class="card-link" href={href} aria-label={title}>
     <div class="feed-body">
       <div class="feed-meta">
         <span class="category-chip">{category.shortName}</span>
         <time datetime={entry.data.eventAt.toISOString()}>{formatDate(entry.data.eventAt)}</time>
       </div>
-      <h2>{entry.data.title}</h2>
+      <h2>{title}</h2>
       {summary && <p class="summary">{summary}</p>}
     </div>
     {hasGeneratedCover && (
@@ -168,8 +169,10 @@ const summary = getDisplaySummary(entry.data.summary, entry.data.title, entry.da
   .feed-card .feed-meta {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
     min-width: 0;
+    width: 100%;
     margin-bottom: 10px;
     color: var(--muted);
     font-size: 12px;
@@ -178,8 +181,11 @@ const summary = getDisplaySummary(entry.data.summary, entry.data.title, entry.da
 
   .feed-card .feed-meta time {
     flex: 0 0 auto;
+    margin-left: auto;
     font-family: var(--mono);
     font-size: 11px;
+    text-align: right;
+    white-space: nowrap;
   }
 
   .feed-card h2 {
@@ -236,6 +242,6 @@ const summary = getDisplaySummary(entry.data.summary, entry.data.title, entry.da
     .feed-card.poster-ratio-4x5 .poster-shell { aspect-ratio: 16 / 9; }
     .feed-card h2 { font-size: 18px; }
     .feed-card .summary { font-size: 14px; -webkit-line-clamp: 3; }
-    .feed-card .feed-meta { flex-wrap: wrap; gap: 6px 8px; }
+    .feed-card .feed-meta { gap: 6px 8px; }
   }
 </style>

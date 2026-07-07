@@ -1,5 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
-import { getDisplaySummary } from '@/lib/feed-display';
+import { getDisplaySummary, getDisplayTitle } from '@/lib/feed-display';
 import { formatDate, getCategoryMeta } from '@/lib/feeds';
 import { getFallbackCover, getPosterRatioClass } from '@/lib/poster-display';
 
@@ -22,14 +22,15 @@ export interface FeedCardData {
 export function toFeedCardData(entry: CollectionEntry<'feeds'>): FeedCardData {
   const category = getCategoryMeta(entry.data.category);
   const fallbackCover = getFallbackCover(entry.data.category, entry.data.fallbackCover);
+  const title = getDisplayTitle(entry.data.title, entry.data.source);
 
   return {
     id: entry.id,
     href: `/feed/${entry.id}/`,
     category: entry.data.category,
     categoryShortName: category.shortName,
-    title: entry.data.title,
-    summary: getDisplaySummary(entry.data.summary, entry.data.title, entry.data.source),
+    title,
+    summary: getDisplaySummary(entry.data.summary, title, entry.data.source),
     cover: entry.data.cover,
     fallbackCover,
     coverStatus: entry.data.coverStatus,
