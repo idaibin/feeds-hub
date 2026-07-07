@@ -83,4 +83,5 @@ Do not skip a verified match update only because:
 - First paragraph: verified status, fixture, time, score, state, official fact, or key match event.
 - Second paragraph: stage, next match, next round, group/bracket relation, advancement, elimination, current confirmation scope, or pending detail.
 - Optional third paragraph: fact conflict, unavailable fine detail, postponed/cancelled/remake context, or verified scheduling caveat.
+- Title, summary, subtitle, and first paragraph must not be near-duplicates; summary should add stage, next opponent, verified score detail, kickoff context, or confirmation scope not already in the title.
 - No prediction, hype, unsourced lineup, emotional win/loss judgement, or template/prompt residue.

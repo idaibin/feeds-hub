@@ -6,6 +6,7 @@ Feed markdown files live directly under category directories:
 - `compute`
 - `dev`
 - `global`
+- `github`
 - `lol`
 - `product`
 - `rust`

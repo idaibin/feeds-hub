@@ -11,6 +11,7 @@
 - 从公开、可核验来源获取新信息。
 - 每条 feed 只描述一个独立事件。
 - 生成信息准确、正文完整的 Markdown 内容。
+- 默认聚焦 `worldcup`、`lol`、`ai`、`github`、`stock`；其它历史 topic 只报告跳过。
 - 默认隐藏海报生成；图片只在用户明确要求或维护 `content/generate-posters` 时处理。
 - 通过 GitHub 写入内容分支。
 - 验证产物后 squash 合并到 `main`。
@@ -24,6 +25,7 @@
 - 不混合多个事件到一条 feed。
 - 不使用历史记忆替代本文件。
 - 不因海报缺失阻塞已核验文本发布。
+- 不发布标题、summary、subtitle 或正文首段高度相似的内容。
 - 不把未验证图片标记为 `generated_webp`。
 - 不写入 SVG、PNG、HTML 截图、Canvas、CSS 绘图或 data URL 作为主封面。
 - 不把 fallback、模板占位图、重复图、空白图、错误比例图或带 prompt 痕迹的图片标记为成功海报。
@@ -36,6 +38,7 @@
 - `src/content.config.ts`，确认当前 schema。
 - `docs/topics/*.md`，读取全部 topic frontmatter，排除 `README.md`。
 - topic frontmatter 中每个 `flows` 对应的 `docs/types/<flow>.md`。
+- `docs/rules/content-format.md` 和 `docs/rules/ui-spec.md`。
 - 现有 `src/content/<category>/`，用于去重。
 
 可以读取其它仓库文件辅助理解当前站点，但本文件是定时任务规则入口。
@@ -73,15 +76,25 @@ allowedKinds: []
 
 执行时必须：
 
-1. 遍历全部 topic 配置。
+1. 读取全部 topic 配置；默认只遍历 `worldcup`、`lol`、`ai`、`github`、`stock`。
 2. 对每个 topic 读取 `flows` 中的全部 `docs/types/<flow>.md`。
 3. 按 topic `sources` 搜索、读取和核实信息。
 4. 写入已核验文本 feed；默认不生成海报。
-5. 对每个 topic 报告新增、跳过或待补原因。
+5. 对每个 topic 报告新增、跳过或待补原因；非重点 topic 报告 `skipped: disabled-by-focus`。
 
 ## Discovery And Deduplication
 
 每个 topic 默认最多新增 1 到 3 条，高质量优先。无合格信息则跳过，但必须报告跳过原因。
+
+默认重点 topic：
+
+- `worldcup`：官方赛程、赛中状态、赛果、晋级关系、关键赛事事实。
+- `lol`：LoL Esports / Riot 官方赛程、赛果、Bracket、晋级与淘汰。
+- `ai`：AI 资讯、模型/产品更新、可核验技能、技巧和工作流。
+- `github`：GitHub 热门仓库、star 猛增、AI 相关开源项目、重要 release/advisory。
+- `stock`：美股、港股、A 股每日闭市信息，以及高度相关的 AI、芯片、宏观、财报、政策、汇率/利率信息。
+
+`global`、`compute`、`rust`、`dev`、`security`、`product` 保留历史内容和路由，默认不生成新 feed。
 
 `flows` 包含 `sports` 的 topic 在官方赛事日不受 1 到 3 条上限限制：必须先完整检查官方赛程、官方比赛中心、官方赛果、standings/stage 页面和页面内嵌官方数据，覆盖任务窗口内每场已验证的赛程、进行中状态或赛果；完成这些赛事硬事实后，才选择其它新闻或话题内容。
 
@@ -107,6 +120,12 @@ allowedKinds: []
 赛事类同一场比赛可以按状态递进生成多条 feed。不要因为已有赛前 feed、同一个 `sourceUrl`、同一个 stage 页面、同一天已有赛事 feed、同一对阵曾经出现，或已经达到普通 topic 数量上限，就跳过新的进行中状态或赛果。只有同一官方 match id 或同一对阵时间、同一状态、同一比分或同一晋级关系已经存在时才跳过。
 
 对于 LoL Esports 这类动态页面，必须读取 stage/standings 页面内嵌的官方 match 数据；当页面提供 `id`、`state`、`matchTeams`、`gameWins`、`outcome`、`destinations` 或 `startTime` 时，以这些字段生成 `eventKey` 和正文事实。不能只看页面标题、meta 描述或旧 feed。
+
+对于 GitHub 热门仓库，必须优先读取 GitHub Search/API/Trending、仓库 releases/tags/advisories、README、changelog 或官方项目文档。第三方榜单、Reddit、Hacker News 和 X 只能用于发现或社区反应，不能单独确认 stars、release、advisory 或仓库事实。AI 相关仓库优先。
+
+对于 AI 技能和技巧，必须绑定到官方文档、cookbook、模型页、产品页、GitHub 仓库、论文、release note 或维护者说明。不要写通用提示词建议、无来源技巧或社交媒体单点经验。
+
+对于股市闭市信息，优先 Reuters、交易所、监管/央行、公司公告和官方统计来源；不得用社交媒体、截图或社区评论确认指数涨跌、价格、财报数字或市场方向。
 
 ## Markdown Format
 
@@ -148,6 +167,13 @@ priority: 90
 - 第四到第五段只在来源提供更多事实、需要说明来源差异、未确认范围或已排期节点时使用。
 
 禁止标题党、预测、投资建议、赛事预测、夸大判断、无来源路线图和社交热度当事实。
+
+标题、subtitle、summary 和正文首段必须做非重复检查：
+
+- 标题只写核心事实，不塞来源名或解释性长句。
+- summary 只写标题没有覆盖的重要信息；没有补充信息时写最短可核验补充，展示层会过滤与标题雷同的摘要。
+- subtitle 只补充范围、状态或时间；与标题或 summary 雷同时必须改写或删除。
+- 正文第一段不得把标题换词扩写；必须加入时间、状态、范围、数据、比分、影响范围或下一步中的至少一类已核验事实。
 
 ## Hidden Poster Branch
 
@@ -303,6 +329,7 @@ Markdown 和图片分离提交。主流程只写 Markdown；图片只写入 `con
 - `eventKey` 和 `sourceUrl` 去重完成。
 - 每条 feed 都有 `coverStatus`。
 - 每条正文符合 3 到 5 段优先的信息完整性要求，来源没有更多可核验事实被无故遗漏。
+- 每条 feed 的标题、subtitle、summary 和正文首段非重复检查通过。
 - `coverStatus: generated_webp` 只允许出现在已有图片分支验收证据并经用户确认同步的内容中。
 - `main` 与 `origin/main` 同步。
 
@@ -335,12 +362,13 @@ posterProfile:
 cover:
 coverStatus:
 bodySupplement:
+similarityCheck: passed | failed
 imageGeneration: skipped | branch-only | synced-after-confirmation
 branch:
 commit:
 ```
 
-如果报告缺少正文补充范围、图片生成状态或内容验证结论，本次任务视为未完成。
+如果报告缺少正文补充范围、相似度检查、图片生成状态或内容验证结论，本次任务视为未完成。
 
 ## Failure Report
 

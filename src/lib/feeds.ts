@@ -5,6 +5,7 @@ export const CATEGORIES = [
   { id: 'lol', name: 'LOL 赛事', shortName: 'LOL', description: '聚合 LPL、先锋赛、MSI、世界赛等英雄联盟赛事信息。' },
   { id: 'stock', name: '股市简报', shortName: '股市', description: '聚合 A 股、美股、创业板、纳斯达克等市场重点信息。' },
   { id: 'ai', name: 'AI 科技', shortName: 'AI 科技', description: '聚合 AI、科技公司、开源模型、工程工具与产品动态。' },
+  { id: 'github', name: 'GitHub 热榜', shortName: 'GitHub', description: '聚合 GitHub 热门仓库、Star 增长、重要 release、AI 相关开源项目和安全公告。' },
   { id: 'compute', name: 'AI 基建', shortName: 'AI 基建', description: '聚合 AI 芯片、HBM、数据中心、云资本开支、电力与基础设施动态。' },
   { id: 'rust', name: '开源与 Rust', shortName: 'Rust', description: '聚合 Rust、开源项目、工程工具、基础设施与开发者生态动态。' },
   { id: 'dev', name: '开发者生态', shortName: '开发', description: '聚合 TypeScript、Node、前端框架、运行时、云平台和开发工具动态。' },
@@ -20,8 +21,8 @@ export const FEED_GROUPS = [
     id: 'realtime',
     name: '实时性',
     shortName: '实时性',
-    description: '聚合 AI、股市、科技、开发、安全、产品和全球重点等高时效信息。',
-    categories: ['ai', 'stock', 'compute', 'rust', 'dev', 'security', 'product', 'global']
+    description: '聚合 AI、GitHub、股市、科技、开发、安全和产品等高时效信息。',
+    categories: ['ai', 'github', 'stock', 'compute', 'rust', 'dev', 'security', 'product']
   },
   {
     id: 'sports',
@@ -37,8 +38,8 @@ export const FEED_TOPIC_GROUPS = [
     id: 'ai',
     name: 'AI',
     shortName: 'AI',
-    description: '聚合 AI 科技、模型、芯片、数据中心与基础设施动态。',
-    categories: ['ai', 'compute']
+    description: '聚合 AI 科技、模型、技巧、开源仓库、芯片、数据中心与基础设施动态。',
+    categories: ['ai', 'github', 'compute']
   },
   {
     id: 'dev',
@@ -51,12 +52,11 @@ export const FEED_TOPIC_GROUPS = [
 
 export const PRIMARY_FEED_NAV = [
   { id: 'all', href: '/', label: '全部' },
-  { id: 'ai', href: '/category/ai/', label: 'AI' },
-  { id: 'stock', href: '/category/stock/', label: '股市' },
-  { id: 'dev', href: '/category/dev/', label: '开发者' },
-  { id: 'global', href: '/category/global/', label: '全球重点' },
   { id: 'worldcup', href: '/category/worldcup/', label: '世界杯' },
-  { id: 'lol', href: '/category/lol/', label: 'LOL' }
+  { id: 'lol', href: '/category/lol/', label: 'LOL' },
+  { id: 'ai', href: '/category/ai/', label: 'AI' },
+  { id: 'github', href: '/category/github/', label: 'GitHub' },
+  { id: 'stock', href: '/category/stock/', label: '股市' }
 ] as const;
 
 export function getCategoryMeta(category: string) {

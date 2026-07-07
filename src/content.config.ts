@@ -7,6 +7,7 @@ const feedCategorySchema = z.enum([
   'lol',
   'stock',
   'ai',
+  'github',
   'compute',
   'global',
   'rust',
@@ -39,7 +40,7 @@ const coverStatusSchema = z.enum([
 ]);
 
 const feeds = defineCollection({
-  loader: glob({ pattern: '{worldcup,lol,stock,ai,compute,global,rust,dev,security,product}/**/*.md', base: './src/content' }),
+  loader: glob({ pattern: '{worldcup,lol,stock,ai,github,compute,global,rust,dev,security,product}/**/*.md', base: './src/content' }),
   schema: z.object({
     title: z.string().min(2),
     subtitle: z.string().min(2),

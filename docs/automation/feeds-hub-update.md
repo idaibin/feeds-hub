@@ -19,6 +19,7 @@ AI 更新任务唯一入口。本文只定义任务计划、topic 遍历、分�
 - 每轮任务从当前 `origin/main` 开始。
 - 内容分支名使用 `content/feeds-hub-update-<yyyyMMdd-HHmm>`。
 - 图片生成分支保留为 `content/generate-posters`；该分支用于后续补图和视觉资产实验，不随 main 内容更新自动删除。
+- 默认只处理重点主题：`worldcup`、`lol`、`ai`、`github`、`stock`。其它 topic 保留历史内容和路由，默认报告为 skipped。
 - 同一轮任务只使用一个内容分支。
 - 如果同名分支已存在，先读取该分支最新 `HEAD`，在其基础上继续，不覆盖已有提交。
 - 无合格内容时不创建空提交。
@@ -27,17 +28,18 @@ AI 更新任务唯一入口。本文只定义任务计划、topic 遍历、分�
 
 1. 读取 `origin/main`、当前远端内容分支和工作流状态。
 2. 创建或继续 `content/feeds-hub-update-<yyyyMMdd-HHmm>`。
-3. 读取并遍历全部 `docs/topics/*.md` topic 配置，排除 `README.md`；不得依赖本文手写列表。
+3. 读取全部 `docs/topics/*.md` topic 配置，排除 `README.md`；默认只遍历 `worldcup`、`lol`、`ai`、`github`、`stock`，其它 topic 报告跳过原因。
 4. 对每个 topic 按 frontmatter 的 `flows` 读取 `docs/types/<flow>.md`，再按 `sources` 获取公开、可核验信息；无合格信息也必须记录跳过原因。
 5. 按 `eventKey` 和现有 `src/content/<category>/` 内容去重，`sourceUrl` 只作为辅助线索；赛事 stage/standings 页面可能包含多场比赛，不得仅因同一 `sourceUrl` 跳过新的赛程、进行中状态或赛果。
 6. 对 `flows` 包含 `sports` 的 topic，先执行赛事状态覆盖：已知赛程在比赛前一天必须有 `match_schedule` 预告；比赛当天必须保留最新赛程或补充官方 `match_flow` 进度；比赛结束后必须补 `match_result`，并写明比分、胜负、晋级、淘汰和下一轮关系中已核验的部分。
 7. 按 `docs/rules/content-format.md` 生成 Markdown；`source` 只写实际发布方短名，例如 `Reuters`、`FIFA`、`LoL Esports`、`GosuGamers`、`Games of Legends`、`Al Jazeera`、`SB Nation`，不要把赛事名、专题名、页面类型或多个来源拼进显示名。
 8. 正文以信息准确和完整为主。来源提供更多可核验事实时，正文应补足背景、时间线、关键数据、下一步和未确认范围；不得只写短摘要，也不得用无来源推断扩写。
-9. 写入已核验文本 Markdown。main 流程不生成、不验证、不展示 WebP；frontmatter 仍保留 `cover` 与 `coverStatus` 以兼容 schema，但 `coverStatus` 可保持 `pending`。
-10. 读取本轮写入的 Markdown，确认路径、frontmatter、正文完整性、来源可核验性和去重结果。
-11. 验证通过后将本轮内容分支 squash 合并到 `main`。
-12. 推送 `main`。
-13. 删除已合并的本轮内容分支，并刷新远端分支列表。
+9. 标题、subtitle、summary 和正文首段做相似度检查；summary 或 subtitle 与标题雷同时删除或改写，正文首段雷同时补充时间、状态、数据、范围或下一节点。
+10. 写入已核验文本 Markdown。main 流程不生成、不验证、不展示 WebP；frontmatter 仍保留 `cover` 与 `coverStatus` 以兼容 schema，但 `coverStatus` 可保持 `pending`。
+11. 读取本轮写入的 Markdown，确认路径、frontmatter、正文完整性、来源可核验性、去重结果和标题/正文非重复。
+12. 验证通过后将本轮内容分支 squash 合并到 `main`。
+13. 推送 `main`。
+14. 删除已合并的本轮内容分支，并刷新远端分支列表。
 
 Topic 配置必须 fail-closed：任一 topic 缺少 `id`、`type`、`flows`、`sources`、`contentDir`、`coverPrefix` 或 `allowedKinds`，`flows` 指向不存在的 `docs/types/<flow>.md`，或 `allowedKinds` 为空时，停止本轮任务并报告配置错误。不要根据旧表、目录名、已有内容或通用经验推断缺失规则。
 
@@ -62,12 +64,13 @@ Markdown 和图片分离提交。main 内容分支只负责 Markdown；图片补
 自动任务生成分支后，最终交付以 `main` 为准：
 
 1. 确认内容分支 Markdown、来源、去重和正文完整性验证通过。
-2. 确认 `main` 与 `origin/main` 同步。
-3. 将内容分支 squash 成一个提交合入 `main`。
-4. 合并提交信息使用内容批次语义，例如 `content: update feeds 20260705-0800`。
-5. 推送 `main`。
-6. 删除对应远端内容分支；不得删除 `content/generate-posters`。
-7. 执行 `git fetch --prune` 后再次确认远端分支状态。
+2. 确认标题、summary、subtitle 和正文首段没有高度相似或换词复述。
+3. 确认 `main` 与 `origin/main` 同步。
+4. 将内容分支 squash 成一个提交合入 `main`。
+5. 合并提交信息使用内容批次语义，例如 `content: update feeds 20260705-0800`。
+6. 推送 `main`。
+7. 删除对应远端内容分支；不得删除 `content/generate-posters`。
+8. 执行 `git fetch --prune` 后再次确认远端分支状态。
 
 若多条自动分支同时存在，按时间顺序逐条验证、去重、合并；不得盲目批量 merge。
 
@@ -92,6 +95,7 @@ Markdown 和图片分离提交。main 内容分支只负责 Markdown；图片补
 - 每个 topic 的 `flows`、来源检查结果和跳过原因。
 - 新增、跳过、待补项。
 - 每条新增 feed 的 `source`、`sourceUrl`、`eventAt`、`eventKey`、正文补充范围和 `coverStatus`。
+- 每条新增 feed 的标题/summary/正文首段非重复检查结论。
 - 图片生成默认跳过；如用户明确要求图片分支，另行报告 `posterProfile`、尺寸、视觉验收结论和质量门槛结论。
 - 写入提交。
 - 产物验证结果。

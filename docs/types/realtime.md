@@ -4,7 +4,7 @@
 
 ## Scope
 
-- 适用于 AI、compute、global、rust、dev、security、product，以及 stock 的普通实时市场事件。
+- 适用于 AI、github、compute、rust、dev、security、product，以及 stock 的普通实时市场事件；global 仅在任务明确要求时启用。
 - 1 feed = 1 release, policy event, company update, advisory, incident, product change, market-moving fact, or other bounded event.
 - 优先文本事实；海报是可选增强，不阻塞 Markdown 写入。
 
@@ -21,6 +21,21 @@
 - Prefer the newest verifiable event in the task window over old evergreen context.
 - Do not rewrite an existing item unless there is a new source-backed state change, version, policy decision, filing, disclosure, or availability update.
 - Default cap is 1 to 3 high-quality items per topic unless another type rule overrides it.
+- Default focus topics are `worldcup`, `lol`, `ai`, `github`, and `stock`; non-focus realtime topics should be reported as skipped unless explicitly requested.
+
+## GitHub Repository Signals
+
+- GitHub repository items must identify owner/name, repository URL, observed state, event type, and developer relevance.
+- Priority signals include sharp star growth, trending rank, AI-related project adoption, important releases, security advisories, and major maintainer updates.
+- AI-related repositories take priority over general-purpose repositories when both are available.
+- GitHub Search/API/Trending, repository pages, releases, tags, advisories, README, changelog, and official project docs are valid hard sources.
+- Third-party trending lists, Reddit, Hacker News, and X may guide discovery or reaction context, but cannot be the only hard source for stars, releases, advisories, or repository facts.
+
+## AI Skills And Techniques
+
+- AI technique items must point to a verifiable artifact such as official docs, cookbook, model page, product page, GitHub repository, release note, paper, or maintainer explanation.
+- The body must state the concrete workflow or capability, where it applies, and what remains unsupported or unverified.
+- Do not publish generic prompt advice, unverifiable tips, or social-media-only tactics.
 
 ## Event Key And Deduplication
 
@@ -34,4 +49,5 @@
 - First paragraph: verified fact, actor, action, time, and version/status.
 - Second paragraph: current availability, affected scope, market/user/developer impact, migration requirement, policy scope, or unresolved detail.
 - Optional third paragraph: conflicting fact status or what remains unconfirmed; do not name the source unless the source itself is the subject.
+- Title, summary, subtitle, and first paragraph must not be near-duplicates; if no non-duplicative summary exists, leave summary for display filtering instead of rewriting the title.
 - No predictions, hype, investment advice, unsupported benchmark claims, or social reaction as fact.

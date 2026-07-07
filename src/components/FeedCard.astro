@@ -27,14 +27,14 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
 
 <style is:global>
   .feed-card {
-    --accent: var(--primary);
+    --accent: var(--topic-accent, var(--primary));
     position: relative;
     display: block;
     width: 100%;
     overflow: hidden;
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    border: 1px solid var(--topic-border, rgba(15, 23, 42, 0.08));
     border-radius: 8px;
-    background: rgba(255, 255, 255, .96);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .98), rgba(255, 255, 255, .94)), var(--topic-bg, transparent);
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
   }
@@ -44,46 +44,6 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     border-color: rgba(5, 105, 237, .18);
     background: #fff;
     box-shadow: 0 16px 34px rgba(15, 23, 42, .10);
-  }
-
-  .feed-card.category-worldcup {
-    --accent: var(--primary);
-  }
-
-  .feed-card.category-lol {
-    --accent: #7c3aed;
-  }
-
-  .feed-card.category-stock {
-    --accent: var(--signal);
-  }
-
-  .feed-card.category-ai {
-    --accent: #0569ed;
-  }
-
-  .feed-card.category-compute {
-    --accent: #0891b2;
-  }
-
-  .feed-card.category-global {
-    --accent: #0f8b8d;
-  }
-
-  .feed-card.category-rust {
-    --accent: #b45309;
-  }
-
-  .feed-card.category-dev {
-    --accent: #2563eb;
-  }
-
-  .feed-card.category-security {
-    --accent: #475569;
-  }
-
-  .feed-card.category-product {
-    --accent: #db2777;
   }
 
   .feed-card .card-link {

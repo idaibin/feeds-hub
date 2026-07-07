@@ -10,6 +10,7 @@ Feeds Hub 页面和组件展示规则。内容格式看 `content-format.md`，�
 - 列表和详情都以文字信息为主，不展示 feed 海报。
 - frontmatter `cover` 只保留 schema 兼容和图片分支资产引用，不作为 main 页面展示契约。
 - 同一断点内 card 宽度统一，内容高度由文本自然撑开。
+- 主题 tag 在列表和详情使用同一套主题变量：`--topic-accent`、`--topic-bg`、`--topic-border`。
 
 ## Color Tokens
 
@@ -44,6 +45,7 @@ Rules:
 - UI 主色只允许 Blue、Cyan、Slate。
 - `primary` 用于核心信息、链接、按钮和可点击状态。
 - `accent` 用于实时、趋势和轻量高亮。
+- `--topic-accent` 用于列表和详情 tag；`--topic-bg` 和 `--topic-border` 用于主题轻量区分。
 - `warning`、`error` 只用于真实风险和错误。
 - 禁止紫色、粉色、红紫色作为 UI 主视觉色。
 
@@ -65,9 +67,10 @@ task entry -> topic config -> type rule -> kind -> Markdown -> page renders text
 
 - 左侧品牌。
 - 右侧主题下拉。
-- 下拉项来自 `src/lib/feeds.ts` 的 `CATEGORIES`。
+- 下拉项来自 `src/lib/feeds.ts` 的 `PRIMARY_FEED_NAV`。
 - 当前主题显示为当前选中项。
 - 移动端不使用横向滚动主题导航。
+- 默认主导航只显示：全部、世界杯、LOL、AI、GitHub、股市。
 
 ## Cards
 
@@ -90,10 +93,11 @@ task entry -> topic config -> type rule -> kind -> Markdown -> page renders text
 - 同一行 card 等宽，PC 等宽网格，窄屏单列。
 - 首页、分类页、详情入口视觉语言一致。
 - 不按横图、竖图、主题或内容类型分配不同宽度。
-- 卡片文本优先，只展示标题、摘要、时间和分类；来源不在卡片显示。
+- 卡片文本优先，只展示标题、非重复摘要、时间和分类；来源不在卡片显示。
+- 摘要为空、过短或与标题雷同时，列表卡片只展示标题。
 - 列表页忽略 `cover` 和 `coverStatus`，不显示缩略图、fallback 大图或 poster-only 变体。
 - PC 和移动端都使用纯文本卡片；CSS 只负责文本排版、响应式和交互状态。
-- 分类 tag 使用文字与彩色点，不依赖图片覆盖层。
+- 分类 tag 使用文字与彩色点，不依赖图片覆盖层；颜色必须来自共享主题变量。
 
 ## Detail Page
 
@@ -133,6 +137,7 @@ const topicCardMap = {
   lol: ['match_result', 'match_schedule', 'match_flow', 'player_spotlight', 'knockout_update', 'data', 'visual', 'news', 'insight'],
   stock: ['market_brief', 'data', 'policy_update', 'breaking', 'insight', 'news'],
   ai: ['news', 'insight', 'ai', 'breaking', 'policy_update', 'data', 'visual'],
+  github: ['hot_topic', 'news', 'data', 'breaking', 'insight', 'policy_update', 'ai'],
   compute: ['market_brief', 'hot_topic', 'data', 'insight', 'news', 'policy_update'],
   global: ['news', 'breaking', 'policy_update', 'insight', 'data', 'visual'],
   rust: ['news', 'insight', 'breaking', 'policy_update', 'data', 'visual'],
@@ -148,6 +153,15 @@ Map requirements:
 - 覆盖 `src/content.config.ts` 的全部 `feedCategorySchema`。
 - 新增主题时补齐 `docs/topics/`、`src/content.config.ts`、`src/lib/feeds.ts` 和本映射；不新增海报类型时无需修改 `docs/posters/`。
 - 只决定内容表达优先级，不决定 card 宽度或主题专属布局。
+
+## Topic Theme Styles
+
+- `worldcup`：蓝色，强调赛事权威和赛程状态。
+- `lol`：琥珀/深金色，强调电竞赛事和 bracket。
+- `ai`：蓝青色，强调模型、产品和技巧信息。
+- `github`：深灰配绿色点缀，强调仓库、star 和开源状态。
+- `stock`：青色配琥珀状态，强调市场窗口和收盘信息。
+- 历史主题保留共享变量，但不进入默认主导航。
 
 ## Images
 

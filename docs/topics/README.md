@@ -4,7 +4,7 @@
 
 通用规则：
 
-- 默认控制在 8-10 个活跃主题，避免来源、去重和生成频率失控。
+- 默认活跃主题只处理 `worldcup`、`lol`、`ai`、`github` 和 `stock`；其它历史主题保留路由和内容，但不参与默认自动生成。
 - `kind` 只表示内容表达方式，不在 topic 文档内写海报视觉提示词。
 - topic `.md` 顶部 YAML frontmatter 是唯一机器可读配置；正文只允许简短说明，不承载规则。
 - 每个 topic 必须声明 `id`、`type`、`flows`、`sources`、`contentDir`、`coverPrefix` 和 `allowedKinds`。
@@ -39,6 +39,7 @@
 - `lol.md`
 - `stock.md`
 - `ai.md`
+- `github.md`
 - `compute.md`
 - `global.md`
 - `rust.md`

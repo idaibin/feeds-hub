@@ -14,6 +14,7 @@
 - Intraday window: record market, time, current state, leading sectors/assets, and whether the data is still live.
 - Close window: record closing result, index/sector moves, major driver, and confirmed close timestamp.
 - Scheduled data: record release time, value, prior/expected value only when source provides it, and market reaction if verified.
+- Daily close coverage prioritizes US equities, Hong Kong equities, and A-share markets.
 
 ## Source Rules
 
@@ -34,4 +35,5 @@
 - First paragraph: market/date/window, verified movement or official data, and timestamp.
 - Second paragraph: sector/asset drivers, company or policy context, confirmed market reaction, or remaining uncertainty.
 - Optional third paragraph: data revisions, timing caveat, or next scheduled checkpoint.
+- Title, summary, subtitle, and first paragraph must not be near-duplicates; summary should add driver, sector split, index scope, or close context not already in the title.
 - No personalized investment advice, target price, return promise, unsupported causal claim, or stale no-timestamp price.
