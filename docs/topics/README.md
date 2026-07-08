@@ -4,11 +4,12 @@ Topic 文件只定义机器可读配置和少量主题特例。通用生成规�
 
 ## 通用规则
 
-- 默认先处理赛事 `lol`、`worldcup`，再处理 `ai`、`github`、`stock`。
+- 默认处理 `hot`、`ai`、`github`、`stock`、`lol`、`worldcup`。
+- `stock`、`lol`、`worldcup`、`github`、`hot` 都有固定检查节奏；`ai` 按事件发生随机检查。
 - 其它历史 topic 保留内容和路由，默认不自动生成。
 - frontmatter 是唯一机器可读配置，必须包含 `id`、`type`、`flows`、`sources`、`contentDir`、`allowedKinds`。
 - topic 特例只写在 `Topic Scope` 或 `Topic Overrides`。
-- Reddit / X / 社区只能补充反应和背景，不能确认硬事实。
+- Reddit / X / 微博 / 社区只能补充热度、反应和背景，不能确认硬事实。
 - 赛事硬事实必须来自官方赛程、比赛中心、赛果、standings/bracket/stage 或权威通讯社。
 - 默认和 topic 来源都无法确认时跳过。
 
@@ -36,7 +37,7 @@ Topic 文件只定义机器可读配置和少量主题特例。通用生成规�
 
 ## Files
 
-- Active: `ai.md`, `github.md`, `stock.md`, `lol.md`, `worldcup.md`
+- Active: `ai.md`, `github.md`, `stock.md`, `hot.md`, `lol.md`, `worldcup.md`
 - Historical: `compute.md`, `global.md`, `rust.md`, `dev.md`, `security.md`, `product.md`
 
 ## Shape

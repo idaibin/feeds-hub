@@ -18,7 +18,7 @@ tags:
 summary: "Reuters 报道称，美国就业数据低于预期后，Dow 收于纪录高位，Nasdaq 受芯片股回落拖累。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/business/wall-st-futures-muted-investors-await-payrolls-data-2026-07-02/"
-reviewed: true
+reviewed: false
 priority: 89
 ---
 

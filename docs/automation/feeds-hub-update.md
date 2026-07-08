@@ -17,8 +17,8 @@ main 内容流程只写 Markdown。
 2. 创建或继续 `content/feeds-hub-update-<yyyyMMdd-HHmm>`。
 3. 读取 `docs/topics/README.md` 的 `Active Event Calendar`。
 4. 读取全部 topic frontmatter 和对应 type rules。
-5. 先审查 `lol`、`worldcup` 的逐场赛事状态。
-6. 再处理 `ai`、`github`、`stock`；`stock` 必须先跑 A 股、港股、美股闭市子检查。
+5. 先处理固定节奏 topic：`hot` 小时热点、`stock` 闭市、`lol` 赛程状态、`worldcup` 赛程状态、`github` 昨日热门仓库。
+6. 再处理随机事件 topic：`ai`。
 7. 其它 topic 报告 `skipped: disabled-by-focus`。
 8. 写入已核验 Markdown。
 9. 重新读取产物并验证格式、来源、去重、正文完整性、非重复表达。
@@ -52,7 +52,9 @@ main 内容流程只写 Markdown。
 - 来源、去重、正文完整性通过。
 - 标题、summary、subtitle、首段不雷同。
 - `coverStatus` 保持 `pending`。
-- stock 交易日已覆盖 A 股、港股、美股闭市；休市必须有交易所日历或权威来源说明。
+- stock 交易日已覆盖 A 股、港股、美股闭市；休市必须有交易所日历或权威来源说明；不得写盘中、早盘、期货、单股、研报或宏观前瞻 stock feed。
+- github 每天最多 1 条，默认汇报昨天热门仓库和技术内容。
+- hot 每个北京时间自然日最多 5 条；同一小时默认最多 1 条，除非重大公共安全或官方确认事件。
 - `main` 与 `origin/main` 同步。
 
 失败时不推送 `main`，报告步骤、topic、feed、分支、已验证文件和失败原因。
@@ -63,7 +65,9 @@ main 内容流程只写 Markdown。
 - 遍历 topic。
 - topic flows、来源检查、跳过原因。
 - 赛事 `sportsCoverage.checkedMatches`、`missingSchedule`、`missingFlow`、`missingResult`、`noMissingState`。
-- 股市 `marketCloseCoverage.aShare`、`marketCloseCoverage.hk`、`marketCloseCoverage.us`，包含 checked/skipped/newFeed 和关键指数涨跌。
+- 股市 `marketCloseCoverage.aShare`、`marketCloseCoverage.hk`、`marketCloseCoverage.us`，包含 checked/skipped/newFeed、关键指数涨跌和市场信息。
+- GitHub `githubTrendingCoverage`，包含 targetDate、checkedRepos、selectedRepo、star/growth evidence。
+- 热点 `hotCoverage`，包含 currentHour、dailyCount、checkedTopics、newFeed、skipped reason。
 - 新增/跳过/待补。
 - 每条 feed 的 source、sourceUrl、eventAt、eventKey、路径、正文补充范围、相似度检查、coverStatus。
 - 写入提交、验证结果、squash 结果、main 推送结果、分支清理结果。

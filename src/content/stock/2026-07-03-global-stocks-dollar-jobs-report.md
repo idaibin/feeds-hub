@@ -1,6 +1,6 @@
 ---
-title: "美股收盘分化，Dow 创收盘新高"
-subtitle: "Reuters 7 月 2 日收盘：Dow 涨 1.14%，S&P 500 持平，Nasdaq 跌 0.80%"
+title: "美股收盘分化，道指创收盘新高"
+subtitle: "7 月 2 日收盘：道指涨 1.14%，标普 500 持平，纳指跌 0.80%"
 category: "stock"
 kind: "market_brief"
 topic: "美国股市与就业数据"
@@ -12,9 +12,9 @@ coverStatus: "pending"
 tags:
   - "美股"
   - "非农"
-  - "Dow"
-  - "Nasdaq"
-summary: "Reuters 7 月 2 日收盘数据显示，Dow 创新高，S&P 500 持平，Nasdaq 下跌。"
+  - "道指"
+  - "纳指"
+summary: "道指创新高，标普 500 持平，纳指下跌。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/business/wall-st-futures-muted-investors-await-payrolls-data-2026-07-02/"
 reviewed: true

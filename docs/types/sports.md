@@ -27,6 +27,18 @@
 6. 缺 `match_schedule` / `match_flow` / `match_result` 时先补比赛 feed。
 7. 没有新增时报告 `sportsCoverage.checkedMatches` 和 `noMissingState`。
 
+## State Progression Gate
+
+每场比赛必须按官方数据计算 expected state：
+
+- 当前时间 < 官方 `startTime`: expected `match_schedule`
+- 当前时间 >= 官方 `startTime` 且官方 state 为 live / inProgress / delayed / remake / walkover / lineup / state change: expected `match_flow`
+- 官方 state 为 completed / final: expected `match_result`
+
+已有较早状态不能抵扣较晚状态。`match_schedule` 不能抵扣 `match_flow` 或 `match_result`；`match_flow` 不能抵扣 `match_result`。
+
+如果官方动态页面可打开但 match data 无法解析，必须报告 `missingSchedule` / `missingFlow` / `missingResult` 的阻塞原因，不能用已有赛前稿、同一 `sourceUrl`、同一 stage 页面或同一天已有 feed 判定 `noMissingState`。
+
 ## Dedup
 
 - 优先使用官方 match ID。

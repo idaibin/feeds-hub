@@ -21,7 +21,9 @@ const summary = getDisplaySummary(
   entry.data.source,
   subtitle ? [subtitle] : []
 );
+const detailNote = isDetail ? [subtitle, summary].filter(Boolean).join('；') : '';
 const chineseAuthorityUrl = entry.data.category === 'lol' ? 'https://lolesports.com/zh-TW' : '';
+const sourceHref = chineseAuthorityUrl || entry.data.sourceUrl;
 ---
 <article class:list={['feed-card', `category-${entry.data.category}`, { 'is-detail': isDetail }]} data-feed-card>
   {
@@ -33,14 +35,9 @@ const chineseAuthorityUrl = entry.data.category === 'lol' ? 'https://lolesports.
             <time datetime={entry.data.eventAt.toISOString()}>{formatDate(entry.data.eventAt)}</time>
           </div>
           <h1>{title}</h1>
-          {subtitle && (
-            <p class="detail-note detail-note-topic">
-              {subtitle}
-            </p>
-          )}
-          {summary && (
-            <p class="detail-note detail-note-important">
-              {summary}
+          {detailNote && (
+            <p class="detail-note">
+              {detailNote}
             </p>
           )}
           <FeedMarkdownBody
@@ -52,13 +49,8 @@ const chineseAuthorityUrl = entry.data.category === 'lol' ? 'https://lolesports.
             summary={summary}
           />
           <p class="source-line">
-            {chineseAuthorityUrl && (
-              <a class="chinese-source-link" href={chineseAuthorityUrl} target="_blank" rel="noreferrer">
-                更多
-              </a>
-            )}
-            {entry.data.sourceUrl && (
-              <a class="source-original-link" href={entry.data.sourceUrl} target="_blank" rel="noreferrer">
+            {sourceHref && (
+              <a class="source-original-link" href={sourceHref} target="_blank" rel="noreferrer">
                 <span>{entry.data.source ?? '原文'}</span>
                 <svg aria-hidden="true" viewBox="0 0 24 24">
                   <path d="M7 17L17 7" />
@@ -255,16 +247,6 @@ const chineseAuthorityUrl = entry.data.category === 'lol' ? 'https://lolesports.
     -webkit-line-clamp: unset;
   }
 
-  .feed-card.is-detail .detail-note-topic {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.65;
-  }
-
-  .feed-card.is-detail .detail-note-important {
-    background: #fff;
-  }
-
   .feed-card.is-detail .detail-callout-label {
     display: inline-flex;
     align-items: center;
@@ -368,11 +350,6 @@ const chineseAuthorityUrl = entry.data.category === 'lol' ? 'https://lolesports.
     gap: 4px;
   }
 
-  .feed-card.is-detail .chinese-source-link {
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
   .feed-card.is-detail .source-original-link {
     color: var(--muted);
     white-space: nowrap;
@@ -401,7 +378,6 @@ const chineseAuthorityUrl = entry.data.category === 'lol' ? 'https://lolesports.
     .feed-card .summary { font-size: 14px; -webkit-line-clamp: 3; }
     .feed-card.is-detail .card-link { padding: 10px; }
     .feed-card.is-detail .detail-note { font-size: 15px; }
-    .feed-card.is-detail .detail-note-topic { font-size: 15px; }
     .feed-card.is-detail .category-chip { font-size: 16px; }
     .feed-card.is-detail .source-line { gap: 10px; }
     .feed-card .feed-meta { gap: 5px 8px; margin-bottom: 6px; }

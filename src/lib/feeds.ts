@@ -3,7 +3,8 @@ import { getCollection } from 'astro:content';
 export const CATEGORIES = [
   { id: 'ai', name: 'AI 科技', shortName: 'AI 科技', description: '聚合 AI、科技公司、开源模型、工程工具与产品动态。' },
   { id: 'github', name: 'GitHub 热榜', shortName: 'GitHub', description: '聚合 GitHub 热门仓库、Star 增长、重要 release、AI 相关开源项目和安全公告。' },
-  { id: 'stock', name: '股市简报', shortName: '股市', description: '聚合 A 股、美股、创业板、纳斯达克等市场重点信息。' },
+  { id: 'stock', name: '股市闭市', shortName: '股市', description: '汇报 A 股、港股、美股每日闭市情况和关键市场信息。' },
+  { id: 'hot', name: '热点新闻', shortName: '热点', description: '汇总微博和 X 上的最新公共热点，按小时限量生成。' },
   { id: 'lol', name: 'LOL 赛事', shortName: 'LOL', description: '聚合 LPL、先锋赛、MSI、世界赛等英雄联盟赛事信息。' },
   { id: 'worldcup', name: '世界杯', shortName: '世界杯', description: '按年份聚合世界杯赛程、球队、焦点比赛与相关新闻，默认关注 2026 世界杯。' },
   { id: 'compute', name: 'AI 基建', shortName: 'AI 基建', description: '聚合 AI 芯片、HBM、数据中心、云资本开支、电力与基础设施动态。' },
@@ -21,8 +22,8 @@ export const FEED_GROUPS = [
     id: 'realtime',
     name: '实时性',
     shortName: '实时性',
-    description: '聚合 AI、GitHub、股市、科技、开发、安全和产品等高时效信息。',
-    categories: ['ai', 'github', 'stock', 'compute', 'rust', 'dev', 'security', 'product']
+    description: '聚合 AI、GitHub、股市闭市、热点、科技、开发、安全和产品等高时效信息。',
+    categories: ['ai', 'github', 'stock', 'hot', 'compute', 'rust', 'dev', 'security', 'product']
   },
   {
     id: 'sports',
@@ -52,6 +53,7 @@ export const FEED_TOPIC_GROUPS = [
 
 export const PRIMARY_FEED_NAV = [
   { id: 'all', href: '/', label: '全部' },
+  { id: 'hot', href: '/category/hot/', label: '热点' },
   { id: 'ai', href: '/category/ai/', label: 'AI' },
   { id: 'github', href: '/category/github/', label: 'GitHub' },
   { id: 'stock', href: '/category/stock/', label: '股市' },
@@ -63,8 +65,36 @@ export function getCategoryMeta(category: string) {
   return CATEGORIES.find((item) => item.id === category) ?? CATEGORIES[0];
 }
 
+function isStockCloseFeed(entry: { data: { category: string; eventKey: string; title: string; subtitle: string; topic: string } }) {
+  if (entry.data.category !== 'stock') return true;
+
+  const text = [
+    entry.data.eventKey,
+    entry.data.topic,
+    entry.data.title,
+    entry.data.subtitle
+  ].join(' ').toLowerCase();
+  const marketText = [
+    entry.data.topic,
+    entry.data.title,
+    entry.data.subtitle
+  ].join(' ');
+  const primaryMarketText = [entry.data.topic, entry.data.title].join(' ');
+  const isUnsupportedMarket = /欧洲|韩国|日本|亚洲|全球|欧元区|STOXX|KOSPI|Nikkei/i.test(primaryMarketText);
+  const isSupportedMarket = /美股|美国|港股|香港|A 股|A股|沪深|上证|深证|创业板|科创/.test(marketText);
+
+  return !isUnsupportedMarket && isSupportedMarket && (
+    text.includes(':close:') ||
+    text.includes('close') ||
+    text.includes('收盘') ||
+    text.includes('闭市')
+  );
+}
+
 export async function getAllFeeds() {
-  const feeds = await getCollection('feeds', ({ data }) => data.reviewed === true);
+  const feeds = await getCollection('feeds', ({ data }) => data.reviewed === true).then((entries) =>
+    entries.filter(isStockCloseFeed)
+  );
   const now = Date.now();
   const sportsCategories = new Set<string>(
     FEED_GROUPS.find((group) => group.id === 'sports')?.categories ?? []

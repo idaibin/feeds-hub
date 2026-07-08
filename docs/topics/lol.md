@@ -41,4 +41,7 @@ League of Legends esports match states, MSI/Worlds/First Stand bracket movement,
 - During MSI inspect embedded data: `id`, `state`, `matchTeams`, `gameWins`, `outcome`, `destinations`, `startTime`, stage, format.
 - `match_schedule` must copy the official `startTime` into subtitle, summary and first paragraph, converted to Beijing time for Chinese display copy; do not publish a date-only schedule when official time is available.
 - Review previous 36 hours, current day, next 48 hours in Beijing time.
+- For every MSI match in that review window, compare official `state`, `startTime`, `matchTeams`, `gameWins`, `outcome`, and `destinations` against existing feeds before writing any lower-priority LoL story.
+- If official `startTime` has passed, a schedule-only feed is insufficient; write `match_flow` or `match_result` when official data supports it.
+- Existing schedule feeds, shared LoL Esports schedule URLs, shared stage pages, or same-day LoL feeds cannot mark a started or completed match as covered.
 - Results require series score, winner, loser, bracket destination, elimination/lower-bracket drop, next opponent if available.

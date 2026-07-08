@@ -1,12 +1,12 @@
 # Scheduled Market Type Rules
 
-用于 `stock` 的开盘、盘中、闭市、财报、宏观数据、央行和监管时间点。
+用于 `stock` 的每日闭市简报。
 
 ## Scope
 
-- 美股、港股、A 股闭市优先。
-- 相关 AI、芯片、宏观、政策、财报、汇率/利率可写入。
-- open、intraday、close 是不同状态，后续 close 不算 open/intraday 重复。
+- 只写美股、港股、A 股闭市。
+- AI、芯片、宏观、政策、财报、汇率/利率只能作为闭市背景信息写入，不单独成稿。
+- 不写开盘、盘中、期货、早盘反弹、单股异动、研报或前瞻。
 
 ## Fixed Close Windows
 
@@ -42,17 +42,29 @@
 
 ## Event Key
 
-闭市使用 `stock:<market>:close:<yyyy-mm-dd>`；其它事件使用 market/entity + window + date + release/filing/earnings id。
+闭市使用 `stock:<market>:close:<yyyy-mm-dd>`。
+
+## Gap Check
+
+每轮必须按交易所时区和当前实际时间生成 expected close keys：
+
+- `stock:a-share:close:<yyyy-mm-dd>`
+- `stock:hk:close:<yyyy-mm-dd>`
+- `stock:us:close:<yyyy-mm-dd>`
+
+其中 `<yyyy-mm-dd>` 是该市场的当地交易日。只有完全匹配 expected close key 的 feed 才算闭市已覆盖。旧格式 `stock:market_brief:*`、盘中稿、期货稿、行业稿、单股稿、宏观前瞻、AI/芯片行情稿都不能抵扣 close feed。
+
+如果闭市窗口已经开始但权威来源尚未发布完整点位，可等待到窗口末段；如果窗口结束后仍缺 required indexes，必须写明缺失来源和阻塞原因，不能改写成其它 stock 类型。
 
 ## Body
 
 - 第一段：闭市结果，必须包含核心指数涨跌幅。
-- 第二段：驱动、板块、公司或宏观影响。
+- 第二段：市场信息，包括成交额/成交量、板块强弱、公司或宏观影响。
 - 第三段：修订、时间 caveat 或下一排期。
 
 ## Close Feed Shape
 
-标题写市场和结果，不写完整指数列表；summary 写标题没覆盖的关键驱动。
+标题必须写市场和结果，不写完整指数列表；summary 写标题没覆盖的关键市场信息。
 
 正文第一段模板：
 

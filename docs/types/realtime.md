@@ -1,11 +1,11 @@
 # Realtime Type Rules
 
-用于实时类 topic：`ai`、`github`、`compute`、`rust`、`dev`、`security`、`product`，以及 stock 的非闭市事件。
+用于实时类 topic：`ai`、`github`、`compute`、`rust`、`dev`、`security`、`product`。
 
 ## Scope
 
 - 1 feed = 1 个 release、政策、公司更新、advisory、incident、产品变化或市场相关事实。
-- 默认重点：`ai`、`github`、`stock`；sports 由 `sports.md` 先处理。
+- 默认重点：`ai`、`github`；sports 由 `sports.md` 先处理，`stock` 使用 `scheduled-market.md`。
 - 默认每个 topic 1-3 条高质量 feed。
 
 ## Source

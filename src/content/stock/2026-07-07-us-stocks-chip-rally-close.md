@@ -1,6 +1,6 @@
 ---
-title: "芯片股反弹推动标普与纳指收高"
-subtitle: "Reuters 报道，Broadcom 领涨带动美股科技板块回升"
+title: "美股收盘走高，芯片股反弹推动纳指"
+subtitle: "Broadcom 领涨带动科技板块回升"
 category: "stock"
 kind: "market_brief"
 topic: "美股收盘"
@@ -14,7 +14,7 @@ tags:
   - "芯片股"
   - "Broadcom"
   - "Nasdaq"
-summary: "Reuters 报道称，标普 500 和纳指在周一收高，Broadcom 及其它芯片股反弹成为主要推动因素。"
+summary: "标普 500 和纳指在周一收高，Broadcom 及其它芯片股反弹成为主要推动因素。"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/world/asia-pacific/us-stock-futures-up-chip-shares-recover-oil-prices-decline-2026-07-06/"
 reviewed: true
