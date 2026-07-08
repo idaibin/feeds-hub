@@ -8,7 +8,7 @@ date: "2026-07-07T10:01:51+08:00"
 eventAt: "2026-07-07T00:54:30Z"
 eventKey: "worldcup:news:fifa-referee-raphael-claus-trump-criticism:2026-07-07"
 cover: "/images/worldcup/2026-07-07-fifa-backs-referee-claus.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "FIFA"

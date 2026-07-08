@@ -8,7 +8,7 @@ date: "2026-07-06T00:59:20+08:00"
 eventAt: "2026-07-05T01:58:00Z"
 eventKey: "worldcup:news:53452509:paraguay-france:alfaro-penalty-reaction:2026-07-05"
 cover: "/images/worldcup/2026-07-06-paraguay-alfaro-penalty-reaction.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "16强"

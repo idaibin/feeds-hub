@@ -8,7 +8,7 @@ date: "2026-07-04T15:58:34Z"
 eventAt: "2026-07-03T17:34:00Z"
 eventKey: "stock:jpmorgan-gold-forecast-q4-4500:2026-07-03"
 cover: "/images/stock/2026-07-04-jpmorgan-gold-forecast-q4.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "JPMorgan"
   - "黄金"

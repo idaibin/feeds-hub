@@ -8,6 +8,7 @@ date: "2026-07-02T15:56:00+08:00"
 eventAt: "2026-07-02T12:27:00+08:00"
 eventKey: "ai:policy_update:openai-us-government-stake-proposal:2026-07-02"
 cover: "/images/ai/2026-07-02-openai-us-government-stake.webp"
+coverStatus: "pending"
 tags:
   - "AI"
   - "OpenAI"

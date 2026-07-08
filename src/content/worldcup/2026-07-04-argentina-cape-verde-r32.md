@@ -11,7 +11,7 @@ eventKey: "worldcup-2026-argentina-cape-verde-r32-result-2026-07-04"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/argentina-beat-cape-verde-3-2-extra-time-thriller-2026-07-04/"
 cover: "/images/worldcup/2026-07-04-argentina-cape-verde-r32.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "World Cup"
   - "Argentina"

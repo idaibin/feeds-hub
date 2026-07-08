@@ -10,7 +10,7 @@ eventKey: "global-nato-turkey-summit-defense-spending-2026-07-07"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/business/take-five/global-markets-themes-graphic-2026-07-03/"
 cover: "/images/global/2026-07-04-nato-turkey-summit-preview.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "NATO"
   - "Turkey"

@@ -8,6 +8,7 @@ date: "2026-07-01T16:55:00+08:00"
 eventAt: "2026-07-01T16:55:00+08:00"
 eventKey: "stock:market_brief:2026-07-01-q3-market-yen-yields-ai:2026-07-01T16:55:00+08:00"
 cover: "/images/stock/2026-07-01-q3-market-yen-yields-ai.webp"
+coverStatus: "pending"
 tags: ["全球市场", "AI芯片", "美债收益率", "日元", "财报季"]
 summary: "三季度首个交易窗口里，全球股市小幅回落，美元走强、日元低位和美债收益率上行同时出现。"
 source: "Reuters"

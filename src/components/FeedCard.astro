@@ -1,28 +1,87 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import FeedMarkdownBody from '@/components/FeedMarkdownBody.astro';
+import { getDisplaySubtitle, getDisplaySummary, getDisplayTitle } from '@/lib/feed-display';
 import { formatDate, getCategoryMeta } from '@/lib/feeds';
-import { getDisplaySummary, getDisplayTitle } from '@/lib/feed-display';
 
 interface Props {
   entry: CollectionEntry<'feeds'>;
+  mode?: 'list' | 'detail';
 }
-const { entry } = Astro.props;
+
+const { entry, mode = 'list' } = Astro.props;
+const isDetail = mode === 'detail';
 const category = getCategoryMeta(entry.data.category);
 const href = `/feed/${entry.id}/`;
 const title = getDisplayTitle(entry.data.title, entry.data.source);
-const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
+const subtitle = isDetail ? getDisplaySubtitle(entry.data.subtitle, entry.data.source, [title]) : '';
+const summary = getDisplaySummary(
+  entry.data.summary,
+  title,
+  entry.data.source,
+  subtitle ? [subtitle] : []
+);
+const chineseAuthorityUrl = entry.data.category === 'lol' ? 'https://lolesports.com/zh-TW' : '';
 ---
-<article class:list={['feed-card', `category-${entry.data.category}`]} data-feed-card>
-  <a class="card-link" href={href} aria-label={title}>
-    <div class="feed-body">
-      <div class="feed-meta">
-        <span class="category-chip">{category.shortName}</span>
-        <time datetime={entry.data.eventAt.toISOString()}>{formatDate(entry.data.eventAt)}</time>
+<article class:list={['feed-card', `category-${entry.data.category}`, { 'is-detail': isDetail }]} data-feed-card>
+  {
+    isDetail ? (
+      <div class="card-link detail-frame">
+        <div class="feed-body">
+          <div class="feed-meta">
+            <a class="category-chip" href={`/category/${category.id}/`}>{category.shortName}</a>
+            <time datetime={entry.data.eventAt.toISOString()}>{formatDate(entry.data.eventAt)}</time>
+          </div>
+          <h1>{title}</h1>
+          {subtitle && (
+            <p class="detail-note detail-note-topic">
+              {subtitle}
+            </p>
+          )}
+          {summary && (
+            <p class="detail-note detail-note-important">
+              {summary}
+            </p>
+          )}
+          <FeedMarkdownBody
+            class="markdown-body"
+            body={entry.body}
+            source={entry.data.source}
+            title={title}
+            subtitle={subtitle}
+            summary={summary}
+          />
+          <p class="source-line">
+            {chineseAuthorityUrl && (
+              <a class="chinese-source-link" href={chineseAuthorityUrl} target="_blank" rel="noreferrer">
+                更多
+              </a>
+            )}
+            {entry.data.sourceUrl && (
+              <a class="source-original-link" href={entry.data.sourceUrl} target="_blank" rel="noreferrer">
+                <span>{entry.data.source ?? '原文'}</span>
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="M7 17L17 7" />
+                  <path d="M9 7h8v8" />
+                </svg>
+              </a>
+            )}
+          </p>
+        </div>
       </div>
-      <h2>{title}</h2>
-      {summary && <p class="summary">{summary}</p>}
-    </div>
-  </a>
+    ) : (
+      <a class="card-link" href={href} aria-label={title}>
+        <div class="feed-body">
+          <div class="feed-meta">
+            <span class="category-chip">{category.shortName}</span>
+            <time datetime={entry.data.eventAt.toISOString()}>{formatDate(entry.data.eventAt)}</time>
+          </div>
+          <h2>{title}</h2>
+          {summary && <p class="summary">{summary}</p>}
+        </div>
+      </a>
+    )
+  }
 </article>
 
 <style is:global>
@@ -35,7 +94,7 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     border: 1px solid var(--topic-border, rgba(15, 23, 42, 0.08));
     border-radius: 8px;
     background: linear-gradient(180deg, rgba(255, 255, 255, .98), rgba(255, 255, 255, .94)), var(--topic-bg, transparent);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.055);
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
   }
 
@@ -43,7 +102,20 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     transform: translateY(-2px);
     border-color: rgba(5, 105, 237, .18);
     background: #fff;
-    box-shadow: 0 16px 34px rgba(15, 23, 42, .10);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, .09);
+  }
+
+  .feed-card.is-detail {
+    max-width: 760px;
+    margin-inline: auto;
+    align-self: flex-start;
+  }
+
+  .feed-card.is-detail:hover {
+    transform: none;
+    border-color: var(--topic-border, rgba(15, 23, 42, 0.08));
+    background: linear-gradient(180deg, rgba(255, 255, 255, .98), rgba(255, 255, 255, .94)), var(--topic-bg, transparent);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.055);
   }
 
   .feed-card .card-link {
@@ -51,9 +123,13 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
     min-height: 0;
-    padding: 12px;
+    padding: 11px;
     color: inherit;
     text-decoration: none;
+  }
+
+  .feed-card.is-detail .card-link {
+    padding: 12px;
   }
 
   .feed-card .feed-body {
@@ -76,6 +152,7 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     letter-spacing: 0;
     line-height: 1.4;
     text-overflow: ellipsis;
+    text-decoration: none;
     white-space: nowrap;
   }
 
@@ -88,6 +165,10 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     border-radius: 999px;
     background: currentColor;
     vertical-align: 1px;
+  }
+
+  .feed-card .category-chip[href]:hover {
+    color: var(--primary-active);
   }
 
   .feed-card .feed-meta {
@@ -124,6 +205,15 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     -webkit-line-clamp: 2;
   }
 
+  .feed-card h1 {
+    margin: 0 0 10px;
+    color: #0f172a;
+    font-size: clamp(26px, 4.2vw, 38px);
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: 0;
+  }
+
   .feed-card h2:last-child {
     margin-bottom: 0;
   }
@@ -132,9 +222,6 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     display: -webkit-box;
     overflow: hidden;
     -webkit-box-orient: vertical;
-  }
-
-  .feed-card .summary {
     margin: 0;
     color: var(--muted);
     line-height: 1.68;
@@ -142,15 +229,181 @@ const summary = getDisplaySummary(entry.data.summary, title, entry.data.source);
     -webkit-line-clamp: 3;
   }
 
+  .feed-card.is-detail .category-chip {
+    max-width: 180px;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .feed-card.is-detail .category-chip::before {
+    width: 8px;
+    height: 8px;
+  }
+
+  .feed-card.is-detail .detail-note {
+    margin: 0 0 10px;
+    overflow: visible;
+    border: 1px solid var(--topic-border, rgba(15, 23, 42, 0.08));
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--topic-bg, rgba(5, 105, 237, 0.06)) 72%, #fff);
+    padding-block: 8px;
+    padding-inline: 12px;
+    color: #334155;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-line-clamp: unset;
+  }
+
+  .feed-card.is-detail .detail-note-topic {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.65;
+  }
+
+  .feed-card.is-detail .detail-note-important {
+    background: #fff;
+  }
+
+  .feed-card.is-detail .detail-callout-label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    border-radius: 999px;
+    background: var(--topic-accent, var(--primary));
+    padding-inline: 8px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .feed-card.is-detail .markdown-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #334155;
+    font-size: clamp(16px, 2.3vw, 22px);
+    line-height: 1.8;
+  }
+
+  .feed-card.is-detail .markdown-body p,
+  .feed-card.is-detail .markdown-body h2,
+  .feed-card.is-detail .markdown-body h3,
+  .feed-card.is-detail .markdown-body ul {
+    margin: 0;
+  }
+
+  .feed-card.is-detail .markdown-body .detail-callout {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 8px;
+    border: 1px solid var(--topic-border, rgba(15, 23, 42, 0.08));
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--topic-bg, rgba(5, 105, 237, 0.06)) 70%, #fff);
+    padding-block: 8px;
+    padding-inline: 10px;
+  }
+
+  .feed-card.is-detail .markdown-body h2 {
+    padding-top: 8px;
+    color: #0f172a;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .feed-card.is-detail .markdown-body h3 {
+    padding-top: 4px;
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .feed-card.is-detail .markdown-body ul {
+    padding-left: 20px;
+  }
+
+  .feed-card.is-detail .markdown-body li {
+    margin-block: 4px;
+  }
+
+  .feed-card.is-detail .markdown-body a,
+  .feed-card.is-detail .source-line a {
+    color: var(--primary-active);
+    text-decoration: none;
+  }
+
+  .feed-card.is-detail .markdown-body code {
+    border-radius: 6px;
+    background: #f1f5f9;
+    padding: 2px 4px;
+    font-family: var(--mono);
+    font-size: .92em;
+  }
+
+  .feed-card.is-detail .markdown-body strong {
+    font-weight: 800;
+  }
+
+  .feed-card.is-detail .source-line {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    width: max-content;
+    max-width: 100%;
+    margin: 4px 0 0 auto;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .feed-card.is-detail .source-line a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .feed-card.is-detail .chinese-source-link {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .feed-card.is-detail .source-original-link {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .feed-card.is-detail .source-line svg {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   @media (max-width: 640px) {
     .feed-card .card-link {
       grid-template-columns: minmax(0, 1fr);
       min-height: 0;
-      padding: 12px;
+      padding: 9px;
     }
 
     .feed-card h2 { font-size: 18px; }
+    .feed-card h1 { font-size: 26px; }
     .feed-card .summary { font-size: 14px; -webkit-line-clamp: 3; }
-    .feed-card .feed-meta { gap: 6px 8px; }
+    .feed-card.is-detail .card-link { padding: 10px; }
+    .feed-card.is-detail .detail-note { font-size: 15px; }
+    .feed-card.is-detail .detail-note-topic { font-size: 15px; }
+    .feed-card.is-detail .category-chip { font-size: 16px; }
+    .feed-card.is-detail .source-line { gap: 10px; }
+    .feed-card .feed-meta { gap: 5px 8px; margin-bottom: 6px; }
   }
 </style>

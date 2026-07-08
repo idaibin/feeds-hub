@@ -8,7 +8,7 @@ date: "2026-07-05T13:01:00+08:00"
 eventAt: "2026-07-04T16:04:00Z"
 eventKey: "worldcup:host-city:mexico-england-duke-of-lisbon:2026-07-04"
 cover: "/images/worldcup/2026-07-05-mexico-england-pub-azteca-showdown.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "墨西哥"

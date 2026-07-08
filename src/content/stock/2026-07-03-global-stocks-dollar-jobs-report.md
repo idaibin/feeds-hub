@@ -8,6 +8,7 @@ date: "2026-07-03T00:54:00+08:00"
 eventAt: "2026-07-03T04:00:00+08:00"
 eventKey: "stock:market_brief:us-stocks-jobs-report-close:2026-07-03T04:00:00+08:00"
 cover: "/images/stock/2026-07-03-global-stocks-dollar-jobs-report.webp"
+coverStatus: "pending"
 tags:
   - "美股"
   - "非农"

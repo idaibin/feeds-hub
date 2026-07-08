@@ -8,7 +8,7 @@ date: "2026-07-06T08:01:00+08:00"
 eventAt: "2026-07-05T17:48:46Z"
 eventKey: "worldcup:player_spotlight:us-belgium:balogun-suspension-suspended:2026-07-05"
 cover: "/images/worldcup/2026-07-06-balogun-us-belgium-suspension.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "美国"
   - "比利时"

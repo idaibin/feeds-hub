@@ -16,6 +16,7 @@ const referenceTexts = [title, subtitle, summary].filter(Boolean);
 type MarkdownBlock =
   | { type: 'heading'; level: 2 | 3; text: string }
   | { type: 'list'; items: string[] }
+  | { type: 'callout'; label: string; text: string }
   | { type: 'paragraph'; text: string };
 
 function escapeHtml(value: string) {
@@ -39,6 +40,12 @@ function clean(value: string) {
 
 function isRedundant(value: string) {
   return referenceTexts.some((reference) => isRedundantDisplayText(value, reference));
+}
+
+function parseCallout(value: string) {
+  const match = /^(重要提示|提示词|提示|注意)[：:]\s*(.+)$/.exec(value);
+  if (!match) return undefined;
+  return { label: match[1], text: match[2].trim() };
 }
 
 function parseMarkdown(value: string) {
@@ -92,6 +99,15 @@ function parseMarkdown(value: string) {
     }
 
     flushList();
+    const callout = parseCallout(clean(line));
+    if (callout) {
+      flushParagraph();
+      if (callout.text && !isRedundant(callout.text)) {
+        blocks.push({ type: 'callout', label: callout.label, text: callout.text });
+      }
+      continue;
+    }
+
     paragraphLines.push(line);
   }
 
@@ -133,6 +149,15 @@ const blocks = parsedBlocks.length ? parsedBlocks : getFallbackBlocks();
 
       if (block.type === 'list') {
         return <ul>{block.items.map((item) => <li set:html={renderInline(item)} />)}</ul>;
+      }
+
+      if (block.type === 'callout') {
+        return (
+          <p class="detail-callout">
+            <span class="detail-callout-label">{block.label}</span>
+            <span set:html={renderInline(block.text)} />
+          </p>
+        );
       }
 
       return <p set:html={renderInline(block.text)} />;

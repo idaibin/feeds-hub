@@ -12,7 +12,6 @@ sources:
     - official announcements
   supplemental: []
 contentDir: src/content/compute/
-coverPrefix: /images/compute/
 allowedKinds:
   - market_brief
   - hot_topic
@@ -22,6 +21,6 @@ allowedKinds:
   - news
 ---
 
-# Compute Topic Config
+# Compute Topic
 
 Uses `docs/types/realtime.md`; focus on AI infrastructure, chips, HBM, data centers, cloud capex, power, and supply-chain facts.

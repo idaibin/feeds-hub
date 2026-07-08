@@ -11,7 +11,7 @@ eventKey: "global:europe:heat-adaptation-gap:2026-07-02"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/business/environment/net-zero-champion-europe-snared-by-climate-change-its-doorstep-2026-07-02/"
 cover: "/images/global/2026-07-05-europe-heat-adaptation-gap.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "欧洲"
   - "气候适应"

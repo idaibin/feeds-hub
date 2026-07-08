@@ -8,6 +8,7 @@ date: "2026-07-01T19:56:00+08:00"
 eventAt: "2026-07-01T19:56:00+08:00"
 eventKey: "ai:hot_topic:2026-07-01-lantern-ecommerce-geo:2026-07-01T19:56:00+08:00"
 cover: "/images/ai/2026-07-01-lantern-ecommerce-geo.webp"
+coverStatus: "pending"
 tags:
   - "AI搜索"
   - "电商"

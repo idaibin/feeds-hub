@@ -8,7 +8,7 @@ date: "2026-07-06T12:59:00+08:00"
 eventAt: "2026-07-06T00:57:08Z"
 eventKey: "worldcup:news:brazil-norway-exit-reaction-ancelotti:2026-07-06"
 cover: "/images/worldcup/2026-07-06-brazil-world-cup-exit-reaction.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "巴西"
   - "挪威"

@@ -16,7 +16,6 @@ sources:
     - GitHub
   supplemental: []
 contentDir: src/content/product/
-coverPrefix: /images/product/
 allowedKinds:
   - hot_topic
   - market_brief
@@ -27,6 +26,6 @@ allowedKinds:
   - insight
 ---
 
-# Product Topic Config
+# Product Topic
 
 Uses `docs/types/realtime.md`; every item must bind to a concrete public product, pricing, policy, launch, or design event.

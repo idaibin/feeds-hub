@@ -8,7 +8,7 @@ date: "2026-07-05T06:59:00+08:00"
 eventAt: "2026-07-04T00:00:00Z"
 eventKey: "worldcup:match_result:morocco-canada-quarter-final:2026-07-04"
 cover: "/images/worldcup/2026-07-05-morocco-canada-quarter-final.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "摩洛哥"

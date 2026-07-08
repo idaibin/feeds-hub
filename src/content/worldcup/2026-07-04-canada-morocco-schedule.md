@@ -8,7 +8,7 @@ date: "2026-07-04T21:35:00+08:00"
 eventAt: "2026-07-05T01:00:00+08:00"
 eventKey: "worldcup:match_schedule:53452511:canada-morocco:2026-07-05T01:00:00+08:00"
 cover: "/images/worldcup/2026-07-04-canada-morocco-schedule.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "16强"

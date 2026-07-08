@@ -8,6 +8,7 @@ date: "2026-07-02T22:55:00+08:00"
 eventAt: "2026-07-02T21:01:09+08:00"
 eventKey: "ai:hot_topic:microsoft-frontier-company-ai-adoption:2026-07-02T21:01:09+08:00"
 cover: "/images/ai/2026-07-02-microsoft-frontier-company-ai-adoption.webp"
+coverStatus: "pending"
 tags:
   - "Microsoft"
   - "企业 AI"

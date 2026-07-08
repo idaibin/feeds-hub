@@ -1,13 +1,12 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "@/components/BaseLayout.astro";
-import FeedMarkdownBody from "@/components/FeedMarkdownBody.astro";
+import FeedCard from "@/components/FeedCard.astro";
 import {
     getDisplaySubtitle,
     getDisplaySummary,
     getDisplayTitle,
 } from "@/lib/feed-display";
-import { formatDate, getCategoryMeta } from "@/lib/feeds";
 
 export async function getStaticPaths() {
     const entries = await getCollection(
@@ -21,7 +20,6 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const category = getCategoryMeta(entry.data.category);
 const title = getDisplayTitle(entry.data.title, entry.data.source);
 const subtitle = getDisplaySubtitle(entry.data.subtitle, entry.data.source, [
     title,
@@ -36,80 +34,5 @@ const metaSummary = summary || subtitle;
 ---
 
 <BaseLayout title={`${title}｜Feeds Hub`} description={metaSummary || title}>
-    <article
-        class={`feed-detail category-${entry.data.category} mx-auto flex w-full max-w-[760px] flex-col self-start rounded-2xl border border-[var(--border)] bg-white/95 shadow-[var(--shadow-card)]`}
-    >
-        <div class="flex flex-none flex-col gap-4 p-4 md:p-6 md:pb-4">
-            <a
-                class="detail-category-link inline-flex max-w-full items-center gap-2 self-start overflow-hidden text-[13px] font-black leading-none text-[var(--topic-accent)] no-underline"
-                href={`/category/${category.id}/`}
-            >
-                <span class="h-2 w-2 shrink-0 rounded-full bg-current"></span>
-                <span class="truncate">{category.shortName}</span>
-            </a>
-            <h1
-                class="m-0 flex-none text-[clamp(30px,5vw,50px)] font-black leading-[1.08] tracking-normal text-feed-text"
-            >
-                {title}
-            </h1>
-            <FeedMarkdownBody
-                class="flex flex-col gap-2 text-[clamp(16px,2.3vw,22px)] leading-[1.8] text-feed-muted [&_a]:text-feed-primary-strong [&_code]:rounded-md [&_code]:bg-slate-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.92em] [&_h2]:m-0 [&_h2]:pt-2 [&_h2]:text-[22px] [&_h2]:font-extrabold [&_h2]:leading-tight [&_h3]:m-0 [&_h3]:pt-1 [&_h3]:text-lg [&_h3]:font-bold [&_li]:my-1 [&_p]:m-0 [&_strong]:font-extrabold [&_ul]:m-0 [&_ul]:pl-5"
-                body={entry.body}
-                source={entry.data.source}
-                title={title}
-                subtitle={subtitle}
-                summary={summary}
-            />
-            <p
-                class="m-0 flex w-full flex-none items-baseline justify-between gap-4 text-xs leading-normal text-feed-muted"
-            >
-                <span class="min-w-0">
-                    来源：
-                    {
-                        entry.data.sourceUrl ? (
-                            <a
-                                class="inline-flex items-center gap-1 text-feed-primary-strong no-underline"
-                                href={entry.data.sourceUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                <span>{entry.data.source ?? "查看原文"}</span>
-                                <svg
-                                    aria-hidden="true"
-                                    class="h-3 w-3 shrink-0"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path d="M7 17L17 7" />
-                                    <path d="M9 7h8v8" />
-                                </svg>
-                            </a>
-                        ) : (
-                            <span>{entry.data.source ?? "查看原文"}</span>
-                        )
-                    }
-                </span>
-                <time
-                    class="shrink-0 whitespace-nowrap text-right font-mono"
-                    datetime={entry.data.eventAt.toISOString()}
-                >
-                    {formatDate(entry.data.eventAt)}
-                </time>
-            </p>
-        </div>
-    </article>
+    <FeedCard entry={entry} mode="detail" />
 </BaseLayout>
-
-<style>
-    .feed-detail {
-        border-color: var(--topic-border);
-        background: linear-gradient(180deg, rgba(255, 255, 255, .98), rgba(255, 255, 255, .94)), var(--topic-bg);
-    }
-
-    svg {
-        stroke: currentColor;
-        stroke-width: 1.8;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        fill: none;
-    }
-</style>

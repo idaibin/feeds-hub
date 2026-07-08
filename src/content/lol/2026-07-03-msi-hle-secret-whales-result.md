@@ -8,7 +8,7 @@ date: "2026-07-04T21:35:00+08:00"
 eventAt: "2026-07-03T12:00:00+09:00"
 eventKey: "lol:match_result:msi-2026:hle-secret-whales:2026-07-03T12:00:00+09:00"
 cover: "/images/lol/2026-07-03-msi-hle-secret-whales-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "MSI2026"
   - "HLE"

@@ -22,7 +22,6 @@ sources:
     - Hacker News
     - official X
 contentDir: src/content/github/
-coverPrefix: /images/github/
 allowedKinds:
   - hot_topic
   - news
@@ -33,13 +32,17 @@ allowedKinds:
   - ai
 ---
 
-# GitHub Topic Config
+# GitHub Topic
 
-Uses `docs/types/realtime.md`; focuses on trending repositories, sharp star growth, important releases, security advisories, and AI-related open-source projects first.
+Uses `docs/types/realtime.md`.
 
-## Topic Overrides
+## Scope
 
-- Prefer AI, agent, model tooling, developer workflow, infrastructure, security, and framework repositories when multiple candidates qualify.
-- Star growth must be supported by GitHub Search/API, GitHub Trending, a repository-visible count with timestamp, or another verifiable public source. Third-party lists may guide discovery but cannot be the only hard source.
-- A repository item must identify the owner/name, repository URL, event type, observed star/release/advisory state, and why it matters to developers.
-- `source` should be `GitHub` unless the hard fact comes from an official project page outside GitHub.
+Trending repos, sharp star growth, releases, advisories, and AI-related open source.
+
+## Overrides
+
+- Prefer AI, agents, model tooling, dev workflow, infrastructure, security, and frameworks.
+- Star growth needs GitHub Search/API/Trending, visible repo count with timestamp, or other verifiable public source.
+- Include owner/name, repo URL, event type, observed state, and developer relevance.
+- Use `source: GitHub` unless the hard fact comes from an official non-GitHub project page.

@@ -8,7 +8,7 @@ date: "2026-07-02T07:55:00+08:00"
 eventAt: "2026-07-02T04:00:00+08:00"
 eventKey: "worldcup:match_result:belgium-senegal:2026-07-02T04:00:00+08:00"
 cover: "/images/worldcup/2026-07-02-belgium-senegal-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "32强"

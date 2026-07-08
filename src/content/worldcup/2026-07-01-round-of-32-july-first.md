@@ -8,7 +8,7 @@ date: "2026-07-01T16:55:00+08:00"
 eventAt: "2026-07-01T16:55:00+08:00"
 eventKey: "worldcup:match_schedule:2026-07-01-round-of-32-july-first:2026-07-01T16:55:00+08:00"
 cover: "/images/worldcup/2026-07-01-round-of-32-july-first.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags: ["世界杯2026", "32强赛", "美国队", "英格兰", "比利时"]
 summary: "7月1日的世界杯32强赛程集中安排了美国对波黑、墨西哥对厄瓜多尔、英格兰对民主刚果、比利时对塞内加尔。今天的重点不是单场爆点，而是淘汰赛首轮进入密集推进阶段，东道主美国和多支欧洲强队的晋级路径会直接影响16强对位。"
 source: "The Economic Times"

@@ -12,7 +12,6 @@ sources:
     - official vendor advisories
   supplemental: []
 contentDir: src/content/security/
-coverPrefix: /images/security/
 allowedKinds:
   - breaking
   - policy_update
@@ -22,6 +21,6 @@ allowedKinds:
   - hot_topic
 ---
 
-# Security Topic Config
+# Security Topic
 
 Uses `docs/types/realtime.md`; only defensive advisory, impact, mitigation, and ecosystem-risk information is allowed.

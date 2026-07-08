@@ -8,7 +8,7 @@ date: "2026-07-06T18:03:00+08:00"
 eventAt: "2026-07-05T22:07:00Z"
 eventKey: "worldcup:match_schedule:portugal-spain:last16:dallas:2026-07-06"
 cover: "/images/worldcup/2026-07-06-portugal-spain-last-16-preview.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "葡萄牙"
   - "西班牙"

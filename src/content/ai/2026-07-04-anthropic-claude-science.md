@@ -11,7 +11,7 @@ eventKey: "ai-anthropic-claude-science-launch-2026-06-30"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/science/anthropic-unveils-claude-science-ai-platform-scientific-research-2026-06-30/"
 cover: "/images/ai/2026-07-04-anthropic-claude-science.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "Anthropic"
   - "Claude Science"

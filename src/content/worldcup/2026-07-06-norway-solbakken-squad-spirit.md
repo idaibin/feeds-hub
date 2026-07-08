@@ -8,7 +8,7 @@ date: "2026-07-06T13:59:00+08:00"
 eventAt: "2026-07-06T00:10:00Z"
 eventKey: "worldcup:news:norway-brazil-solbakken-squad-spirit:2026-07-06"
 cover: "/images/worldcup/2026-07-06-norway-solbakken-squad-spirit.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "挪威"
   - "巴西"

@@ -8,7 +8,7 @@ date: "2026-07-07T16:35:00+08:00"
 eventAt: "2026-07-15T09:00:00Z"
 eventKey: "lol:data:ewc-2026-lol-group-openers:2026-07-15T09:00:00Z"
 cover: "/images/lol/2026-07-07-ewc-lol-group-openers-schedule.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "EWC2026"
   - "LOL赛事"
@@ -23,4 +23,4 @@ priority: 86
 
 Esports World Cup 官方页显示，2026 年 League of Legends 项目赛期为 7 月 15 日至 19 日，参赛队伍 16 支，奖金池为 2,000,000 美元。
 
-首日赛程从 7 月 15 日 09:00 UTC 开始，官方页列出 Team Secret vs Sentinels、Gen.G Esports vs Karmine Corp、Bilibili Gaming vs Movistar KOI、GAM Esports vs T1、G2 Esports vs FURIA、Dplus Kia vs AG.AL、Hanwha Life Esports vs MIBR.LOS、JD Gaming vs LYON 等小组赛开幕对阵。后续淘汰赛从 7 月 17 日进入四分之一决赛，7 月 19 日进行季军赛和总决赛。
+首日赛程从北京时间 7 月 15 日 17:00 开始，官方页列出 Team Secret vs Sentinels、Gen.G Esports vs Karmine Corp、Bilibili Gaming vs Movistar KOI、GAM Esports vs T1、G2 Esports vs FURIA、Dplus Kia vs AG.AL、Hanwha Life Esports vs MIBR.LOS、JD Gaming vs LYON 等小组赛开幕对阵。后续淘汰赛从 7 月 17 日进入四分之一决赛，7 月 19 日进行季军赛和总决赛。

@@ -8,7 +8,7 @@ date: "2026-07-06T23:59:00+08:00"
 eventAt: "2026-07-06T13:55:10Z"
 eventKey: "worldcup:hot_topic:belgium-balogun-eligibility-challenge:2026-07-06"
 cover: "/images/worldcup/2026-07-06-belgium-balogun-eligibility-challenge.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "比利时"
   - "FIFA"

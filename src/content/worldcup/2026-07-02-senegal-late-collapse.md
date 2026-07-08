@@ -8,7 +8,7 @@ date: "2026-07-02T12:57:00+08:00"
 eventAt: "2026-07-02T09:21:53+08:00"
 eventKey: "worldcup:hot_topic:senegal-late-collapse:2026-07-02T09:21:53+08:00"
 cover: "/images/worldcup/2026-07-02-senegal-late-collapse.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "塞内加尔"

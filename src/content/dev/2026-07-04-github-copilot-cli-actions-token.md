@@ -8,7 +8,7 @@ date: "2026-07-04T12:58:35Z"
 eventAt: "2026-07-02T00:00:00Z"
 eventKey: "dev:github-copilot-cli:actions-github-token:2026-07-02"
 cover: "/images/dev/2026-07-04-github-copilot-cli-actions-token.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "GitHub Actions"
   - "Copilot CLI"

@@ -11,7 +11,7 @@ eventKey: "ai:central-banks:financial-stability-sintra:2026-07-01"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/business/finance/ai-hopes-fears-dominate-global-central-bank-meet-2026-07-01/"
 cover: "/images/ai/2026-07-05-central-banks-ai-financial-stability.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "AI"
   - "央行"

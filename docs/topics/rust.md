@@ -16,7 +16,6 @@ sources:
     - RustSec
   supplemental: []
 contentDir: src/content/rust/
-coverPrefix: /images/rust/
 allowedKinds:
   - hot_topic
   - policy_update
@@ -26,6 +25,6 @@ allowedKinds:
   - insight
 ---
 
-# Rust Topic Config
+# Rust Topic
 
 Uses `docs/types/realtime.md`; covers Rust language, tooling, crates, compiler, RFC, and advisory updates.

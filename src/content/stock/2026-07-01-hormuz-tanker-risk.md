@@ -8,6 +8,7 @@ date: "2026-07-01T18:55:00+08:00"
 eventAt: "2026-07-01T18:55:00+08:00"
 eventKey: "stock:market_brief:2026-07-01-hormuz-tanker-risk:2026-07-01T18:55:00+08:00"
 cover: "/images/stock/2026-07-01-hormuz-tanker-risk.webp"
+coverStatus: "pending"
 tags:
   - "能源市场"
   - "霍尔木兹"

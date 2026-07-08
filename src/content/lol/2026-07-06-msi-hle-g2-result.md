@@ -8,7 +8,7 @@ date: "2026-07-07T16:20:00+08:00"
 eventAt: "2026-07-05T17:00:00+09:00"
 eventKey: "lol:match_result:msi-2026:hle-g2:2026-07-05T17:00:00+09:00:3-0"
 cover: "/images/lol/2026-07-06-msi-hle-g2-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "MSI2026"
   - "HLE"

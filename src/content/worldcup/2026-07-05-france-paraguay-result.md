@@ -8,7 +8,7 @@ date: "2026-07-05T08:59:34+08:00"
 eventAt: "2026-07-04T23:10:12Z"
 eventKey: "worldcup:match_result:53452509:paraguay-france:2026-07-04:0-1"
 cover: "/images/worldcup/2026-07-05-france-paraguay-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "16强"

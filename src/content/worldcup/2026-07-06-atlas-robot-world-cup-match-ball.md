@@ -8,7 +8,7 @@ date: "2026-07-06T10:01:00+08:00"
 eventAt: "2026-07-06T00:16:32Z"
 eventKey: "worldcup:news:atlas-humanoid-robot-match-ball:brazil-norway:2026-07-06"
 cover: "/images/worldcup/2026-07-06-atlas-robot-world-cup-match-ball.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "Atlas"
   - "Boston Dynamics"

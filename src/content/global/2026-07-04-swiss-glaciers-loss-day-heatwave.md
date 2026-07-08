@@ -8,7 +8,7 @@ date: "2026-07-04T05:00:00Z"
 eventAt: "2026-07-03T09:45:11Z"
 eventKey: "global:swiss-glaciers-loss-day-heatwave:2026-06-29"
 cover: "/images/global/2026-07-04-swiss-glaciers-loss-day-heatwave.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "瑞士冰川"
   - "欧洲热浪"

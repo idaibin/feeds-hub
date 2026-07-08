@@ -8,7 +8,7 @@ date: "2026-07-04T15:58:34Z"
 eventAt: "2026-07-04T00:59:00Z"
 eventKey: "global:reuters-climate-monitor-temperature-anomaly:2026-07-04"
 cover: "/images/global/2026-07-04-reuters-climate-monitor-heat.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "Reuters Climate Monitor"
   - "高温"

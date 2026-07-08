@@ -8,7 +8,7 @@ date: "2026-07-04T05:00:00Z"
 eventAt: "2026-07-01T09:03:44Z"
 eventKey: "ai:un-independent-scientific-panel-ai-report:2026-07-01"
 cover: "/images/ai/2026-07-04-un-ai-scientific-panel-report.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "联合国"
   - "AI 治理"

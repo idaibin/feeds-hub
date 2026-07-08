@@ -8,7 +8,7 @@ date: "2026-07-05T11:00:00+08:00"
 eventAt: "2026-07-04T14:20:00Z"
 eventKey: "worldcup:news:fifpro-racist-abuse-warning:2026-07-04"
 cover: "/images/worldcup/2026-07-05-fifpro-world-cup-abuse-warning.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "FIFPRO"

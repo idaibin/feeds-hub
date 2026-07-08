@@ -8,7 +8,7 @@ date: "2026-07-06T00:02:02+08:00"
 eventAt: "2026-07-05T01:02:45Z"
 eventKey: "worldcup:news:53452509:france-paraguay:deschamps-reaction:2026-07-05"
 cover: "/images/worldcup/2026-07-06-france-paraguay-deschamps-reaction.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "16强"

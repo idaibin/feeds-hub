@@ -8,7 +8,7 @@ date: "2026-07-04T11:59:00+08:00"
 eventAt: "2026-07-03T14:50:00+08:00"
 eventKey: "ai:alibaba:claude-code-workplace-ban:2026-07-03"
 cover: "/images/ai/2026-07-04-alibaba-claude-code-workplace-ban.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "Claude Code"
   - "Anthropic"

@@ -8,6 +8,7 @@ date: "2026-07-04T09:45:00+08:00"
 eventAt: "2026-06-30T00:00:00+08:00"
 eventKey: "rust:hot_topic:rust-1-96-1-maintenance-release:2026-06-30"
 cover: "/images/rust/2026-06-30-rust-1961-maintenance-release.webp"
+coverStatus: "pending"
 tags:
   - "Rust"
   - "Cargo"

@@ -8,6 +8,7 @@ date: "2026-07-01T16:55:00+08:00"
 eventAt: "2026-07-01T16:55:00+08:00"
 eventKey: "ai:hot_topic:2026-07-01-reboot-c-to-safe-rust:2026-07-01T16:55:00+08:00"
 cover: "/images/ai/2026-07-01-reboot-c-to-safe-rust.webp"
+coverStatus: "pending"
 tags: ["Rust", "Safe Rust", "开源工程", "解释器", "代码迁移"]
 summary: "arXiv 论文提出 Reboot 流程，用特性分解、多智能体翻译和自动化验证处理 C 解释器到 Safe Rust 的迁移。"
 source: "arXiv"

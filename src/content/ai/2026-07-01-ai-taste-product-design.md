@@ -8,6 +8,7 @@ date: "2026-07-01T16:55:00+08:00"
 eventAt: "2026-07-01T16:55:00+08:00"
 eventKey: "ai:hot_topic:2026-07-01-ai-taste-product-design:2026-07-01T16:55:00+08:00"
 cover: "/images/ai/2026-07-01-ai-taste-product-design.webp"
+coverStatus: "pending"
 tags: ["AI产品", "产品设计", "创业", "审美判断", "设计反馈"]
 summary: "Axios 报道称，Taste Labs 使用专业设计师和创意人的反馈评估 AI 生成结果。"
 source: "Axios"

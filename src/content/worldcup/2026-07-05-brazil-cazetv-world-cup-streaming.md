@@ -8,7 +8,7 @@ date: "2026-07-05T14:59:52+08:00"
 eventAt: "2026-07-05T04:05:18Z"
 eventKey: "worldcup:news:cazetv-streaming-rights-brazil-world-cup:2026-07-05"
 cover: "/images/worldcup/2026-07-05-brazil-cazetv-world-cup-streaming.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "巴西"

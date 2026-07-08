@@ -8,7 +8,7 @@ date: "2026-07-05T08:59:34+08:00"
 eventAt: "2026-07-04T19:21:15Z"
 eventKey: "worldcup:match_result:53452511:canada-morocco:2026-07-04:3-0"
 cover: "/images/worldcup/2026-07-05-canada-morocco-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "16强"

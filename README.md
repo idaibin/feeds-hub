@@ -2,7 +2,7 @@
 
 AI-powered information hub built with Astro.
 
-Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构化 Markdown、可选 WebP 海报和静态站点发布串成一套可复制流程。仓库只保存展示层和处理后的 feed 内容；通用 Prompt、Skill、Workflow 和共享自动化规范由 [`idaibin/aicraft`](https://github.com/idaibin/aicraft) 维护。
+Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构化 Markdown 和静态站点发布串成一套可复制流程。仓库只保存展示层和处理后的 feed 内容；通用 Prompt、Skill、Workflow 和共享自动化规范由 [`idaibin/aicraft`](https://github.com/idaibin/aicraft) 维护。
 
 ## 用途
 
@@ -21,9 +21,7 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 | `docs/topics/README.md` | 主题列表和主题文档格式 |
 | `docs/topics/<category>.md` | 单主题范围、来源、跳过条件 |
 | `docs/rules/content-format.md` | frontmatter、标题、摘要、正文格式 |
-| `docs/posters/README.md` | 海报规则总入口、`kind` 选择、比例映射、提示词拼装和图片写入 |
-| `docs/posters/<kind>.md` | 可直接拼入模板的单类海报提示词 |
-| `docs/rules/ui-spec.md` | 页面、card、详情页和图片展示规则 |
+| `docs/rules/ui-spec.md` | 页面、card 和详情页展示规则 |
 
 ## 默认主题
 
@@ -45,25 +43,22 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 完整执行规则见 `docs/automation/feeds-hub-update.md`。核心顺序：
 
 ```text
-topics -> sources -> dedupe -> kind -> markdown -> optional webp -> validation
+topics -> sources -> dedupe -> kind -> markdown -> validation
 ```
 
 必要原则：
 
 - 1 feed = 1 event。
-- 信息生成优先于图片生成。
-- 无法生成合规 WebP 时，保留内容并设置 `coverStatus: "pending"`。
-- 海报只允许 WebP，禁止 SVG/PNG 主封面。
-- 图片写入 GitHub 必须按 `docs/posters/README.md` 的 blob/tree/commit/ref 流程。
+- 信息准确、可核验、去重表达优先。
+- `cover` / `coverStatus` 只作 schema 兼容；`coverStatus` 固定为 `pending`。
 
 ## 内容结构
 
 ```text
 src/content/<category>/<yyyy-mm-dd>-<slug>.md
-public/images/<category>/<yyyy-mm-dd>-<slug>.webp
 ```
 
-frontmatter 中的 `cover` 使用站点路径：
+frontmatter 中的 `cover` 是历史兼容占位，不参与展示，也不要求对应文件存在。建议使用稳定站点路径：
 
 ```text
 /images/<category>/<yyyy-mm-dd>-<slug>.webp

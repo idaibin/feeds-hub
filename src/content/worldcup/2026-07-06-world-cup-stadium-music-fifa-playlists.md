@@ -8,7 +8,7 @@ date: "2026-07-06T02:59:50+08:00"
 eventAt: "2026-07-05T10:05:09Z"
 eventKey: "worldcup:news:fifa-stadium-entertainment-playlists:2026-07-05"
 cover: "/images/worldcup/2026-07-06-world-cup-stadium-music-fifa-playlists.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "FIFA"

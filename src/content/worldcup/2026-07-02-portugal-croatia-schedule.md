@@ -8,7 +8,7 @@ date: "2026-07-02T08:54:00+08:00"
 eventAt: "2026-07-03T07:00:00+08:00"
 eventKey: "worldcup:match_schedule:portugal-croatia:2026-07-03T07:00:00+08:00"
 cover: "/images/worldcup/2026-07-02-portugal-croatia-schedule.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "32强"

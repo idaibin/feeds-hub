@@ -8,7 +8,7 @@ date: "2026-07-04T12:58:35Z"
 eventAt: "2026-07-03T00:00:00Z"
 eventKey: "product:vercel-agent-runs:mcp-cli:2026-07-03"
 cover: "/images/product/2026-07-04-vercel-agent-runs-mcp-cli.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "Vercel"
   - "Agent Runs"

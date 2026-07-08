@@ -8,6 +8,7 @@ date: "2026-07-02T18:56:00+08:00"
 eventAt: "2026-06-30T20:32:40+08:00"
 eventKey: "ai:policy_update:boe-agentic-ai-rules:2026-06-30T20:32:40+08:00"
 cover: "/images/ai/2026-07-02-boe-agentic-ai-rules.webp"
+coverStatus: "pending"
 tags:
   - "Agentic AI"
   - "英国央行"

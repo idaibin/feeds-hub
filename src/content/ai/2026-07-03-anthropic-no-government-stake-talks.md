@@ -8,6 +8,7 @@ date: "2026-07-03T02:54:00+08:00"
 eventAt: "2026-07-03T00:28:00+08:00"
 eventKey: "ai:policy_update:anthropic-no-government-stake-talks:2026-07-03T00:28:00+08:00"
 cover: "/images/ai/2026-07-03-anthropic-no-government-stake-talks.webp"
+coverStatus: "pending"
 tags:
   - "Anthropic"
   - "AI 政策"

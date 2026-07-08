@@ -8,6 +8,7 @@ date: "2026-07-02T14:54:00+08:00"
 eventAt: "2026-07-01T18:15:00+08:00"
 eventKey: "ai:policy_update:un-ai-panel-preliminary-report:2026-07-01"
 cover: "/images/ai/2026-07-02-un-ai-panel-risk-report.webp"
+coverStatus: "pending"
 tags:
   - "AI"
   - "治理"

@@ -11,7 +11,7 @@ eventKey: "stock-stoxx-600-record-us-jobs-data-2026-07-02"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/markets/europe/european-shares-slip-ai-stocks-weigh-us-jobs-data-focus-2026-07-02/"
 cover: "/images/stock/2026-07-04-stoxx-600-record-us-jobs.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "STOXX 600"
   - "Europe"

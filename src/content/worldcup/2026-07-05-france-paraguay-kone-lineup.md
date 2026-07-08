@@ -8,7 +8,7 @@ date: "2026-07-05T06:00:00+08:00"
 eventAt: "2026-07-04T19:53:09Z"
 eventKey: "worldcup:france-paraguay:last16-kone-tchouameni:2026-07-04"
 cover: "/images/worldcup/2026-07-05-france-paraguay-kone-lineup.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "法国"

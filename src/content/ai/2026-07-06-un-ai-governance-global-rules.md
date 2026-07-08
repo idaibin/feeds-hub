@@ -8,7 +8,7 @@ date: "2026-07-06T17:00:00+08:00"
 eventAt: "2026-07-06T07:25:00Z"
 eventKey: "ai:policy:un-global-ai-governance-dialogue:2026-07-06"
 cover: "/images/ai/2026-07-06-un-ai-governance-global-rules.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "AI治理"
   - "联合国"

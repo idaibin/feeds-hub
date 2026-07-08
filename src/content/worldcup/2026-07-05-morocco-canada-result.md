@@ -11,7 +11,7 @@ eventKey: "worldcup:match_result:canada-morocco:2026-07-04"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/morocco-beat-canada-3-0-reach-world-cup-quarter-finals-2026-07-04/"
 cover: "/images/worldcup/2026-07-05-morocco-canada-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "摩洛哥"

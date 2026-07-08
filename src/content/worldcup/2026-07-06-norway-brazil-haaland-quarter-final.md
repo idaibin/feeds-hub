@@ -8,7 +8,7 @@ date: "2026-07-06T07:01:00+08:00"
 eventAt: "2026-07-05T22:13:00Z"
 eventKey: "worldcup:match_result:brazil-norway:2026-07-05:2-1"
 cover: "/images/worldcup/2026-07-06-norway-brazil-haaland-quarter-final.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "挪威"
   - "巴西"

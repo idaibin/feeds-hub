@@ -8,6 +8,7 @@ date: "2026-07-03T01:54:00+08:00"
 eventAt: "2026-07-02T21:33:09+08:00"
 eventKey: "stock:policy_update:fed-daly-policy-uncertain-ai-investment:2026-07-02T21:33:09+08:00"
 cover: "/images/stock/2026-07-03-fed-daly-policy-uncertain-ai-investment.webp"
+coverStatus: "pending"
 tags:
   - "美联储"
   - "Mary Daly"
@@ -24,4 +25,4 @@ Reuters 报道称，旧金山联储主席 Mary Daly 7 月 2 日在西班牙 Sant
 
 市场状态：政策更新，不写入指数收盘点位。
 
-市场情绪：震荡。报道还称，Daly 讲话时美国 6 月就业增长已明显放缓，交易员下调了近期加息押注；该事件事实基础使用西班牙 Santander 当地时间。
+市场情绪：震荡。报道还称，Daly 讲话时美国 6 月就业增长已明显放缓，交易员下调了近期加息押注；本条按北京时间记录事件确认时间。

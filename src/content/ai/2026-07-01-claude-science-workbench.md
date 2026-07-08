@@ -8,6 +8,7 @@ date: "2026-07-01T18:55:00+08:00"
 eventAt: "2026-07-01T18:55:00+08:00"
 eventKey: "ai:hot_topic:2026-07-01-claude-science-workbench:2026-07-01T18:55:00+08:00"
 cover: "/images/ai/2026-07-01-claude-science-workbench.webp"
+coverStatus: "pending"
 tags:
   - "Anthropic"
   - "Claude Science"

@@ -8,7 +8,7 @@ date: "2026-07-04T17:00:00Z"
 eventAt: "2026-07-04T15:52:42Z"
 eventKey: "worldcup:canada-morocco:last16-davies-bench:2026-07-04"
 cover: "/images/worldcup/2026-07-05-canada-morocco-davies-bench.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "加拿大"

@@ -10,7 +10,7 @@ eventKey: "compute-ai-infrastructure-spending-2026-06-24"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/technology/artificial-intelligence/artificial-intelligencer-wall-street-cant-decide-what-think-about-ai-2026-06-24/"
 cover: "/images/compute/2026-07-04-ai-infrastructure-spending.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "AI infrastructure"
   - "chips"

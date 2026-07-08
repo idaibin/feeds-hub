@@ -8,6 +8,7 @@ date: "2026-07-02T17:55:00+08:00"
 eventAt: "2026-07-02T17:34:05+08:00"
 eventKey: "stock:market_brief:us-futures-payrolls-chipmakers:2026-07-02T17:34:05+08:00"
 cover: "/images/stock/2026-07-02-us-futures-payrolls-chipmakers.webp"
+coverStatus: "pending"
 tags:
   - "美股"
   - "就业数据"

@@ -8,7 +8,7 @@ date: "2026-07-03T11:56:00+08:00"
 eventAt: "2026-07-03T07:00:00+08:00"
 eventKey: "worldcup:match_result:portugal-croatia:2026-07-03T07:00:00+08:00"
 cover: "/images/worldcup/2026-07-03-portugal-croatia-last-16.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "葡萄牙"
   - "克罗地亚"
@@ -23,4 +23,4 @@ priority: 86
 
 葡萄牙在世界杯 32 强战中 2-1 击败克罗地亚；Ivan Perisic 第 53 分钟破门，Cristiano Ronaldo 第 68 分钟点球扳平，Goncalo Ramos 在补时阶段打入制胜球，葡萄牙晋级 16 强，克罗地亚出局。
 
-葡萄牙下一轮将在 Dallas 对阵西班牙。Josko Gvardiol 的后段进球经 VAR 判定越位，比分保持 2-1；比赛时间按 Toronto 当地时间记录，原始赛程为 7 月 2 日 19:00 EDT。
+葡萄牙下一轮将在 Dallas 对阵西班牙。Josko Gvardiol 的后段进球经 VAR 判定越位，比分保持 2-1；该场原始赛程对应北京时间 7 月 3 日 07:00。

@@ -1,87 +1,50 @@
 # Sports Type Rules
 
-赛事类信息规则，供 `type: sports` 或 `flows: [sports]` 的 topic 引用。Topic 文件只声明来源、目录、kind 和少量特例，不重复完整状态机。
+用于 `worldcup`、`lol` 和未来 sports topic。
 
 ## Scope
 
-- 适用于 `worldcup`、`lol` 和未来新增的赛事类 topic。
-- 1 feed = 1 match state, 1 player story, 1 bracket/path update, or 1 clearly bounded tournament event.
-- 官方赛事日先覆盖硬事实：赛前一天必须有预告，当天必须有赛程或进行中状态，赛后必须有赛果、晋级、淘汰和下一轮关系；完成后才写话题、热度或背景内容。
+- 1 feed = 1 个比赛状态、球员/选手故事、晋级路径更新或明确赛事事件。
+- 官方赛事日先补赛程、赛中状态、赛果和晋级关系，再写热点/反应/背景。
+- 当前日期落在 `docs/topics/README.md` 的赛事窗口内时，不能跳过逐场审查。
 
-## Shared Kinds
+## Kinds
 
-- `match_schedule`: upcoming fixture, kickoff, stage, teams, official schedule, format when available.
-- `match_flow`: live or in-progress state, official timeline, current score/state, verified key phase, pause/remake/postponement when available.
-- `match_result`: completed match, confirmed score, winner, loser, advancement, elimination, next-match relationship, series/game detail when available.
-- `player_spotlight`: one player or role update tied to a verified event.
-- `knockout_update`: bracket, path, advancement, elimination stage, upper/lower bracket, final path, or next round.
-- `data`: standings, schedule table, bracket, ranking, path, game record, or timeline.
-- `hot_topic` / `news`: one bounded tournament storyline, rule update, roster-impacting item, or official competition update.
+- `match_schedule`: fixture, kickoff date, exact start time, timezone, stage, teams, venue/region, format.
+- `match_flow`: live/in-progress, lineup, pause, delay, remake, walkover, current score/state.
+- `match_result`: final score, winner, loser, advancement, elimination, next match.
+- `knockout_update`: bracket/path/next opponent/final route.
+- `data`: standings, schedule table, bracket, ranking, timeline.
+- `player_spotlight`, `hot_topic`, `news`: 只写边界清楚的赛事故事。
 
-## Match State Progression
+## Per-run Review
 
-For each official match in the task window, check whether the latest official state is scheduled, live, final, postponed, cancelled, remake, walkover, or otherwise official.
+1. 读取 `Active Event Calendar` 和 topic `Topic Overrides`。
+2. 打开官方 schedule、results、standings/bracket/stage、match centre。
+3. 生成审查清单：前 36 小时、当天、后 48 小时。
+4. 将每场标为 scheduled、live、final、postponed、cancelled、remake、walkover、unknown。
+5. 对照现有 `src/content/<category>/` 去重。
+6. 缺 `match_schedule` / `match_flow` / `match_result` 时先补比赛 feed。
+7. 没有新增时报告 `sportsCoverage.checkedMatches` 和 `noMissingState`。
 
-- `match_schedule` may be followed later by `match_flow`.
-- `match_schedule` or `match_flow` may be followed later by `match_result`.
-- A completed official match should produce `match_result` even if a previous `match_schedule` feed already exists.
-- For scheduled official matches, create or keep a `match_schedule` preview no later than the previous calendar day in the event venue timezone when the fixture is known.
-- On match day, create `match_flow` only when an official live/in-progress state, postponement, pause, remake, walkover, or other state change is verified; otherwise keep the latest `match_schedule` as the current state until a result is confirmed.
-- A bracket-changing result may also produce a separate `knockout_update` when the path, next opponent, elimination, or final route is the main event.
-- Do not force all states in one run; do not skip a newer verified state because an older state already exists.
+## Dedup
 
-## Required Facts
+- 优先使用官方 match ID。
+- 无 ID 时用 tournament + teams + eventAt + state。
+- `sourceUrl` 不能单独判重，stage/standings 页面通常包含多场比赛。
+- 同一场可按状态递进：schedule -> flow -> result。
+- result 只在同一 match、state、score、晋级关系均已存在时才算重复。
 
-For `match_schedule`, include when verified:
+## Source
 
-- tournament, stage, teams, kickoff time, venue/region if available, and format when relevant.
-- next-round context only when the official page provides it.
+- 硬事实来自官方赛程、比赛中心、赛果、standings/stage、官方声明或 topic 允许的权威报道。
+- 社区/中文站只能补充评价、情绪、讨论热度和背景。
+- 官方与权威来源冲突时跳过。
 
-For `match_flow`, include when verified:
+## Body
 
-- live/in-progress status, current total score or game state, current game/period/map when relevant, pause/remake/postponement state, and key turning point.
-- do not infer a final winner from a live score.
-
-For `match_result`, include when verified:
-
-- final score.
-- winner and loser.
-- advancement, elimination, lower-bracket drop, next opponent, next match, or final path when official data provides it.
-- game-by-game or period-by-period detail when available from official data.
-- MVP, player of the match, awards, lineup, roster, or player availability only when official or otherwise verified by an allowed source.
-
-If fine-grained game/period detail is not available from verified sources, write only the verified total score and state that detailed breakdown is not confirmed.
-
-## Event Key And Deduplication
-
-- Use official match ID when available.
-- If official match ID is unavailable, use normalized tournament, teams, kickoff/event time, and state.
-- Do not treat the same `sourceUrl` as a duplicate by itself. Official stage, standings, match center, or schedule pages often contain multiple matches.
-- Same teams and same kickoff can still have separate state keys for `match_schedule`, `match_flow`, and `match_result`.
-- A result feed is duplicate only when tournament, official match ID or teams plus event time, state, and final score all match an existing feed.
-- A bracket/path update is duplicate only when the same advancement, elimination, next opponent, or path relationship already exists.
-
-Do not skip a verified match update only because:
-
-- the same `sourceUrl` already exists.
-- a previous state exists for the same teams.
-- the same stage or schedule page contains multiple matches.
-- the same tournament day already produced another feed.
-- the ordinary per-topic item limit has already been reached.
-
-## Source Rules
-
-- Hard facts must come from official schedule, official match center, official results, official standings/stage pages, official embedded match data, official statements, or an allowed authoritative reporting source for that topic.
-- `source` must be the short publisher name that matches `sourceUrl`; keep tournament names, stage names, and source-comparison notes in `topic`, `tags`, or body text instead of the source display field.
-- Community and Chinese sports/esports sites may supplement player evaluation, local context, fan reaction, discussion heat, social mood, or poster atmosphere.
-- Community discussion, comments, hot takes, and social reactions cannot override score, schedule, winner, match status, advancement, lineup, roster, or next-round relationships.
-- If official pages are dynamic, inspect embedded official data before skipping. Do not rely only on the page title, meta description, old feed text, or visible shell content.
-- If official and authoritative sources conflict on score, kickoff, match status, winner, roster, or bracket relationship, skip until it can be resolved.
-
-## Body Format
-
-- First paragraph: verified status, fixture, time, score, state, official fact, or key match event.
-- Second paragraph: stage, next match, next round, group/bracket relation, advancement, elimination, current confirmation scope, or pending detail.
-- Optional third paragraph: fact conflict, unavailable fine detail, postponed/cancelled/remake context, or verified scheduling caveat.
-- Title, summary, subtitle, and first paragraph must not be near-duplicates; summary should add stage, next opponent, verified score detail, kickoff context, or confirmation scope not already in the title.
-- No prediction, hype, unsourced lineup, emotional win/loss judgement, or template/prompt residue.
+- `match_schedule` 的 title、subtitle、summary 和第一段必须写入官网核验的具体开赛时间；中文页面和中文内容统一显示北京时间。只有官网明确 TBD 时才写 TBD，并说明待确认。
+- 第一段：状态、对阵、时间、比分或关键事实。
+- 第二段：阶段、下一轮、晋级/淘汰、确认范围。
+- 第三段可写冲突、缺失细节、延期/重赛等限制。
+- 标题、summary、subtitle、首段不得近似复述。

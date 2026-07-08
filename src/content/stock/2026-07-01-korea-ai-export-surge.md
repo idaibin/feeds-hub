@@ -8,6 +8,7 @@ date: "2026-07-01T15:50:00+08:00"
 eventAt: "2026-07-01T15:50:00+08:00"
 eventKey: "stock:market_brief:2026-07-01-korea-ai-export-surge:2026-07-01T15:50:00+08:00"
 cover: "/images/stock/2026-07-01-korea-ai-export-surge.webp"
+coverStatus: "pending"
 tags:
   - "韩国出口"
   - "AI芯片"

@@ -11,7 +11,7 @@ eventKey: "compute-bloom-brookfield-ai-power-funding-2026-06-30"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/business/energy/bloom-energy-brookfield-expand-ai-infrastructure-power-partnership-25-billion-2026-06-30/"
 cover: "/images/compute/2026-07-04-bloom-brookfield-ai-power.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "Bloom Energy"
   - "Brookfield"

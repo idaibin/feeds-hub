@@ -8,6 +8,7 @@ date: "2026-07-02T19:56:00+08:00"
 eventAt: "2026-07-02T15:18:04+08:00"
 eventKey: "stock:market_brief:europe-defensives-tech-slide:2026-07-02T15:18:04+08:00"
 cover: "/images/stock/2026-07-02-europe-defensives-tech-slide.webp"
+coverStatus: "pending"
 tags:
   - "欧洲股市"
   - "STOXX 600"

@@ -8,7 +8,7 @@ date: "2026-07-05T16:58:00+08:00"
 eventAt: "2026-07-05T01:36:09Z"
 eventKey: "worldcup:match_schedule:53452519:mexico-england:2026-07-05:england-tuchel-azteca"
 cover: "/images/worldcup/2026-07-05-england-azteca-tuchel-preparation.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "16强"

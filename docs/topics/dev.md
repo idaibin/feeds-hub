@@ -20,7 +20,6 @@ sources:
     - platform announcements
   supplemental: []
 contentDir: src/content/dev/
-coverPrefix: /images/dev/
 allowedKinds:
   - hot_topic
   - news
@@ -30,6 +29,6 @@ allowedKinds:
   - ai
 ---
 
-# Dev Topic Config
+# Dev Topic
 
 Uses `docs/types/realtime.md`; covers developer ecosystem news outside Rust.

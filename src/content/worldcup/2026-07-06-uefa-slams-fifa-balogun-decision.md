@@ -8,7 +8,7 @@ date: "2026-07-06T21:01:00+08:00"
 eventAt: "2026-07-06T10:06:04Z"
 eventKey: "worldcup:hot_topic:uefa-fifa-balogun-decision-response:2026-07-06"
 cover: "/images/worldcup/2026-07-06-uefa-slams-fifa-balogun-decision.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "UEFA"
   - "FIFA"

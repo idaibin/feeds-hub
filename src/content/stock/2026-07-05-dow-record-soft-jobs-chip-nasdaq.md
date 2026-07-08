@@ -8,7 +8,7 @@ date: "2026-07-05T01:59:00+08:00"
 eventAt: "2026-07-02T09:34:05Z"
 eventKey: "stock:us-dow-record-soft-jobs-chip-nasdaq:2026-07-02"
 cover: "/images/stock/2026-07-05-dow-record-soft-jobs-chip-nasdaq.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "美股"
   - "Dow"

@@ -8,7 +8,7 @@ date: "2026-07-07T16:58:22+08:00"
 eventAt: "2026-07-06T23:14:14Z"
 eventKey: "worldcup-news-egypt-coach-palestine-press-appeal-2026-07-06"
 cover: "/images/worldcup/2026-07-07-egypt-coach-palestine-press-appeal.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "World Cup"
   - "Egypt"

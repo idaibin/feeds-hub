@@ -8,6 +8,7 @@ date: "2026-07-03T08:55:00+08:00"
 eventAt: "2026-07-03T04:11:00+08:00"
 eventKey: "ai:hot_topic:meta-ai-agents-slower-progress:2026-07-03T04:11:00+08:00"
 cover: "/images/ai/2026-07-03-meta-ai-agents-slower-progress.webp"
+coverStatus: "pending"
 tags:
   - "Meta"
   - "AI Agent"

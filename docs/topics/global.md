@@ -20,7 +20,6 @@ sources:
     - sanctions publications
   supplemental: []
 contentDir: src/content/global/
-coverPrefix: /images/global/
 allowedKinds:
   - policy_update
   - breaking
@@ -30,7 +29,7 @@ allowedKinds:
   - insight
 ---
 
-# Global Topic Config
+# Global Topic
 
 Uses `docs/types/realtime.md`; covers high-signal global events with official or Reuters confirmation.
 
@@ -38,4 +37,4 @@ Uses `docs/types/realtime.md`; covers high-signal global events with official or
 
 - This topic is retained for historical content and route compatibility.
 - Default automation must skip this topic and report `skipped: disabled-by-focus`.
-- Re-enable only when the task explicitly expands focus beyond worldcup, lol, ai, github, and stock.
+- Re-enable only when the task explicitly expands focus beyond ai, github, stock, lol, and worldcup.

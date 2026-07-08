@@ -8,7 +8,7 @@ date: "2026-07-04T21:35:00+08:00"
 eventAt: "2026-07-04T02:00:00+08:00"
 eventKey: "worldcup:match_result:53452503:australia-egypt:2026-07-04T02:00:00+08:00"
 cover: "/images/worldcup/2026-07-04-australia-egypt-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "32强"

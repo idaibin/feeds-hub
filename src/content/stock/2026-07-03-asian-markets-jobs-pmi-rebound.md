@@ -8,6 +8,7 @@ date: "2026-07-03T13:56:00+08:00"
 eventAt: "2026-07-03T09:08:26+08:00"
 eventKey: "stock:market_brief:asian-markets-jobs-pmi-rebound:2026-07-03T09:08:26+08:00"
 cover: "/images/stock/2026-07-03-asian-markets-jobs-pmi-rebound.webp"
+coverStatus: "pending"
 tags:
   - "亚洲股市"
   - "PMI"

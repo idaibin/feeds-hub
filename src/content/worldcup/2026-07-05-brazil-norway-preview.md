@@ -8,7 +8,7 @@ date: "2026-07-05T10:00:00+08:00"
 eventAt: "2026-07-04T19:27:05Z"
 eventKey: "worldcup:match_schedule:53452517:brazil-norway:2026-07-05:preview-solbakken"
 cover: "/images/worldcup/2026-07-05-brazil-norway-preview.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "16强"

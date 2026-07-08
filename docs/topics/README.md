@@ -1,53 +1,45 @@
 # Topics
 
-主题文档只写 topic 配置：信息类型、信息源、允许的 `kind`、内容存储位置和海报路径前缀。信息生成规则统一放在 `docs/types/`，海报规则统一放在 `docs/posters/`。
+Topic 文件只定义机器可读配置和少量主题特例。通用生成规则放在 `docs/types/`，内容格式放在 `docs/rules/content-format.md`。
 
-通用规则：
+## 通用规则
 
-- 默认活跃主题只处理 `worldcup`、`lol`、`ai`、`github` 和 `stock`；其它历史主题保留路由和内容，但不参与默认自动生成。
-- `kind` 只表示内容表达方式，不在 topic 文档内写海报视觉提示词。
-- topic `.md` 顶部 YAML frontmatter 是唯一机器可读配置；正文只允许简短说明，不承载规则。
-- 每个 topic 必须声明 `id`、`type`、`flows`、`sources`、`contentDir`、`coverPrefix` 和 `allowedKinds`。
-- `flows` 决定读取哪些 `docs/types/*.md` 信息规则；一个 topic 可以引用多个 flow，例如 `stock` 同时引用 `realtime` 和 `scheduled-market`。
-- topic 独有例外必须显式写在 frontmatter 或正文的 `Topic Overrides` 小节；不能把 topic 特例藏进 automation、poster 或 UI 文档。
-- 海报 profile、比例、尺寸和图片规则看 `docs/posters/README.md`，具体 prompt 看 `docs/posters/<profile>.md`。
-- 正文格式看 `docs/rules/content-format.md`。
-- 自动任务计划、分支创建、提交、合并和清理看 `docs/automation/feeds-hub-update.md`。
-- 全局默认站点固定为 GitHub、Reuters、Reddit、X；各 topic 只配置额外搜索网站和关注内容。
-- Reddit / X 不作为硬事实来源；可用于网友看法、情绪接受度、乐观/悲观倾向、使用反馈、背景信息和市场反应。
-- 官方认证账号的 X 推文可作为官方声明来源，必须提供推文 URL；`sourceName` 简单标注为 `X / 账号名` 或 `官方 X`。
-- 最终 `sourceUrl` 优先写 GitHub、Reuters、官方来源或 topic 额外来源中的裁决链接；Reddit / X 只在内容明确讨论社区反应且无更合适来源时作为补充链接。
-- 赛事类硬事实以官方赛程、官方比赛中心、官方赛果或权威通讯社为准，包括比分、赛程、胜负、晋级、下一轮关系、阵容和官方状态。
-- 赛事类通用状态、去重、正文和来源规则统一看 `docs/types/sports.md`；具体赛事 topic 文件只写来源、范围和特有差异。
-- 虎扑等社区/中文赛事站用于补充选手评价、用户情绪、讨论热度和市场关注点，只能作为正文背景和海报氛围参考，不能覆盖官方硬事实。
-- 默认站点和 topic 额外来源都无法确认时跳过，不临时扩展来源。
-- 海报只接收最终结构化 facts，不读取原始新闻正文或来源全文。
-- Markdown 和海报目标路径以 topic frontmatter 为准。
+- 默认先处理赛事 `lol`、`worldcup`，再处理 `ai`、`github`、`stock`。
+- 其它历史 topic 保留内容和路由，默认不自动生成。
+- frontmatter 是唯一机器可读配置，必须包含 `id`、`type`、`flows`、`sources`、`contentDir`、`allowedKinds`。
+- topic 特例只写在 `Topic Scope` 或 `Topic Overrides`。
+- Reddit / X / 社区只能补充反应和背景，不能确认硬事实。
+- 赛事硬事实必须来自官方赛程、比赛中心、赛果、standings/bracket/stage 或权威通讯社。
+- 默认和 topic 来源都无法确认时跳过。
 
-## Default Sites
+## Active Event Calendar
 
-| Source | Role |
-| --- | --- |
-| GitHub | releases, repository changes, open-source development, security advisories |
-| Reuters | markets, technology, compute, global, company and policy reporting |
-| Reddit | community reaction, sentiment, acceptance, optimism/pessimism, usage feedback, and background context only |
-| X | official-account tweet URL when used as a statement source; otherwise discussion context only |
+每轮先读本表，再读对应 topic 的 `Topic Overrides`，最后打开官方来源逐场核验。日期按赛事官方当地日期；Markdown `eventAt` 使用 UTC。
+
+| Topic | Event | Window | 必查 |
+| --- | --- | --- | --- |
+| `worldcup` | FIFA World Cup 2026 | 2026-06-11 to 2026-07-19 | FIFA schedule、scores-fixtures、standings/bracket、match centre |
+| `lol` | MSI 2026 Daejeon | 2026-06-28 to 2026-07-12 | LoL Esports schedule、MSI news、内嵌 match data |
+
+关键窗口：
+
+- World Cup: Round of 16 2026-07-04 to 2026-07-07; Quarter-finals 2026-07-09 to 2026-07-11; Semi-finals 2026-07-14 to 2026-07-15; Third-place 2026-07-18; Final 2026-07-19.
+- MSI: Play-In 2026-06-28 to 2026-07-01; Bracket 2026-07-03 to 2026-07-06 and 2026-07-08 to 2026-07-12; Upper Final 2026-07-09; Lower Final 2026-07-11; Grand Finals 2026-07-12.
+
+官方入口：
+
+- FIFA schedule: https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/match-schedule-fixtures-results-teams-stadiums
+- FIFA scores: https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/scores-fixtures
+- FIFA standings: https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/standings
+- LoL Esports schedule: https://lolesports.com/en-GB/leagues/first_stand%2Cmsi%2Cworlds
+- MSI update: https://lolesports.com/en-GB/news/msi-and-worlds-updates
 
 ## Files
 
-- `worldcup.md`
-- `lol.md`
-- `stock.md`
-- `ai.md`
-- `github.md`
-- `compute.md`
-- `global.md`
-- `rust.md`
-- `dev.md`
-- `security.md`
-- `product.md`
+- Active: `ai.md`, `github.md`, `stock.md`, `lol.md`, `worldcup.md`
+- Historical: `compute.md`, `global.md`, `rust.md`, `dev.md`, `security.md`, `product.md`
 
-## Topic File Shape
+## Shape
 
 ```yaml
 ---
@@ -60,15 +52,6 @@ sources:
   secondary: []
   supplemental: []
 contentDir: src/content/<topic>/
-coverPrefix: /images/<topic>/
 allowedKinds: []
 ---
 ```
-
-未指定来源时，执行者自行搜索公开、可核验来源；指定来源时优先采用。
-
-## Type Rules
-
-- `docs/types/realtime.md`
-- `docs/types/scheduled-market.md`
-- `docs/types/sports.md`

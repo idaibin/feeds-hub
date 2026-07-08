@@ -16,20 +16,16 @@ Feed markdown files live directly under category directories:
 
 Do not add an extra `feeds/` parent directory under `src/content`.
 
-Poster assets, when available, use the matching physical structure under `public/images/<category>/`.
-
-Frontmatter `cover` uses the site path, for example:
+Frontmatter `cover` is a legacy compatibility field. It is not displayed and does not require a matching file. Use a stable site path, for example:
 
 ```text
 /images/<category>/<file>.webp
 ```
 
-New feed frontmatter must include `coverStatus`:
+New feed frontmatter must include `coverStatus` for schema compatibility:
 
 ```text
-generated_webp | pending
+pending
 ```
-
-Poster generation, binary image writes, fallback, and pending cover rules are maintained in `docs/posters/README.md`; profile prompts are maintained in `docs/posters/<profile>.md`.
 
 Do not include `public` or `/feeds/` in `cover`.

@@ -8,7 +8,7 @@ date: "2026-07-04T11:59:00+08:00"
 eventAt: "2026-07-04T02:44:00+08:00"
 eventKey: "product:stubhub:texas-ag-world-cup-ticket-investigation:2026-07-03"
 cover: "/images/product/2026-07-04-stubhub-texas-world-cup-ticket-investigation.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "StubHub"
   - "世界杯门票"

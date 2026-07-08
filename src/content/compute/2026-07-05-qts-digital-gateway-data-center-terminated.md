@@ -8,7 +8,7 @@ date: "2026-07-04T17:00:00Z"
 eventAt: "2026-07-02T22:17:00Z"
 eventKey: "compute:qts-digital-gateway-data-center-terminated:2026-07-02"
 cover: "/images/compute/2026-07-05-qts-digital-gateway-data-center-terminated.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "QTS"
   - "Blackstone"

@@ -8,7 +8,7 @@ date: "2026-07-07T16:22:00+08:00"
 eventAt: "2026-07-05T12:00:00+09:00"
 eventKey: "lol:match_result:msi-2026:secret-whales-top-esports:2026-07-05T12:00:00+09:00:3-1"
 cover: "/images/lol/2026-07-06-msi-secret-whales-top-esports-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "MSI2026"
   - "Secret Whales"

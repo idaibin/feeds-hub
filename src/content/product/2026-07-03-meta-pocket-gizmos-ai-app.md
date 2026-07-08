@@ -8,6 +8,7 @@ date: "2026-07-03T09:56:00+08:00"
 eventAt: "2026-07-03T05:09:06+08:00"
 eventKey: "product:hot_topic:meta-pocket-gizmos-ai-app:2026-07-03T05:09:06+08:00"
 cover: "/images/product/2026-07-03-meta-pocket-gizmos-ai-app.webp"
+coverStatus: "pending"
 tags:
   - "Meta"
   - "Pocket"

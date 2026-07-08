@@ -1,49 +1,20 @@
-# Repository Scope
+# Repo Scope
 
-`idaibin/feeds-hub` owns the static feed site, feed content schema, repository-specific update entry, topic rules, poster rules, UI rules, and generated feed cover assets.
+本仓库只负责 Feeds Hub 站点、内容 Markdown、规则文档和静态资源引用。
 
-## Owns
+## 允许
 
-- Short-cycle feed entries.
-- Category cards and feed summaries.
-- Repository-specific frontmatter and content paths.
-- AI-generated feed posters under `public/images/<category>/`.
-- Update task entry under `docs/automation/`.
-- Repository-specific rules under `docs/rules/`, `docs/topics/`, and `docs/posters/`.
+- `src/content/**` 内容更新。
+- `docs/topics/**` topic 配置。
+- `docs/types/**` 信息类型规则。
+- `docs/rules/**` 内容/UI/仓库规则。
+- `src/**` 站点 UI、内容读取和展示逻辑。
 
-## Does Not Own
+## 分离
 
-- Long-form blog articles.
-- Reusable prompts, skills, workflow templates, or shared standards.
-- Shared GitHub branching and AI content quality standards.
+- 内容更新不要和 UI/规则改动混在一个提交。
+- 不把外部 AI 源素材搬进仓库。
 
-Reusable AI assets belong in `idaibin/aicraft`; long-form publishing belongs in `idaibin/blog`.
+## 禁止
 
-## External Standards
-
-```text
-idaibin/aicraft/docs/standards/github-branching.md
-idaibin/aicraft/docs/standards/ai-content-quality.md
-```
-
-## Allowed Update Paths
-
-Normal feed update tasks may modify only:
-
-```text
-src/content/<category>/*.md
-public/images/<category>/*.webp
-```
-
-Rule updates require an explicit user request and may touch:
-
-```text
-docs/automation/**
-docs/rules/**
-docs/topics/**
-docs/posters/**
-AGENTS.md
-README.md
-```
-
-Do not move reusable AI source assets into this repository.
+- 不跨仓库移动所有权。

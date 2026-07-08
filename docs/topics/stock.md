@@ -17,7 +17,6 @@ sources:
     - company earnings releases
   supplemental: []
 contentDir: src/content/stock/
-coverPrefix: /images/stock/
 allowedKinds:
   - market_brief
   - policy_update
@@ -28,13 +27,18 @@ allowedKinds:
   - insight
 ---
 
-# Stock Topic Config
+# Stock Topic
 
-Uses both `docs/types/realtime.md` and `docs/types/scheduled-market.md`; opening, intraday, and close are distinct states.
+Uses `docs/types/realtime.md` and `docs/types/scheduled-market.md`.
 
-## Topic Overrides
+## Scope
 
-- Default scheduled coverage prioritizes US, Hong Kong, and A-share market close summaries.
-- A close feed must include the market, date, close window, verified index or sector movement, and the strongest confirmed driver available from the source.
-- Other high-priority items include AI/chip market moves, major earnings, central-bank decisions, regulator actions, macro data, exchange notices, and large company filings.
-- Do not confirm prices, index moves, sector gains, or market direction from social posts, screenshots, or community commentary.
+US, Hong Kong, A-share closes; AI/chip/macro/earnings/policy/FX/rates/company market facts.
+
+## Overrides
+
+- Every exchange trading day must check three fixed close windows: A-share, Hong Kong, US.
+- Close feeds need market, trade date, close window, key index level/move, sector move, and confirmed driver.
+- If a market is closed for holiday, publish no close feed and report `skipped: market-holiday` with the exchange calendar source.
+- High priority: AI/chips, earnings, central banks, regulators, macro data, exchange notices, large filings.
+- Do not confirm prices, moves, gains, or market direction from social posts, screenshots, or community commentary.

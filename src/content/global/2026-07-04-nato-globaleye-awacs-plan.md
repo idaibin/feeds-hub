@@ -11,7 +11,7 @@ eventKey: "global-nato-globaleye-awacs-replacement-plan-2026-07-02"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/business/aerospace-defense/nato-plans-saab-globaleye-jets-replace-awacs-sources-say-2026-07-02/"
 cover: "/images/global/2026-07-04-nato-globaleye-awacs-plan.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "NATO"
   - "GlobalEye"

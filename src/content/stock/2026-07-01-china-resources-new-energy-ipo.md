@@ -8,6 +8,7 @@ date: "2026-07-01T20:58:00+08:00"
 eventAt: "2026-07-01T20:58:00+08:00"
 eventKey: "stock:market_brief:2026-07-01-china-resources-new-energy-ipo:2026-07-01T20:58:00+08:00"
 cover: "/images/stock/2026-07-01-china-resources-new-energy-ipo.webp"
+coverStatus: "pending"
 tags:
   - "A股"
   - "IPO"

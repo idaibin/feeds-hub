@@ -8,7 +8,7 @@ date: "2026-07-06T18:00:00+08:00"
 eventAt: "2026-07-06T08:31:36Z"
 eventKey: "stock:macro:euro-zone-sentix-investor-morale:2026-07"
 cover: "/images/stock/2026-07-06-euro-zone-sentix-investor-morale.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "欧元区"
   - "Sentix"

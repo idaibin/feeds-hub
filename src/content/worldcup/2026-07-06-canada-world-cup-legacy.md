@@ -8,7 +8,7 @@ date: "2026-07-06T03:59:50+08:00"
 eventAt: "2026-07-05T16:55:43Z"
 eventKey: "worldcup:news:canada-world-cup-legacy-canada-rising:2026-07-05"
 cover: "/images/worldcup/2026-07-06-canada-world-cup-legacy.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "加拿大"

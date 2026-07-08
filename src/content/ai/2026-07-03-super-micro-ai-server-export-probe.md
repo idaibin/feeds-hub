@@ -8,6 +8,7 @@ date: "2026-07-03T07:57:00+08:00"
 eventAt: "2026-07-02T14:00:47+08:00"
 eventKey: "ai:policy_update:super-micro-ai-server-export-probe:2026-07-02T14:00:47+08:00"
 cover: "/images/ai/2026-07-03-super-micro-ai-server-export-probe.webp"
+coverStatus: "pending"
 tags:
   - "Super Micro"
   - "AI 服务器"

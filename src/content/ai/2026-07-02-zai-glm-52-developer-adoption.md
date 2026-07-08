@@ -8,6 +8,7 @@ date: "2026-07-02T20:56:00+08:00"
 eventAt: "2026-07-02T15:17:31+08:00"
 eventKey: "ai:hot_topic:zai-glm-52-developer-adoption:2026-07-02T15:17:31+08:00"
 cover: "/images/ai/2026-07-02-zai-glm-52-developer-adoption.webp"
+coverStatus: "pending"
 tags:
   - "Z.ai"
   - "GLM-5.2"

@@ -8,7 +8,7 @@ date: "2026-07-06T23:01:00+08:00"
 eventAt: "2026-07-06T08:02:43Z"
 eventKey: "worldcup:hot_topic:racist-commentary-black-players-scrutiny:2026-07-06"
 cover: "/images/worldcup/2026-07-06-worldcup-racist-commentary-scrutiny.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "反种族歧视"

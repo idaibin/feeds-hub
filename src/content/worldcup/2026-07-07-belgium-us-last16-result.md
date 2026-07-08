@@ -8,7 +8,7 @@ date: "2026-07-07T10:59:44+08:00"
 eventAt: "2026-07-07T02:10:50Z"
 eventKey: "worldcup:match_result:united-states-belgium:last16:4-1:2026-07-07"
 cover: "/images/worldcup/2026-07-07-belgium-us-last16-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "比利时"

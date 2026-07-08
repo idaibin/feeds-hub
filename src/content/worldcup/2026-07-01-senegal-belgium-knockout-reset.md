@@ -8,7 +8,7 @@ date: "2026-07-01T19:56:00+08:00"
 eventAt: "2026-07-01T19:56:00+08:00"
 eventKey: "worldcup:match_schedule:2026-07-01-senegal-belgium-knockout-reset:2026-07-01T19:56:00+08:00"
 cover: "/images/worldcup/2026-07-01-senegal-belgium-knockout-reset.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯2026"
   - "塞内加尔"

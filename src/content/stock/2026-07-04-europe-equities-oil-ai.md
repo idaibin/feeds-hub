@@ -10,7 +10,7 @@ eventKey: "stock-europe-equities-lower-oil-ai-glow-2026-07-01"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/business/investors-warm-european-stocks-eclipsed-by-wall-streets-ai-glow-2026-07-01/"
 cover: "/images/stock/2026-07-04-europe-equities-oil-ai.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "Europe equities"
   - "oil"

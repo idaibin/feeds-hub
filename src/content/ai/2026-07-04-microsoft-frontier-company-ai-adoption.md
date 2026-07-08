@@ -8,7 +8,7 @@ date: "2026-07-04T15:58:34Z"
 eventAt: "2026-07-02T13:01:00Z"
 eventKey: "ai:microsoft-frontier-company:launch:2026-07-02"
 cover: "/images/ai/2026-07-04-microsoft-frontier-company-ai-adoption.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "Microsoft"
   - "企业 AI"

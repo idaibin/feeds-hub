@@ -8,7 +8,7 @@ date: "2026-07-05T15:59:00+08:00"
 eventAt: "2026-07-05T00:04:26Z"
 eventKey: "worldcup:news:mexico-world-cup-domestic-issues:2026-07-05"
 cover: "/images/worldcup/2026-07-05-mexico-world-cup-domestic-tensions.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "墨西哥"

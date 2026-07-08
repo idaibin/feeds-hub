@@ -1,39 +1,63 @@
 # Scheduled Market Type Rules
 
-定时市场规则，供 `stock` 等市场 topic 的固定窗口信息引用。目标是稳定覆盖开盘、盘中、收盘、财报日和宏观数据发布窗口。
+用于 `stock` 的开盘、盘中、闭市、财报、宏观数据、央行和监管时间点。
 
 ## Scope
 
-- 适用于 market open, intraday checkpoint, market close, earnings calendar, macro-data release, central-bank schedule, and exchange/regulator scheduled events.
-- 1 feed = 1 market window, 1 official data release, 1 earnings event, or 1 policy/filing event.
-- 定时市场信息优先文本事实和数据口径；海报失败不阻塞发布。
+- 美股、港股、A 股闭市优先。
+- 相关 AI、芯片、宏观、政策、财报、汇率/利率可写入。
+- open、intraday、close 是不同状态，后续 close 不算 open/intraday 重复。
 
-## Time Windows
+## Fixed Close Windows
 
-- Opening window: record market, date, opening direction, major index or sector movement, and timestamp.
-- Intraday window: record market, time, current state, leading sectors/assets, and whether the data is still live.
-- Close window: record closing result, index/sector moves, major driver, and confirmed close timestamp.
-- Scheduled data: record release time, value, prior/expected value only when source provides it, and market reaction if verified.
-- Daily close coverage prioritizes US equities, Hong Kong equities, and A-share markets.
+每个交易日按固定窗口检查；非交易日包含周末、交易所假期和临时休市，报告 `skipped: market-holiday`。
 
-## Source Rules
+| Market | Close check time | Required indexes |
+| --- | --- | --- |
+| A 股 | 15:30-16:30 Asia/Shanghai | 上证指数、深证成指、创业板指、科创 50；可补沪深 300、北证 50 |
+| 港股 | 16:15-17:30 Asia/Hong_Kong | 恒生指数、恒生科技指数、国企指数；可补红筹指数 |
+| 美股 | 16:15-18:00 America/New_York | Dow、S&P 500、Nasdaq Composite、Russell 2000；可补 Philadelphia Semiconductor Index |
 
-- Primary: Reuters markets reporting.
-- Secondary: exchanges, filings, investor relations, regulator notices, central-bank releases, official statistics agencies, and company earnings releases.
-- Do not use social posts, unsourced screenshots, or community commentary to confirm prices, index moves, earnings facts, or macro data.
-- If the source lacks timestamp, market, or data scope, skip or write a low-certainty caveat only when the core fact is still reliable.
+说明：
 
-## Event Key And Deduplication
+- A 股主板/深市收盘集合竞价到 15:00；上交所部分盘后固定价格交易到 15:30，闭市信息统一 15:30 后检查。
+- 港股收市竞价交易时段通常随机收于 16:08-16:10，闭市信息统一 16:15 后检查。
+- 美股使用 Eastern Time。夏令时为 EDT UTC-4，对应北京时间次日 04:15-06:00；冬令时为 EST UTC-5，对应北京时间次日 05:15-07:00。流程中必须使用 `America/New_York` 时区，不手写固定 UTC 偏移。
+- 跨时区写入时，`eventAt` 使用该市场闭市后的官方/权威确认时间；正文必须写清本地交易日和北京时间/当地时间差异。
 
-- `eventKey` combines market/entity, scheduled window, date, and release/filing/earnings identifier when available.
-- Opening, intraday, and close are distinct states for the same market day.
-- A later close result is not a duplicate of an opening or intraday feed.
-- Same Reuters live page URL can support multiple market states; do not dedupe by `sourceUrl` alone.
+## Source
 
-## Body Format
+- 优先 Reuters、交易所、监管/央行、公司公告、官方统计。
+- A 股指数和成交额优先上交所、深交所、北交所、中证指数、新华社/证券时报等权威来源；港股优先 HKEX、恒生指数公司、Reuters；美股优先 Reuters、NYSE/Nasdaq/Cboe、指数公司。
+- 社交媒体、截图、社区评论不能确认价格、涨跌、财报数字或市场方向。
 
-- First paragraph: market/date/window, verified movement or official data, and timestamp.
-- Second paragraph: sector/asset drivers, company or policy context, confirmed market reaction, or remaining uncertainty.
-- Optional third paragraph: data revisions, timing caveat, or next scheduled checkpoint.
-- Title, summary, subtitle, and first paragraph must not be near-duplicates; summary should add driver, sector split, index scope, or close context not already in the title.
-- No personalized investment advice, target price, return promise, unsupported causal claim, or stale no-timestamp price.
+## Required Facts
+
+- 市场/指数/公司。
+- 时间窗口和确认时间。
+- 每个 required index 的收盘点位和涨跌幅；来源没有点位时至少写涨跌幅并说明缺失。
+- 成交额/成交量、领涨领跌板块、行业或主题线索，来源可核验时必须写。
+- 主要驱动。
+- 影响范围或下一节点。
+
+## Event Key
+
+闭市使用 `stock:<market>:close:<yyyy-mm-dd>`；其它事件使用 market/entity + window + date + release/filing/earnings id。
+
+## Body
+
+- 第一段：闭市结果，必须包含核心指数涨跌幅。
+- 第二段：驱动、板块、公司或宏观影响。
+- 第三段：修订、时间 caveat 或下一排期。
+
+## Close Feed Shape
+
+标题写市场和结果，不写完整指数列表；summary 写标题没覆盖的关键驱动。
+
+正文第一段模板：
+
+```text
+<交易日> <市场>收盘，<指数1>收于<点位>，涨/跌<幅度>；<指数2>...；<指数3>...。本条记录的是<当地时间>闭市后的确认数据。
+```
+
+不得用盘中稿替代闭市稿；同一市场同一交易日只能有一个 close feed，除非交易所发布更正。

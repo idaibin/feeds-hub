@@ -11,7 +11,7 @@ eventKey: "worldcup:hydration-breaks:match-rhythm:2026-07-03"
 source: "Reuters"
 sourceUrl: "https://www.reuters.com/sports/soccer/more-water-less-flow-hydration-breaks-fuel-debate-game-rhythm-put-test-2026-07-03/"
 cover: "/images/worldcup/2026-07-05-world-cup-hydration-breaks.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "补水暂停"

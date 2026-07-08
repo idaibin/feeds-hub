@@ -14,7 +14,6 @@ sources:
   supplemental:
     - 虎扑网
 contentDir: src/content/lol/
-coverPrefix: /images/lol/
 allowedKinds:
   - match_schedule
   - match_flow
@@ -26,6 +25,20 @@ allowedKinds:
   - news
 ---
 
-# LOL Topic Config
+# LOL Topic
 
-Uses `docs/types/sports.md`; LoL Esports is the source of truth for schedule, score, state, bracket, winner, roster, and next-round relationships.
+Uses `docs/types/sports.md`; LoL Esports is source of truth.
+
+## Scope
+
+League of Legends esports match states, MSI/Worlds/First Stand bracket movement, verified roster/rule changes, and Riot tournament operations.
+
+## Overrides
+
+- Active event: MSI 2026, Daejeon, 2026-06-28 to 2026-07-12.
+- Schedule: https://lolesports.com/en-GB/leagues/first_stand%2Cmsi%2Cworlds
+- Update: https://lolesports.com/en-GB/news/msi-and-worlds-updates
+- During MSI inspect embedded data: `id`, `state`, `matchTeams`, `gameWins`, `outcome`, `destinations`, `startTime`, stage, format.
+- `match_schedule` must copy the official `startTime` into subtitle, summary and first paragraph, converted to Beijing time for Chinese display copy; do not publish a date-only schedule when official time is available.
+- Review previous 36 hours, current day, next 48 hours in Beijing time.
+- Results require series score, winner, loser, bracket destination, elimination/lower-bracket drop, next opponent if available.

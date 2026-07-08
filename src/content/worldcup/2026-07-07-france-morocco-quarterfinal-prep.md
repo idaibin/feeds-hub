@@ -8,7 +8,7 @@ date: "2026-07-07T12:02:14+08:00"
 eventAt: "2026-07-06T00:00:00Z"
 eventKey: "worldcup:news:france-morocco-quarterfinal-prep:2026-07-06"
 cover: "/images/worldcup/2026-07-07-france-morocco-quarterfinal-prep.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "法国"

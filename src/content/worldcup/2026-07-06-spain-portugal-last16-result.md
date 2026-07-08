@@ -8,7 +8,7 @@ date: "2026-07-07T06:00:00+08:00"
 eventAt: "2026-07-06T21:10:52Z"
 eventKey: "worldcup:match_result:portugal-spain:last16:1-0:2026-07-06"
 cover: "/images/worldcup/2026-07-06-spain-portugal-last16-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "西班牙"
   - "葡萄牙"

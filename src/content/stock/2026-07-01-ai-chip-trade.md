@@ -8,6 +8,7 @@ date: "2026-07-01T14:58:00+08:00"
 eventAt: "2026-07-01T14:58:00+08:00"
 eventKey: "stock:market_brief:2026-07-01-ai-chip-trade:2026-07-01T14:58:00+08:00"
 cover: "/images/stock/2026-07-01-ai-chip-trade.webp"
+coverStatus: "pending"
 tags:
   - "AI芯片"
   - "半导体"

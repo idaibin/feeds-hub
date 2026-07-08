@@ -8,7 +8,7 @@ date: "2026-07-06T11:00:00+08:00"
 eventAt: "2026-07-06T00:17:50Z"
 eventKey: "worldcup:player_spotlight:neymar-brazil-farewell-norway-exit:2026-07-06"
 cover: "/images/worldcup/2026-07-06-neymar-brazil-farewell-norway-exit.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "内马尔"
   - "巴西"

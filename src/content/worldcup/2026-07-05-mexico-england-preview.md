@@ -8,7 +8,7 @@ date: "2026-07-05T10:00:00+08:00"
 eventAt: "2026-07-04T22:35:00Z"
 eventKey: "worldcup:match_schedule:53452519:mexico-england:2026-07-05:preview-aguirre"
 cover: "/images/worldcup/2026-07-05-mexico-england-preview.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "16强"

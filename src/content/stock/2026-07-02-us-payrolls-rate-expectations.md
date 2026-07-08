@@ -8,6 +8,7 @@ date: "2026-07-02T21:55:00+08:00"
 eventAt: "2026-07-02T20:38:45+08:00"
 eventKey: "stock:market_brief:us-june-payrolls-rate-expectations:2026-07-02T20:38:45+08:00"
 cover: "/images/stock/2026-07-02-us-payrolls-rate-expectations.webp"
+coverStatus: "pending"
 tags:
   - "美国非农"
   - "美联储"

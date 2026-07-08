@@ -8,7 +8,7 @@ date: "2026-07-02T10:56:00+08:00"
 eventAt: "2026-07-03T11:00:00+08:00"
 eventKey: "worldcup:match_schedule:switzerland-algeria:2026-07-03T11:00:00+08:00"
 cover: "/images/worldcup/2026-07-02-switzerland-algeria-schedule.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "32强"

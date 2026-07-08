@@ -8,7 +8,7 @@ date: "2026-07-06T16:01:03+08:00"
 eventAt: "2026-07-05T23:07:00Z"
 eventKey: "stock:samsung-ai-memory-profit-preview:2026-07-06"
 cover: "/images/stock/2026-07-06-samsung-ai-memory-profit-preview.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "Samsung"
   - "AI Memory"

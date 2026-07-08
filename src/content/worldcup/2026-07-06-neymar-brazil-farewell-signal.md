@@ -8,7 +8,7 @@ date: "2026-07-06T20:03:00+08:00"
 eventAt: "2026-07-06T00:17:50Z"
 eventKey: "worldcup:player_spotlight:neymar-brazil-farewell-signal:2026-07-06"
 cover: "/images/worldcup/2026-07-06-neymar-brazil-farewell-signal.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "巴西"
   - "Neymar"

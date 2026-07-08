@@ -100,31 +100,30 @@ const currentItem =
                 </nav>
             </details>
         </header>
-        <main class="flex-1"><slot /></main>
+        <main><slot /></main>
         {
             !hideFooter && (
-                <footer class="relative mx-auto mb-4 flex w-[min(820px,calc(100%_-_32px))] items-center justify-between gap-4 border-t border-slate-900/10 pt-3 text-[13px] text-slate-500 max-[640px]:w-[min(820px,calc(100%_-_16px))] max-[640px]:gap-2 max-[640px]:text-xs">
-                    <span class="inline-flex min-w-0 items-baseline gap-2 whitespace-nowrap leading-tight max-[640px]:gap-1">
-                        <strong class="font-normal text-slate-500">
+                <footer class="site-footer">
+                    <p class="site-footer-copy">
+                        <strong>
                             © 2026 Feeds Hub
                         </strong>
-                        <small class="text-xs font-normal text-slate-400">
+                        <small>
                             All rights reserved.
                         </small>
-                    </span>
+                    </p>
                     <nav
-                        class="flex shrink-0 items-center justify-end gap-2"
+                        class="site-footer-nav"
                         aria-label="站点链接"
                     >
                         <a
-                            class="inline-flex items-center gap-1.5 whitespace-nowrap text-slate-500 no-underline hover:text-feed-primary-strong"
+                            class="site-footer-link"
                             href="https://github.com/idaibin/feeds-hub"
                             target="_blank"
                             rel="noreferrer"
                         >
                             <span>GitHub</span>
                             <svg
-                                class="h-3.5 w-3.5 shrink-0 fill-none stroke-current stroke-[1.8] [stroke-linecap:round] [stroke-linejoin:round]"
                                 aria-hidden="true"
                                 viewBox="0 0 24 24"
                             >
@@ -160,6 +159,7 @@ const currentItem =
         --feed-card-gap: 16px;
         --feed-card-row-gap: 16px;
         --content-max-width: 960px;
+        --header-height: 60px;
         --mono:
             "SFMono-Regular", "Cascadia Mono", "Menlo", "Consolas", monospace;
         --shadow-card: 0 16px 34px rgba(31, 45, 65, 0.08);
@@ -226,13 +226,11 @@ const currentItem =
         box-sizing: border-box;
     }
     body {
-        display: flex;
-        flex-direction: column;
         width: 100%;
-        height: 100vh;
         min-height: 100vh;
         overflow-x: hidden;
         margin: 0;
+        padding-top: var(--header-height);
         color: var(--text);
         background:
             linear-gradient(
@@ -272,48 +270,78 @@ const currentItem =
         max-width: 100%;
     }
     main {
-        flex: 1 1 auto;
-        display: flex;
-        align-items: stretch;
-        justify-content: center;
         position: relative;
         width: 100%;
-        min-height: 0;
         margin: 0 auto;
         overflow-x: hidden;
-        overflow-y: auto;
-        padding-block: 16px;
-        padding-inline: 16px;
-        scrollbar-color: rgba(100, 116, 139, 0.36) transparent;
-        scrollbar-gutter: stable;
-        scrollbar-width: thin;
-    }
-    main::-webkit-scrollbar {
-        width: 6px;
-    }
-    main::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    main::-webkit-scrollbar-thumb {
-        border-radius: 999px;
-        background: rgba(100, 116, 139, 0.32);
-    }
-    main::-webkit-scrollbar-thumb:hover {
-        background: rgba(100, 116, 139, 0.5);
+        padding-block: 12px;
+        padding-inline: 12px;
     }
     .site-header {
-        position: sticky;
+        position: fixed;
         top: 0;
+        left: 0;
+        right: 0;
         z-index: 10;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 18px;
+        min-height: var(--header-height);
         padding-block: 10px;
         padding-inline: max(16px, calc(50vw - 580px));
         border-bottom: 1px solid var(--border);
         background: rgba(248, 250, 252, 0.9);
         backdrop-filter: blur(16px);
+    }
+    .site-footer {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: min(820px, calc(100% - 24px));
+        margin: 0 auto 12px;
+        padding-block: 2px 10px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+        white-space: nowrap;
+    }
+    .site-footer-copy {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+    .site-footer-copy strong {
+        font-weight: 400;
+    }
+    .site-footer-copy small {
+        margin-left: 8px;
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 400;
+    }
+    .site-footer-nav {
+        margin: 0;
+    }
+    .site-footer-link {
+        display: inline-grid;
+        grid-auto-flow: column;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        text-decoration: none;
+    }
+    .site-footer-link:hover {
+        color: var(--primary-strong);
+    }
+    .site-footer-link svg {
+        width: 14px;
+        height: 14px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
     }
     .brand {
         display: inline-flex;
@@ -528,6 +556,55 @@ const currentItem =
         border-radius: 8px;
         box-shadow: var(--shadow-card);
         backdrop-filter: blur(18px);
+    }
+
+    @media (max-width: 640px) {
+        :root {
+            --header-height: 54px;
+            --feed-card-gap: 10px;
+            --feed-card-row-gap: 10px;
+        }
+        body {
+            padding-top: var(--header-height);
+        }
+        main {
+            padding-block: 8px;
+            padding-inline: 10px;
+        }
+        .site-header {
+            gap: 10px;
+            padding-block: 8px;
+            padding-inline: 10px;
+        }
+        .brand {
+            gap: 8px;
+        }
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+        }
+        .brand small {
+            display: none;
+        }
+        .topic-switcher summary {
+            min-width: 112px;
+            min-height: 34px;
+            padding-inline: 12px 10px;
+        }
+        .feed-section {
+            margin-top: 4px;
+        }
+        .site-footer {
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+            padding-block: 0 8px;
+            font-size: 12px;
+            gap: 10px;
+        }
+        .site-footer-copy small {
+            margin-left: 6px;
+            font-size: 11px;
+        }
     }
 
     @keyframes brand-title-flow {

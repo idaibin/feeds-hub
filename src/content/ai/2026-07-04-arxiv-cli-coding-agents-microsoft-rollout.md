@@ -8,7 +8,7 @@ date: "2026-07-04T12:58:35Z"
 eventAt: "2026-07-01T19:24:27Z"
 eventKey: "ai:arxiv:2607.01418:cli-coding-agents-microsoft-rollout:2026-07-01"
 cover: "/images/ai/2026-07-04-arxiv-cli-coding-agents-microsoft-rollout.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "arXiv"
   - "Claude Code"

@@ -8,6 +8,7 @@ date: "2026-07-02T13:55:00+08:00"
 eventAt: "2026-07-02T13:30:00+08:00"
 eventKey: "ai:policy_update:us-voluntary-model-standards:2026-07-02"
 cover: "/images/ai/2026-07-02-us-ai-model-standards-talks.webp"
+coverStatus: "pending"
 tags:
   - "AI"
   - "模型发布"

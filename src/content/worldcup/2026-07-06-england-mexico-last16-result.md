@@ -8,7 +8,7 @@ date: "2026-07-06T21:58:00+08:00"
 eventAt: "2026-07-06T03:27:42Z"
 eventKey: "worldcup:match_result:england-mexico:last16:3-2:2026-07-06"
 cover: "/images/worldcup/2026-07-06-england-mexico-last16-result.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "英格兰"
   - "墨西哥"

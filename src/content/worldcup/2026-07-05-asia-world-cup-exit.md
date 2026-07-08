@@ -8,7 +8,7 @@ date: "2026-07-05T01:59:00+08:00"
 eventAt: "2026-07-04T16:53:14Z"
 eventKey: "worldcup:asia-confederation-exit:2026-07-04"
 cover: "/images/worldcup/2026-07-05-asia-world-cup-exit.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "亚洲球队"

@@ -8,7 +8,7 @@ date: "2026-07-05T14:01:00+08:00"
 eventAt: "2026-07-05T00:18:40Z"
 eventKey: "worldcup:player_spotlight:53452517:raphinha-return:brazil-norway:2026-07-05"
 cover: "/images/worldcup/2026-07-05-brazil-norway-raphinha-return.webp"
-coverStatus: "generated_webp"
+coverStatus: "pending"
 tags:
   - "世界杯"
   - "巴西"
