@@ -188,7 +188,7 @@ test('OAuth mode validates issuer, audience, expiry, signature, and scopes', asy
   );
 });
 
-test('OAuth protected resource metadata advertises the issuer, resource, and feed scopes', () => {
+test('OAuth protected resource metadata advertises only scopes exposed by the runtime', () => {
   const metadata = getMcpProtectedResourceMetadata({
     FEED_MCP_OAUTH_ISSUER: 'https://issuer.example',
     FEED_MCP_OAUTH_RESOURCE: 'https://feeds.example/api/mcp',
@@ -196,7 +196,14 @@ test('OAuth protected resource metadata advertises the issuer, resource, and fee
   });
   assert.equal(metadata.resource, 'https://feeds.example/api/mcp');
   assert.deepEqual(metadata.authorization_servers, ['https://issuer.example']);
-  assert.deepEqual(metadata.scopes_supported, ['feeds:read', 'feeds:write', 'feeds:publish', 'feeds:archive']);
+  assert.deepEqual(metadata.scopes_supported, ['feeds:read']);
+  const writableMetadata = getMcpProtectedResourceMetadata({
+    FEED_MCP_OAUTH_ISSUER: 'https://issuer.example',
+    FEED_MCP_OAUTH_RESOURCE: 'https://feeds.example/api/mcp',
+    FEED_MCP_OAUTH_JWKS_URL: 'https://issuer.example/.well-known/jwks.json',
+    FEED_WRITES_ENABLED: 'true',
+  });
+  assert.deepEqual(writableMetadata.scopes_supported, ['feeds:read', 'feeds:write', 'feeds:publish', 'feeds:archive']);
 });
 
 test('MCP tool scopes and audit actors derive from validated OAuth auth info', () => {

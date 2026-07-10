@@ -17,7 +17,7 @@ The provider must expose OAuth 2.0 Authorization Server Metadata or OpenID Conne
 - scopes `feeds:read`, `feeds:write`, `feeds:publish`, `feeds:archive`;
 - one ChatGPT-compatible registration path: client-ID metadata documents, dynamic client registration, or a pre-created static OAuth client.
 
-Create the API/resource in the provider first. For an initial read-only canary, grant only `feeds:read`. Write scopes do not bypass `FEED_WRITES_ENABLED=false` or database privileges.
+Create the API/resource in the provider first. For an initial read-only canary, grant only `feeds:read`. When `FEED_WRITES_ENABLED=false`, protected-resource metadata and `tools/list` expose only the read scope and three read tools.
 
 ## Local service
 
@@ -69,14 +69,14 @@ Verify without recording credentials:
 2. An unauthenticated `POST /api/mcp` returns `401` and a `WWW-Authenticate` header containing `resource_metadata`.
 3. A valid `feeds:read` token initializes MCP and can call the three read tools.
 4. A token with the wrong issuer, audience, signature or expiry returns `401`.
-5. Mutation tools fail with `MCP_SCOPE_REQUIRED` without write scope, and still fail with `WRITES_DISABLED` while the global write switch is off.
+5. Mutation tools are not advertised while `FEED_WRITES_ENABLED=false`; the service write kill switch remains a second enforcement layer.
 
 ## ChatGPT Developer Mode
 
-1. In ChatGPT, enable Developer Mode under **Settings → Security and login**.
-2. Open **Settings → Plugins** or `https://chatgpt.com/plugins` and create an app.
+1. In ChatGPT web, enable Developer Mode under **Settings → Apps → Advanced settings**.
+2. Open **Settings → Apps → Create** and create a custom app.
 3. Set the MCP URL to `https://feeds.idaibin.dev/api/mcp`.
-4. Select OAuth authentication. If the provider supports dynamic registration, let ChatGPT register. Otherwise enter the provider's pre-created OAuth client ID and secret in ChatGPT; never store them in this repository.
+4. Select OAuth authentication. With Auth0 CIMD, import the client metadata URL shown by ChatGPT through **Auth0 → Applications → Applications → Create Application → Import from URL**, then grant that client `feeds:read` access to this API.
 5. Complete login and consent, open a new chat, select the app from **More**, and call `list_feeds` first.
 6. After MCP tool or scope changes, use **Refresh** in the app configuration and reconnect OAuth.
 

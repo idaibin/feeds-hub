@@ -16,7 +16,10 @@ export function createMcpRoute(options: FeedMcpRouteOptions = {}): APIRoute {
   return async ({ request }) => {
     try {
       const prepared = await prepareMcpRequest(request, env);
-      handler ??= createFeedMcpHandler(options.service ?? new FeedService(undefined, env));
+      handler ??= createFeedMcpHandler(
+        options.service ?? new FeedService(undefined, env),
+        { writesEnabled: env.FEED_WRITES_ENABLED === 'true' },
+      );
       return await handler(prepared.request);
     } catch (error) {
       return mcpHttpErrorResponse(error);

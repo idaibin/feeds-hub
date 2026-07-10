@@ -111,16 +111,6 @@ async function compatibility() {
   const feeds = await callTool(route, 3, 'list_feeds', { status: 'published', limit: 1 });
   const feed = await callTool(route, 4, 'get_feed', { id: feeds.tool.items[0].id });
   const unknownField = await callTool(route, 21, 'list_feeds', { status: 'published', limit: 1, unexpected: true });
-  const write = await callTool(route, 5, 'save_feed_draft', {
-    feed: {
-      slug: 'ai/write-disabled', title: 'Write disabled', subtitle: 'Compatibility test', category: 'ai', kind: 'news', topic: 'MCP',
-      date: '2026-07-10T08:00:00Z', eventAt: '2026-07-10T08:00:00Z', eventKey: 'ai:write-disabled', cover: '/images/ai/write.webp',
-      coverStatus: 'pending', tags: ['AI'], summary: 'Write disabled summary.', source: 'Example', sourceUrl: 'https://example.com/write',
-      body: 'Write disabled body.', priority: 0,
-    },
-    idempotencyKey: 'mcp:write-disabled:0001',
-    reason: 'verify write kill switch',
-  });
   return {
     initializeStatus: initialized.response.status,
     initializeContentType: initialized.response.headers.get('content-type'),
@@ -131,8 +121,6 @@ async function compatibility() {
     strictSchemas: listed.payload?.result?.tools?.map((tool: { inputSchema?: { additionalProperties?: boolean } }) => tool.inputSchema?.additionalProperties),
     listSlug: feeds.tool.items?.[0]?.slug,
     getSlug: feed.tool.feed?.slug,
-    writeError: write.tool.code,
-    writeIsError: write.payload?.result?.isError,
     unknownFieldIsError: unknownField.payload?.result?.isError,
   };
 }

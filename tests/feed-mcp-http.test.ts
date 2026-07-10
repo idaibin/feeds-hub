@@ -129,7 +129,7 @@ test('independent Astro server completes real HTTP initialize, tools/list, list,
     });
     assert.equal(initialized.result?.protocolVersion, '2025-06-18');
     const tools = await invoke(baseUrl, { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} });
-    assert.equal(tools.result?.tools?.length, 7);
+    assert.equal(tools.result?.tools?.length, 3);
     const listed = await invoke(baseUrl, {
       jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'list_feeds', arguments: { status: 'published', limit: 1 } },
     });

@@ -27,7 +27,7 @@ test('disabled MCP route import exits without starting the upstream cleanup time
   });
 });
 
-test('Astro MCP route completes Streamable HTTP list/get calls and keeps writes disabled', async () => {
+test('Astro MCP route completes Streamable HTTP reads and omits write tools while writes are disabled', async () => {
   const result = await runMcpChild('compat');
   assert.equal(result.initializeStatus, 200);
   assert.match(String(result.initializeContentType), /^text\/event-stream/);
@@ -38,15 +38,9 @@ test('Astro MCP route completes Streamable HTTP list/get calls and keeps writes 
     'list_feeds',
     'get_feed',
     'find_feed_duplicates',
-    'save_feed_draft',
-    'publish_feed',
-    'update_published_feed',
-    'archive_feed',
   ]);
-  assert.deepEqual(result.strictSchemas, [false, false, false, false, false, false, false]);
+  assert.deepEqual(result.strictSchemas, [false, false, false]);
   assert.equal(result.listSlug, 'ai/example-feed');
   assert.equal(result.getSlug, 'ai/example-feed');
-  assert.equal(result.writeError, 'WRITES_DISABLED');
-  assert.equal(result.writeIsError, true);
   assert.equal(result.unknownFieldIsError, true);
 });

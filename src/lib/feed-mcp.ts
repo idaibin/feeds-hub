@@ -178,7 +178,15 @@ async function call(operation: () => Promise<ReturnType<typeof result>>) {
   }
 }
 
-export function createFeedMcpHandler(service = new FeedService()) {
+export interface FeedMcpHandlerOptions {
+  writesEnabled?: boolean;
+}
+
+export function createFeedMcpHandler(
+  service = new FeedService(),
+  options: FeedMcpHandlerOptions = {},
+) {
+  const writesEnabled = options.writesEnabled ?? process.env.FEED_WRITES_ENABLED === 'true';
   return createMcpHandler(
     (server) => {
       server.registerTool(
@@ -227,6 +235,8 @@ export function createFeedMcpHandler(service = new FeedService()) {
           return result({ candidates: await service.findDuplicates(parseDuplicateQuery(input)) });
         }),
       );
+
+      if (!writesEnabled) return;
 
       server.registerTool(
         'save_feed_draft',

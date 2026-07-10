@@ -133,7 +133,7 @@ export function getMcpProtectedResourceMetadata(env: NodeJS.ProcessEnv = process
   return {
     resource: config.resourceUrl,
     authorization_servers: [config.issuer],
-    scopes_supported: [...MCP_SCOPES],
+    scopes_supported: env.FEED_WRITES_ENABLED === 'true' ? [...MCP_SCOPES] : ['feeds:read'],
     bearer_methods_supported: ['header'],
     resource_name: 'Feeds Hub MCP',
   };
