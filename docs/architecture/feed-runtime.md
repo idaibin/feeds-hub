@@ -1,6 +1,6 @@
 # Feed Runtime Architecture
 
-Status: proposed by Task 0. This document defines contracts for later task packages; it does not activate database reads, writes, runtime rendering, or MCP.
+Status: Task 0 architecture aligned with the Task 1–6 implementation on the current integration branch. Code availability does not prove that any Production deployment, database operation, read cutover, MCP canary, or write canary has run.
 
 ## Goals
 
@@ -72,7 +72,7 @@ All mutations require:
 ### Transport layer
 
 - Task 4 adds protected HTTP write routes under `/api/feeds/**`.
-- Task 5 adds `/api/mcp` only after a compatibility spike proves that `mcp-handler` can run inside an Astro route built by `@astrojs/vercel` using Streamable HTTP.
+- Task 5 adds `/api/mcp` only after a local compatibility spike proves that the pinned `mcp-handler` can run inside an Astro route using Streamable HTTP. Task 5 does not deploy; Task 6 owns the phased Production canary after squash integration to `main`.
 - Task 7 changes `aicraft` to call the reviewed MCP tools. It does not bypass `FeedService`.
 
 ## Astro and Vercel Runtime
@@ -149,20 +149,22 @@ draft -> published -> archived
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | unset | Server-only Neon pooled URL used by runtime queries. |
-| `DATABASE_URL_UNPOOLED` | unset | Direct URL reserved for reviewed migration commands. |
+| `DATABASE_URL` | unset | Server-only pooled URL using the fixed `feeds_runtime` role. This is the only database credential allowed in Vercel. |
+| `DATABASE_URL_UNPOOLED` | unset | Direct migration-owner URL for reviewed operator commands only; it must be absent from Vercel build/runtime environments. |
+| `FEED_DB_EXPECTED_MIGRATION_ROLE` | unset | Exact reviewed owner role expected in `DATABASE_URL_UNPOOLED`; never a grant target supplied by a caller. |
 | `FEED_DB_TARGET` | unset | Required mutation target: `test`, `preview`, or `production`. |
 | `FEED_READ_SOURCE` | `content` | Selects `content` or `database`. |
 | `FEED_WRITES_ENABLED` | `false` | Global write kill switch. |
 | `FEED_WRITE_TOKEN` | unset | Bearer token for protected HTTP writes. |
 | `FEED_MCP_ENABLED` | `false` | Remote MCP kill switch. |
 | `FEED_MCP_TOKEN` | unset | Separate bearer token for `/api/mcp`. |
+| `FEED_MCP_ALLOWED_ORIGINS` | unset | Optional exact Origin allowlist for MCP request-origin enforcement; not a CORS switch. |
 
 All variables are server-only. They must not use a public client prefix or appear in logs, API errors, rendered HTML, or MCP tool output.
 
-The current rollout uses one Production Neon database and does not create or use a Preview database. Task 1 must verify or establish both exact server-only aliases `DATABASE_URL` and `DATABASE_URL_UNPOOLED` before any database command runs. The pooled and direct aliases must resolve to the same Neon project, branch, and database with their expected connection roles; a missing alias, role mismatch, or redacted-identity mismatch stops before connection or mutation. Platform integrations may generate differently prefixed variables, but application code reads only these contract names; provider-specific generated names must not be hard-coded as fallbacks, and the direct URL must not be derived by string rewriting. Verification may report a redacted database identity, never a connection string.
+The current rollout uses one Production Neon database and does not create or use a Preview database. Operator commands require pooled `DATABASE_URL` and direct `DATABASE_URL_UNPOOLED` aliases that resolve to the same Neon endpoint and database but intentionally use different roles: the pooled URL must use fixed role `feeds_runtime`; the direct URL must use the separately reviewed owner in `FEED_DB_EXPECTED_MIGRATION_ROLE`. The identity fingerprint covers endpoint, database and both roles. Missing aliases, same-role credentials, role mismatch, or fingerprint mismatch stops before connection or mutation. Vercel receives only pooled `feeds_runtime` credentials; configuration loading scans database-shaped environment values and rejects any Neon direct/owner credential even when a Marketplace integration gives it another prefix. Provider-generated names are not application fallbacks, and neither URL is derived by rewriting the other.
 
-The Production-only decision grants a narrow exception to Task 1 for the generated foundation migration and the first deterministic Markdown import. Both operations remain gated by the migration document: a successful dry run, verified Production database identity, a recorded backup or restore point, an operation-scoped `--confirm-production` flag, `FEED_READ_SOURCE=content`, disabled runtime writes/MCP, rejection of unexpected non-empty application schema or data, and post-import verification. It does not authorize reset, truncate, delete, destructive rollback, Task 4 mutation tests, or Task 5 Preview database access.
+The Production-only decision grants a narrow exception to Task 1 for the generated foundation migration and the first deterministic Markdown import. Both operations remain gated by the migration document: a successful dry run, verified Production database identity, a recorded backup or restore point, an operation-scoped `--confirm-production` flag, `FEED_READ_SOURCE=content`, disabled runtime writes/MCP, rejection of unexpected non-empty application schema or data, and post-import verification. It does not authorize reset, truncate, delete, destructive rollback, Task 4 mutation tests, Task 5 database access, or the later Production MCP canary to write data.
 
 ## Security Invariants
 
@@ -173,6 +175,7 @@ The Production-only decision grants a narrow exception to Task 1 for the generat
 - Duplicate detection is advisory before save and mandatory before publish.
 - Optimistic-lock conflicts return a stable conflict error; they never overwrite silently.
 - Audit records are append-only and store actor, action, feed id, version, reason, idempotency key, and timestamp.
+- The Production runtime role owns no objects, inherits no roles, cannot create schemas or temporary objects, and has no DDL, DELETE, TRUNCATE, REFERENCES, or TRIGGER privilege. Phase B grants only Feed reads; Phase D adds only the exact tables and operations required by `FeedRepository`.
 - HTTP/MCP responses never include database URLs, raw driver errors, tokens, or arbitrary stack traces.
 - No API or MCP tool accepts SQL, shell commands, file paths, or delete instructions.
 
@@ -185,8 +188,8 @@ The Production-only decision grants a narrow exception to Task 1 for the generat
 | 2 | `refact/feed-domain-model` | Task 1 squashed | UI no longer imports `CollectionEntry<"feeds">`; output unchanged. |
 | 3 | `feat/feed-runtime-read` | Task 2 squashed | Content/database switch, runtime pages and Playwright pass. |
 | 4 | `feat/feed-write-api` | Task 3 squashed | Protected writes, lock/idempotency/audit integration tests pass on an explicitly authorized non-Production database; writes default off. |
-| 5 | `feat/feed-mcp-server` | Task 4 squashed | Astro/Vercel/mcp-handler spike passes in Vercel Preview without database mutation before tool implementation. |
-| 6 | `release/feed-runtime-cutover` | Task 5 squashed | Production read cutover evidence, separately confirmed forward migrations, rollback material, and Markdown source retained. |
+| 5 | `feat/feed-mcp-server` | Task 4 squashed | Local Astro/mcp-handler Streamable HTTP spike passes before all seven tools are implemented; no deployment or database mutation. |
+| 6 | `release/feed-runtime-cutover` | Task 5 squashed | Production read cutover and read-only MCP canary evidence from `main`, separately confirmed forward migrations, rollback material, and Markdown source retained. |
 | 7 | `feat/feeds-hub-mcp-writer` in `aicraft` | Task 6 reviewed and cut over | Existing content rules drive MCP draft/review/publish workflow. |
 
 Each task stops after its branch is committed and pushed. The next task starts only from the latest `main` after the preceding branch has been reviewed and squash-integrated.
@@ -199,7 +202,8 @@ Stop the active task and report instead of expanding scope when:
 - Task 1 cannot verify the exact Production identity, a usable backup/restore point, an operation-scoped Production confirmation, disabled runtime writes/MCP, or the expected empty application schema/data state before mutation;
 - any task other than the authorized Task 1 foundation/import operation or a separately confirmed Task 6 cutover attempts to mutate Production;
 - Task 4 has only the Production database for mutation/integration testing; the Task 1 authorization is not reusable and Task 4 stops until an explicitly authorized non-Production database exists;
-- Task 5 Preview attempts a database migration, import, write test, or Production database mutation; its Preview authorization covers only code and MCP protocol compatibility;
+- Task 5 attempts any deployment or Production database access; its authorization covers local code and MCP protocol compatibility only;
+- the Task 6 first MCP canary invokes mutation tools, enables writes, or treats local test authorization as Production write authority;
 - runtime output, URL shape, sort order, or copy changes without explicit ownership;
 - write atomicity, optimistic locking, or audit completeness cannot be proven;
 - `mcp-handler` requires Next.js/Nuxt-specific primitives that cannot be adapted within an Astro route;

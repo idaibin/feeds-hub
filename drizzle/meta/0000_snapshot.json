@@ -1,0 +1,674 @@
+{
+  "id": "bd407477-db7e-4ffb-acb3-edac616db32b",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.feed_import_runs": {
+      "name": "feed_import_runs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "source_commit": {
+          "name": "source_commit",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_tree_hash": {
+          "name": "source_tree_hash",
+          "type": "char(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hash_version": {
+          "name": "hash_version",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "migration_hash": {
+          "name": "migration_hash",
+          "type": "char(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "database_fingerprint": {
+          "name": "database_fingerprint",
+          "type": "char(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target": {
+          "name": "target",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "feed_import_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total": {
+          "name": "total",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inserted": {
+          "name": "inserted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated": {
+          "name": "updated",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "unchanged": {
+          "name": "unchanged",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "conflict": {
+          "name": "conflict",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invalid": {
+          "name": "invalid",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "failures": {
+          "name": "failures",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "started_at": {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "completed_at": {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "feed_import_runs_source_commit_unique": {
+          "name": "feed_import_runs_source_commit_unique",
+          "columns": [
+            {
+              "expression": "source_commit",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "feed_import_runs_completed_idx": {
+          "name": "feed_import_runs_completed_idx",
+          "columns": [
+            {
+              "expression": "completed_at",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "feed_import_runs_source_tree_hash_check": {
+          "name": "feed_import_runs_source_tree_hash_check",
+          "value": "\"feed_import_runs\".\"source_tree_hash\" ~ '^[0-9a-f]{64}$'"
+        },
+        "feed_import_runs_migration_hash_check": {
+          "name": "feed_import_runs_migration_hash_check",
+          "value": "\"feed_import_runs\".\"migration_hash\" ~ '^[0-9a-f]{64}$'"
+        },
+        "feed_import_runs_database_fingerprint_check": {
+          "name": "feed_import_runs_database_fingerprint_check",
+          "value": "\"feed_import_runs\".\"database_fingerprint\" ~ '^[0-9a-f]{64}$'"
+        },
+        "feed_import_runs_target_check": {
+          "name": "feed_import_runs_target_check",
+          "value": "\"feed_import_runs\".\"target\" = 'production'"
+        },
+        "feed_import_runs_counts_nonnegative_check": {
+          "name": "feed_import_runs_counts_nonnegative_check",
+          "value": "\"feed_import_runs\".\"total\" >= 0 and \"feed_import_runs\".\"inserted\" >= 0 and \"feed_import_runs\".\"updated\" >= 0 and \"feed_import_runs\".\"unchanged\" >= 0 and \"feed_import_runs\".\"conflict\" >= 0 and \"feed_import_runs\".\"invalid\" >= 0"
+        },
+        "feed_import_runs_total_check": {
+          "name": "feed_import_runs_total_check",
+          "value": "\"feed_import_runs\".\"total\" = \"feed_import_runs\".\"inserted\" + \"feed_import_runs\".\"updated\" + \"feed_import_runs\".\"unchanged\" + \"feed_import_runs\".\"conflict\" + \"feed_import_runs\".\"invalid\""
+        },
+        "feed_import_runs_success_check": {
+          "name": "feed_import_runs_success_check",
+          "value": "\"feed_import_runs\".\"status\" <> 'succeeded' or (\"feed_import_runs\".\"conflict\" = 0 and \"feed_import_runs\".\"invalid\" = 0 and jsonb_array_length(\"feed_import_runs\".\"failures\") = 0)"
+        },
+        "feed_import_runs_time_check": {
+          "name": "feed_import_runs_time_check",
+          "value": "\"feed_import_runs\".\"completed_at\" >= \"feed_import_runs\".\"started_at\""
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.feeds": {
+      "name": "feeds",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subtitle": {
+          "name": "subtitle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "feed_category",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "feed_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "topic": {
+          "name": "topic",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "event_at": {
+          "name": "event_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "event_key": {
+          "name": "event_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cover": {
+          "name": "cover",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cover_status": {
+          "name": "cover_status",
+          "type": "feed_cover_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "tags": {
+          "name": "tags",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_url": {
+          "name": "source_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "body": {
+          "name": "body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "priority": {
+          "name": "priority",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "status": {
+          "name": "status",
+          "type": "feed_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "version": {
+          "name": "version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "origin": {
+          "name": "origin",
+          "type": "feed_origin",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'markdown'"
+        },
+        "published_at": {
+          "name": "published_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "archived_at": {
+          "name": "archived_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content_hash": {
+          "name": "content_hash",
+          "type": "char(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "feeds_slug_unique": {
+          "name": "feeds_slug_unique",
+          "columns": [
+            {
+              "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "feeds_event_key_unique": {
+          "name": "feeds_event_key_unique",
+          "columns": [
+            {
+              "expression": "event_key",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "feeds_source_url_idx": {
+          "name": "feeds_source_url_idx",
+          "columns": [
+            {
+              "expression": "source_url",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "feeds_status_updated_idx": {
+          "name": "feeds_status_updated_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "feeds_published_event_idx": {
+          "name": "feeds_published_event_idx",
+          "columns": [
+            {
+              "expression": "event_at",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            },
+            {
+              "expression": "priority",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            },
+            {
+              "expression": "date",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"feeds\".\"status\" = 'published'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "feeds_published_category_event_idx": {
+          "name": "feeds_published_category_event_idx",
+          "columns": [
+            {
+              "expression": "category",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "event_at",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            },
+            {
+              "expression": "priority",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            },
+            {
+              "expression": "date",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"feeds\".\"status\" = 'published'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "feeds_slug_format_check": {
+          "name": "feeds_slug_format_check",
+          "value": "\"feeds\".\"slug\" ~ '^[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?(?:/[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?)*$'"
+        },
+        "feeds_title_length_check": {
+          "name": "feeds_title_length_check",
+          "value": "char_length(\"feeds\".\"title\") between 2 and 300"
+        },
+        "feeds_subtitle_length_check": {
+          "name": "feeds_subtitle_length_check",
+          "value": "char_length(\"feeds\".\"subtitle\") between 2 and 500"
+        },
+        "feeds_topic_length_check": {
+          "name": "feeds_topic_length_check",
+          "value": "char_length(\"feeds\".\"topic\") between 2 and 300"
+        },
+        "feeds_event_key_length_check": {
+          "name": "feeds_event_key_length_check",
+          "value": "char_length(\"feeds\".\"event_key\") between 2 and 700"
+        },
+        "feeds_cover_length_check": {
+          "name": "feeds_cover_length_check",
+          "value": "char_length(\"feeds\".\"cover\") between 1 and 1200"
+        },
+        "feeds_summary_length_check": {
+          "name": "feeds_summary_length_check",
+          "value": "char_length(\"feeds\".\"summary\") between 2 and 3000"
+        },
+        "feeds_source_length_check": {
+          "name": "feeds_source_length_check",
+          "value": "char_length(\"feeds\".\"source\") between 2 and 300"
+        },
+        "feeds_source_url_length_check": {
+          "name": "feeds_source_url_length_check",
+          "value": "char_length(\"feeds\".\"source_url\") between 8 and 4096"
+        },
+        "feeds_source_url_protocol_check": {
+          "name": "feeds_source_url_protocol_check",
+          "value": "\"feeds\".\"source_url\" ~ '^https?://[^[:space:]]+$'"
+        },
+        "feeds_body_length_check": {
+          "name": "feeds_body_length_check",
+          "value": "char_length(\"feeds\".\"body\") between 1 and 50000"
+        },
+        "feeds_priority_range_check": {
+          "name": "feeds_priority_range_check",
+          "value": "\"feeds\".\"priority\" between -1000 and 1000"
+        },
+        "feeds_version_positive_check": {
+          "name": "feeds_version_positive_check",
+          "value": "\"feeds\".\"version\" >= 1"
+        },
+        "feeds_content_hash_check": {
+          "name": "feeds_content_hash_check",
+          "value": "\"feeds\".\"content_hash\" ~ '^[0-9a-f]{64}$'"
+        },
+        "feeds_tags_array_check": {
+          "name": "feeds_tags_array_check",
+          "value": "jsonb_typeof(\"feeds\".\"tags\") = 'array'"
+        },
+        "feeds_lifecycle_check": {
+          "name": "feeds_lifecycle_check",
+          "value": "(\n        (\"feeds\".\"status\" = 'draft' and \"feeds\".\"published_at\" is null and \"feeds\".\"archived_at\" is null)\n        or (\"feeds\".\"status\" = 'published' and \"feeds\".\"published_at\" is not null and \"feeds\".\"archived_at\" is null)\n        or (\"feeds\".\"status\" = 'archived' and \"feeds\".\"published_at\" is not null and \"feeds\".\"archived_at\" is not null)\n      )"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.feed_category": {
+      "name": "feed_category",
+      "schema": "public",
+      "values": [
+        "worldcup",
+        "lol",
+        "stock",
+        "ai",
+        "github",
+        "hot",
+        "compute",
+        "global",
+        "rust",
+        "dev",
+        "security",
+        "product"
+      ]
+    },
+    "public.feed_cover_status": {
+      "name": "feed_cover_status",
+      "schema": "public",
+      "values": [
+        "pending"
+      ]
+    },
+    "public.feed_import_status": {
+      "name": "feed_import_status",
+      "schema": "public",
+      "values": [
+        "succeeded",
+        "failed"
+      ]
+    },
+    "public.feed_kind": {
+      "name": "feed_kind",
+      "schema": "public",
+      "values": [
+        "match_result",
+        "match_schedule",
+        "match_flow",
+        "player_spotlight",
+        "knockout_update",
+        "worldcup_feed",
+        "hot_topic",
+        "market_brief",
+        "policy_update",
+        "news",
+        "breaking",
+        "insight",
+        "ai",
+        "data",
+        "visual"
+      ]
+    },
+    "public.feed_origin": {
+      "name": "feed_origin",
+      "schema": "public",
+      "values": [
+        "markdown",
+        "api",
+        "mcp"
+      ]
+    },
+    "public.feed_status": {
+      "name": "feed_status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "published",
+        "archived"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

@@ -8,17 +8,43 @@
     "dev": "astro dev",
     "build": "astro build",
     "check": "astro check",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "tsx --test tests/*.test.ts",
+    "test:mcp": "tsx --test tests/feed-mcp-security.test.ts tests/feed-mcp-compatibility.test.ts tests/feed-mcp-http.test.ts",
+    "test:integration": "tsx --test --test-concurrency=1 tests/integration/**/*.test.ts",
+    "test:e2e": "playwright test",
+    "db:generate": "drizzle-kit generate",
+    "db:check": "drizzle-kit check && tsx scripts/db-schema-check.ts",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:migrate:forward": "tsx scripts/db-migrate-forward.ts",
+    "db:grant:runtime-read": "tsx scripts/db-grant-runtime-read.ts",
+    "db:grant:runtime-write": "tsx scripts/db-grant-runtime-write.ts",
+    "content:import:dry": "tsx scripts/import-feeds.ts --dry-run",
+    "content:import": "tsx scripts/import-feeds.ts",
+    "content:verify": "tsx scripts/verify-feeds.ts"
   },
   "dependencies": {
-    "astro": "^7.0.4"
+    "@astrojs/vercel": "^11.0.2",
+    "@modelcontextprotocol/sdk": "1.26.0",
+    "@neondatabase/serverless": "^1.1.0",
+    "astro": "^7.0.4",
+    "drizzle-orm": "^0.45.2",
+    "mcp-handler": "1.1.0",
+    "zod": "3.25.76"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/vite": "^4.3.2",
+    "@types/node": "^26.1.1",
+    "@types/pg": "^8.20.0",
+    "drizzle-kit": "^0.31.10",
+    "pg": "^8.22.0",
     "tailwindcss": "^4.3.2",
+    "tsx": "^4.23.0",
     "typescript": "^6.0.3",
-    "vite": "^8.1.2"
+    "vite": "^8.1.2",
+    "yaml": "^2.9.0"
   },
   "engines": {
     "node": ">=22.12.0"

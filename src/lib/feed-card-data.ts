@@ -1,4 +1,4 @@
-import type { CollectionEntry } from 'astro:content';
+import type { Feed } from '@/domain/feed';
 import { getDisplaySummary, getDisplayTitle } from '@/lib/feed-display';
 import { formatDate, getCategoryMeta } from '@/lib/feeds';
 
@@ -13,18 +13,18 @@ export interface FeedCardData {
   eventAtLabel: string;
 }
 
-export function toFeedCardData(entry: CollectionEntry<'feeds'>): FeedCardData {
-  const category = getCategoryMeta(entry.data.category);
-  const title = getDisplayTitle(entry.data.title, entry.data.source);
+export function toFeedCardData(feed: Feed): FeedCardData {
+  const category = getCategoryMeta(feed.category);
+  const title = getDisplayTitle(feed.title, feed.source);
 
   return {
-    id: entry.id,
-    href: `/feed/${entry.id}/`,
-    category: entry.data.category,
+    id: feed.slug,
+    href: `/feed/${feed.slug}/`,
+    category: feed.category,
     categoryShortName: category.shortName,
     title,
-    summary: getDisplaySummary(entry.data.summary, title, entry.data.source),
-    eventAt: entry.data.eventAt.toISOString(),
-    eventAtLabel: formatDate(entry.data.eventAt),
+    summary: getDisplaySummary(feed.summary, title, feed.source),
+    eventAt: feed.eventAt.toISOString(),
+    eventAtLabel: formatDate(feed.eventAt),
   };
 }

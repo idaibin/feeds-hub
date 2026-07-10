@@ -1,17 +1,19 @@
 ---
-import type { CollectionEntry } from 'astro:content';
 import FeedCard from '@/components/FeedCard.astro';
+import type { Feed } from '@/domain/feed';
 
 interface Props {
-  entries: CollectionEntry<'feeds'>[];
+  entries: Feed[];
   ariaLabel: string;
   listId: string;
   emptyLabel?: string;
   pageSize?: number;
+  hasMore?: boolean;
 }
 
-const { entries, ariaLabel, listId, emptyLabel = '暂无内容。', pageSize = 10 } = Astro.props;
+const { entries, ariaLabel, listId, emptyLabel = '暂无内容。', pageSize = 10, hasMore } = Astro.props;
 const initialEntries = entries.slice(0, pageSize);
+const canLoadMore = hasMore ?? entries.length > pageSize;
 ---
 
 <section class="feed-section" aria-label={ariaLabel} data-feed-section>
@@ -24,10 +26,10 @@ const initialEntries = entries.slice(0, pageSize);
         data-feed-next-page="2"
         data-feed-source={`/feed-pages/${listId}/`}
       >
-        {initialEntries.map((entry) => <FeedCard entry={entry} />)}
+        {initialEntries.map((entry) => <FeedCard feed={entry} />)}
       </div>
-      <div class="feed-load-sentinel" data-feed-sentinel hidden={entries.length <= pageSize} aria-hidden="true"></div>
-      <p class="feed-end-state" data-feed-end hidden={entries.length > pageSize}>没有更多了</p>
+      <div class="feed-load-sentinel" data-feed-sentinel hidden={!canLoadMore} aria-hidden="true"></div>
+      <p class="feed-end-state" data-feed-end hidden={canLoadMore}>没有更多了</p>
     </>
   ) : (
     <div class="empty-state">{emptyLabel}</div>

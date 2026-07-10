@@ -17,3 +17,5 @@ minimumReleaseAgeExclude:
   - '@astrojs/compiler-rs@0.3.0'
   - astro@7.0.4
   - vite@8.1.2
+patchedDependencies:
+  mcp-handler@1.1.0: patches/mcp-handler@1.1.0.patch

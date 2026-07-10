@@ -1,10 +1,12 @@
 ---
 import FeedList from '@/components/FeedList.astro';
 import BaseLayout from '@/components/BaseLayout.astro';
-import { getAllFeeds } from '@/lib/feeds';
+import { getFeedSource } from '@/lib/feed-sources';
 
-const feeds = await getAllFeeds();
+export const prerender = false;
+
+const page = await (await getFeedSource()).listPublished({ list: 'all', page: 1, pageSize: 10 });
 ---
 <BaseLayout title="Feeds Hub" description="全部中文资讯聚合。" hideFooter>
-  <FeedList entries={feeds} ariaLabel="全部信息" listId="all" />
+  <FeedList entries={page.items} ariaLabel="全部信息" listId="all" hasMore={page.hasMore} />
 </BaseLayout>

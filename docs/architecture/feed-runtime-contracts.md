@@ -1,6 +1,6 @@
 # Feed Runtime Contracts
 
-Status: proposed by Task 0. TypeScript snippets describe later implementation contracts and are not runtime code.
+Status: Task 0 contracts aligned with the Task 1–6 implementation on the current integration branch. TypeScript snippets remain illustrative; runtime behavior is defined by the reviewed source and does not prove any Production cutover has run.
 
 ## Domain Model
 
@@ -85,7 +85,7 @@ interface FeedSource {
 }
 ```
 
-Public reads always return published feeds. Numeric `page` and `pageSize` preserve the existing pagination URL contract. Draft/archived search and cursor pagination are separate internal repository/service operations and require authorization.
+Public reads always return published feeds. Numeric `page` and `pageSize` preserve the existing pagination URL contract, with `page` bounded to 1-1000 and `pageSize` to 1-100. The database adapter pushes list/category selection, the stock-close predicate, future-sports ordering, stable tie-breaks, and pagination into PostgreSQL; it fetches at most `pageSize + 1` projected rows and excludes `body` from list queries. Only detail lookup fetches the complete body. Draft/archived search and cursor pagination are separate internal repository/service operations and require authorization.
 
 ### Existing presentation contract
 
@@ -94,7 +94,7 @@ Tasks 2 and 3 must preserve:
 - `/` as the all-feed list.
 - `/category/<id>/` route paths and labels.
 - `/feed/<category>/<slug>/` detail URLs produced from the existing entry id.
-- `/feed-pages/<list>/<page>.json` payload fields: `href`, `category`, `categoryShortName`, `title`, `summary`, `eventAt`, `eventAtLabel`.
+- `/feed-pages/<list>/<page>.json` payload fields: `id`, `href`, `category`, `categoryShortName`, `title`, `summary`, `eventAt`, `eventAtLabel`; the public `id` remains the existing Content entry id, which is the feed slug.
 - page size of 10.
 - current topic/list resolution, including the existing `ai` and `dev` topic-group lookup before category fallback.
 - the stock close filter in `src/lib/feeds.ts`.
@@ -106,7 +106,7 @@ Tasks 2 and 3 must preserve:
 3. Other items sort by `eventAt` descending.
 4. Ties sort by `priority` descending.
 5. Remaining ties sort by `date` descending.
-6. Final ties sort by `id` ascending.
+6. Final ties sort by public `slug` ascending. Database UUID `id` is not a presentation ordering key.
 
 Database ordering must implement the same semantics. Tests must compare content-source and database-source output using the same fixture set.
 
@@ -143,6 +143,7 @@ Repository methods are not exposed directly to routes. `FeedService` calls them 
 ```ts
 interface DuplicateQuery {
   feedId?: string;
+  slug?: string;
   eventKey?: string;
   sourceUrl?: string;
   title?: string;
@@ -197,7 +198,7 @@ interface ArchiveCommand extends MutationContext {
 
 interface MutationResult {
   feed: Feed;
-  action: 'created' | 'unchanged' | 'published' | 'updated' | 'archived';
+  action: 'created' | 'published' | 'updated' | 'archived';
   auditEventId: string;
 }
 ```
@@ -213,6 +214,7 @@ Creating a new draft omits `feedId` and `expectedVersion`. Updating an existing 
 - Scope is `(actor, operation, idempotencyKey)`.
 - The repository stores a normalized request hash and successful result reference.
 - Same key plus same request returns the stored result.
+- A replay returns the original feed snapshot, action, and audit event id without adding another revision or audit event.
 - Same key plus different request returns `IDEMPOTENCY_CONFLICT`.
 - Failed validation is not persisted as a successful idempotent result.
 
@@ -302,15 +304,21 @@ Raw database messages are logged only after secret redaction and are never retur
 
 ## MCP Compatibility Gate
 
-The official `mcp-handler` package currently documents Next.js and Nuxt adapters rather than Astro. Task 5 must begin with a disposable compatibility spike that proves all of the following inside this repository:
+Task 5 pins `mcp-handler@1.1.0` with `@modelcontextprotocol/sdk@1.26.0` and begins with a local compatibility spike. Although the package documentation is framework-oriented, this version exposes a Web `Request` to Web `Response` handler and uses the Web Standard Streamable HTTP transport. The spike must prove all of the following inside this repository before the remaining tools are implemented:
 
 - an Astro API route at `/api/mcp` can adapt the request/response types without a second framework;
-- `@astrojs/vercel` preserves Streamable HTTP POST responses and required headers;
-- tool listing and one read-only tool work locally and in Vercel Preview;
+- the Astro route preserves Streamable HTTP POST responses and required headers;
+- initialization, tool listing, and one read-only Content-source tool work through a real local HTTP request and every response completes;
 - bearer authentication runs before MCP request dispatch;
 - no Next.js, Nuxt, Express sidecar, or separate deployment is introduced.
 
+The route's method gate admits authenticated Streamable HTTP `POST` and `GET`; the pinned stateless transport has SSE disabled and therefore completes `GET` with `405`. `OPTIONS` is not implemented. `FEED_MCP_ALLOWED_ORIGINS` is an exact Origin allowlist used to reject unexpected browser origins and DNS-rebinding paths; it does not enable CORS, does not emit CORS response headers, and does not accept a wildcard. Non-browser clients may omit `Origin`, but every request still requires the independent `FEED_MCP_TOKEN` bearer credential. Declared request size is rejected before authentication, and the actual POST stream is read only after successful authentication, with a 256 KiB maximum.
+
+The pinned `mcp-handler@1.1.0` package is maintained through the repository's `pnpm` patch. The patch calls `unref()` on the package-global cleanup interval in both published CJS and ESM builds, preserving cleanup behavior while allowing idle serverless/test processes to exit naturally.
+
 If any gate fails, Task 5 stops with evidence and does not implement the tools.
+
+Task 5 does not deploy to Vercel Preview or Production. After Task 5 is reviewed, Task 6 may run a phased canary from `main` in Production. The MCP canary starts only after the database-read phase is approved, with `FEED_READ_SOURCE=database` and `FEED_WRITES_ENABLED=false`; it exercises initialization, tool listing, `list_feeds`, `get_feed`, and `find_feed_duplicates`, and verifies every advertised mutation tool fails with `WRITES_DISABLED` without creating data. It grants no migration, import, database mutation, or MCP mutation authorization. Enabling writes is a separate Task 6 decision after the read-only canary and local integration evidence are reviewed.
 
 Reference: <https://github.com/vercel/mcp-handler>
 
@@ -320,7 +328,7 @@ All tools are narrow wrappers around `FeedService`.
 
 | Tool | Input boundary | Output boundary |
 | --- | --- | --- |
-| `list_feeds` | status/category/query/limit/cursor allowlist | Feed summaries and cursor. |
+| `list_feeds` | status/category/query/limit/cursor allowlist; query 2-300 characters; limit 1-100 | Feed summaries and source-bound cursor. |
 | `get_feed` | id or slug | One authorized feed view. |
 | `find_feed_duplicates` | duplicate query fields only | Candidates with reasons. |
 | `save_feed_draft` | validated feed draft + idempotency key + reason | Draft mutation result. |
@@ -337,3 +345,5 @@ Prohibited MCP capabilities:
 - schema/migration execution;
 - token, environment, or raw audit export;
 - generic create/update endpoints that bypass the seven named tools.
+
+The authorized list/get contract is intentionally bounded for the current small feed dataset: Bearer authentication is mandatory, `limit` defaults to 20 and never exceeds 100, and cursors contain a canonical version plus `content` or `database` source identity. A cursor from one source is rejected before the other source's driver is called. This is not a general search or bulk-export interface.

@@ -1,6 +1,6 @@
 # Feed Runtime Migration and Rollback
 
-Status: proposed by Task 0. No database command is executed by this task.
+Status: Task 0 design with Task 1–6 implementation alignment. This document does not claim that any Production database command or cutover has executed; the operator-facing procedure is `docs/operations/feed-runtime-production-cutover.md`.
 
 ## Baseline Evidence
 
@@ -21,15 +21,16 @@ Database mutation commands require both a connection URL and `FEED_DB_TARGET`. T
 
 | Target | Current rollout policy |
 | --- | --- |
-| `test` | Not provisioned by this decision. A later test database requires explicit authorization before use. |
-| `preview` | Not created or used. Vercel Preview in Task 5 is a code/protocol environment only and grants no database mutation authority. |
-| `production` | Task 1 may run only the generated foundation migration and first idempotent Markdown import under the gates below. Task 6 may run separately reviewed forward migrations during cutover. All other mutations are rejected. |
+| `test` | An isolated local `feeds_hub_test` database has been used for Task 4/5 integration evidence. It is not a deployment or Production substitute. |
+| `preview` | Not created or used. Task 5 performs local protocol compatibility only. |
+| `production` | The foundation runner may execute only reviewed `0000`; the import command may perform only the deterministic Markdown import; the Task 6 forward runner may execute only reviewed `0001`. Each requires its own operation scope, confirmation and backup evidence. All other migration mutations are rejected. |
 
 Rules:
 
 - `db:generate` and `db:check` are local/static and do not connect to a database.
 - `content:import:dry` parses and validates without writing.
-- Task 1 verifies or establishes both exact server-only aliases `DATABASE_URL` and `DATABASE_URL_UNPOOLED` before connecting. Platform-generated prefixed variables may be mapped in deployment configuration, but application code never reads those provider-specific names. Both aliases must resolve to the same Neon project, branch, and database with the pooled/direct roles expected by the command; a missing alias, role mismatch, or redacted-identity mismatch fails before connection or mutation. The unpooled URL is never derived by string rewriting the pooled URL.
+- Operator commands verify both exact aliases before connecting: pooled `DATABASE_URL` uses fixed role `feeds_runtime`, while direct `DATABASE_URL_UNPOOLED` uses the distinct owner recorded in `FEED_DB_EXPECTED_MIGRATION_ROLE`. They must resolve to the same Neon endpoint/database, and the reviewed fingerprint covers both roles. Vercel build/runtime environments contain only `DATABASE_URL`; code fails closed if `DATABASE_URL_UNPOOLED` is present there. Neither URL is derived by string rewriting.
+- Runtime privileges are changed only by the fixed `db:grant:runtime-read` and `db:grant:runtime-write` runners. They accept no SQL, role, table, file, or shell input. Both remove schema/database creation, temporary-object creation, and existing public-table/sequence grants, then fail unless the runtime role also has no elevated attributes, inherited roles, or owned objects and the complete effective privilege matrix is exact. Phase B grants only `SELECT` on `feeds`; Phase D grants `SELECT/INSERT/UPDATE` on `feeds` and `SELECT/INSERT` on `feed_revisions`, `feed_audit_events`, and `feed_idempotency_keys`. No runtime phase grants DELETE, TRUNCATE, DDL, REFERENCES, TRIGGER, sequence, or `feed_import_runs` access.
 - Migration and real import commands print the resolved target and a redacted database identity, never the URL, credentials, or connection-string fragments.
 - An unset or unknown target fails before opening a connection.
 - Before each authorized Production mutation, the operator must verify the actual project/branch/database identity against the reviewed target and record a usable provider backup or restore point. The evidence includes a redacted backup/restore identifier, creation time, covered database identity, retention window, and recovery entry; it must predate the mutation, and unverifiable recovery evidence stops the command.
@@ -211,28 +212,25 @@ Compatibility proof:
 1. Add `mcp-handler` on its task branch.
 2. Implement only `/api/mcp`, authentication, tool listing, and one read-only probe tool.
 3. Verify Streamable HTTP locally.
-4. Verify the same endpoint through the explicit Vercel Preview gate below.
-5. Record request/response status, content type, MCP headers, and tool result.
+4. Record local request/response status, content type, MCP headers, completion time, and tool result.
+5. If the local gate passes, implement and verify only the named tools from `feed-runtime-contracts.md`.
 
-#### Explicit Vercel Preview gate
+#### Deferred Production canary
 
-The current `vercel.json` skips Git-triggered builds when `VERCEL_GIT_COMMIT_REF` is not `main`. Task 5 therefore must not treat the absence of an automatic feature-branch Preview as a compatibility result or wait for a Git-triggered deployment.
+Task 5 does not create a Vercel Preview or Production deployment. Local compatibility evidence is necessary but does not claim that Vercel Production has been verified.
 
-Task 5 must create an explicitly authorized Preview deployment from the clean task-branch commit under review. The deployment must not target, promote, or change Production. Before exercising `/api/mcp`, its evidence must include:
+After the reviewed Task 5 commit is squash-integrated to `main`, Task 6 may perform a separately authorized, phased Production canary. Before exercising `/api/mcp`, its evidence must include:
 
 - the linked Vercel project and scope authorized for `idaibin/feeds-hub`; if the repository is not linked to an authorized project, stop and report the missing authorization;
-- the branch name, a clean `git status`, and the exact commit from `git rev-parse HEAD`;
-- the exact Preview deployment command, with no Production flag or promotion step;
-- the resulting immutable Preview URL and deployment metadata proving it was built from the recorded commit; if the deployment mechanism cannot prove the commit, stop and report instead of testing an untraceable URL;
+- `main`, a clean `git status`, and exact equality between the local commit, `origin/main`, and the deployment source commit;
+- the exact Production deployment or promotion command and resulting deployment metadata;
 - the exact MCP request command and response evidence: HTTP status, content type, required Streamable HTTP headers, tool listing, and one read-only tool result.
 
-This gate validates only the current Task 5 feature-branch commit. It does not change the repository's Git deployment policy and does not authorize a Production deployment.
+The first MCP canary runs only after the database-read phase is independently approved. It uses `FEED_READ_SOURCE=database`, `FEED_WRITES_ENABLED=false`, and exercises initialization, `tools/list`, `list_feeds`, `get_feed`, and `find_feed_duplicates`. Because `tools/list` advertises the narrow mutation tools too, the canary must also prove that each mutation attempt returns `WRITES_DISABLED` and creates no data. It must not run migration/import commands, mutate Production, or treat a prior Production confirmation as reusable authorization.
 
-The Task 5 Preview deployment must use `FEED_READ_SOURCE=content` and `FEED_WRITES_ENABLED=false`. It must not run migration/import commands, attach a writable Production database path, mutate Production, or treat the Task 1 Production confirmation as reusable authorization. The probe tool is read-only and uses the Content source.
+After the read-only canary is reviewed, Task 6 may decide whether to enable mutation tools in a later phase. That decision remains subject to the write kill switch, bearer authentication, validation, duplicate checks, idempotency, optimistic locking, audit requirements, and a separately recorded Production change authorization. Local Task 4/5 test authorization does not authorize Production writes.
 
-If the Astro/Vercel adapter cannot host the handler without Next.js, Nuxt, Express sidecar, or a second deployment, stop the task and report failure. Do not implement the seven tools.
-
-After compatibility passes, implement only the named tools from `feed-runtime-contracts.md`.
+If Astro cannot host the local handler without Next.js, Nuxt, Express sidecar, or a second runtime, stop Task 5 and do not implement the seven tools. If the later Vercel Production canary cannot preserve the already-reviewed Streamable HTTP contract, stop Task 6, keep MCP disabled, and report the deployment incompatibility instead of adding another framework.
 
 Rollback:
 
@@ -244,27 +242,29 @@ Rollback:
 
 Task 6 coordinates the Production read cutover and any separately reviewed forward migrations required after the Task 1 foundation. It does not silently repeat or broaden the Task 1 import authorization.
 
+The executable checklist, evidence fields, exact commands, stop gates, phase verification, and rollback matrix live in `docs/operations/feed-runtime-production-cutover.md`. That runbook is authoritative for execution.
+
 Preconditions:
 
-- Tasks 1-5 are reviewed and squash-integrated to latest `main`.
-- Task 1 Production foundation migration/import completed under its recorded gates, and `content:verify` passed.
+- Tasks 1-5 are reviewed on the exact commit intended for `main`. The current user-authorized combined-branch integration may use one reviewed squash; this is an explicit exception to the earlier one-branch-per-task delivery plan, not an exception to Production gates.
+- If Task 1 Production foundation migration/import has not run, Task 6 performs those exact guarded steps while the live site remains on Content. It never assumes an empty schema or successful import.
 - Task 3 content-source/database-source parity tests passed using read-only access.
 - Task 4 write integration tests passed on an explicitly authorized non-Production database; if none exists, Task 4 and therefore Task 6 remain blocked.
-- Task 5 Vercel Preview code/MCP protocol compatibility passed without database mutation.
+- Task 5 local Astro/MCP protocol compatibility passed without a deployment or database mutation.
+- the Task 6 read-only Production canary plan keeps Content reads and writes disabled until its evidence is reviewed.
 - write and MCP kill switches have been proven.
 - rollback owner and change window are recorded.
 
-Production sequence:
+Production sequence summary:
 
 1. Capture current Production deployment, commit, environment, and public sample URLs.
-2. Reconfirm the actual Production database identity and create/record a usable backup or restore point without exposing connection strings.
-3. Run `content:import:dry` and `content:verify` read-only; stop on unexpected schema/data, conflicts, drift, or mismatch.
-4. If reviewed post-Task-1 forward migrations are required, apply only those migrations with `FEED_DB_TARGET=production` and a fresh operation-scoped `--confirm-production` flag. Never reset, truncate, delete, or run a destructive down-migration.
-5. Re-run `content:verify`; do not repeat the initial import unless a separately reviewed plan and explicit Production confirmation authorize the exact idempotent operation.
-6. Deploy with `FEED_READ_SOURCE=content`, writes off, MCP off.
-7. Switch Production read source to `database` and redeploy.
-8. Verify home, categories, detail pages, pagination, ordering, and selected historical feeds.
-9. Enable writes/MCP only as separately recorded cutover steps after their own review.
+2. Confirm the safe Content/writes-off/MCP-off Production environment, then push the reviewed target `main`; its automatic Vercel deployment is Phase A. Record `origin/main`, deployment ID, and deployment source commit, and stop unless all identify the reviewed target.
+3. Reconfirm the actual Production database identity and create/record a usable backup or restore point without exposing connection strings.
+4. While the healthy Phase A deployment remains on Content, apply only required fixed runners: foundation `0000` on an empty schema, deterministic Markdown import, then runtime forward `0001`. Each mutation has fresh backup evidence and a distinct operation-scoped confirmation.
+5. Run `content:verify`; stop on unexpected schema/data, conflicts, drift, or mismatch. Do not repeat the initial import without separate review and confirmation.
+6. Phase B: switch only reads to `database`; verify pages, pagination, ordering, history, latency and errors.
+7. Phase C: enable MCP while writes remain off; verify read tools and verify every mutation tool returns `WRITES_DISABLED` with no writes.
+8. Phase D: only after separate Production write authorization, enable writes and run the minimal audited/idempotent canary.
 
 Rollback triggers:
 
@@ -280,7 +280,7 @@ Production rollback:
 1. Disable MCP.
 2. Disable writes.
 3. Set `FEED_READ_SOURCE=content`.
-4. Redeploy the last reviewed commit/configuration.
+4. Redeploy the known-good deployment ID and configuration recorded before the change.
 5. Verify public routes and pagination.
 6. Preserve Neon rows, revisions, audit records, logs, and import reports for diagnosis.
 

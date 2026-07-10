@@ -1,41 +1,11 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { FEED_CATEGORIES, FEED_COVER_STATUSES, FEED_KINDS } from '@/domain/feed';
 
-const feedCategorySchema = z.enum([
-  'worldcup',
-  'lol',
-  'stock',
-  'ai',
-  'github',
-  'hot',
-  'compute',
-  'global',
-  'rust',
-  'dev',
-  'security',
-  'product'
-]);
-
-const feedKindSchema = z.enum([
-  'match_result',
-  'match_schedule',
-  'match_flow',
-  'player_spotlight',
-  'knockout_update',
-  'worldcup_feed',
-  'hot_topic',
-  'market_brief',
-  'policy_update',
-  'news',
-  'breaking',
-  'insight',
-  'ai',
-  'data',
-  'visual'
-]);
-
-const coverStatusSchema = z.enum(['pending']);
+const feedCategorySchema = z.enum(FEED_CATEGORIES);
+const feedKindSchema = z.enum(FEED_KINDS);
+const coverStatusSchema = z.enum(FEED_COVER_STATUSES);
 
 const feeds = defineCollection({
   loader: glob({ pattern: '{worldcup,lol,stock,ai,github,hot,compute,global,rust,dev,security,product}/**/*.md', base: './src/content' }),

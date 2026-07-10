@@ -1,4 +1,10 @@
-import { getCollection } from 'astro:content';
+import type { Feed, FeedCategory } from '@/domain/feed';
+import {
+  MAX_PUBLIC_FEED_PAGE,
+  MAX_PUBLIC_FEED_PAGE_SIZE,
+  type FeedPage,
+  type PublicFeedPageQuery,
+} from '@/domain/feed-source';
 
 export const CATEGORIES = [
   { id: 'ai', name: 'AI 科技', shortName: 'AI 科技', description: '聚合 AI、科技公司、开源模型、工程工具与产品动态。' },
@@ -15,7 +21,7 @@ export const CATEGORIES = [
   { id: 'global', name: '全球重点', shortName: '全球', description: '聚合全球范围内值得关注的政治、经济、社会与科技综合新闻。' }
 ] as const;
 
-export type CategoryId = (typeof CATEGORIES)[number]['id'];
+export type CategoryId = FeedCategory;
 
 export const FEED_GROUPS = [
   {
@@ -65,21 +71,21 @@ export function getCategoryMeta(category: string) {
   return CATEGORIES.find((item) => item.id === category) ?? CATEGORIES[0];
 }
 
-function isStockCloseFeed(entry: { data: { category: string; eventKey: string; title: string; subtitle: string; topic: string } }) {
-  if (entry.data.category !== 'stock') return true;
+export function isStockCloseFeed(feed: Pick<Feed, 'category' | 'eventKey' | 'title' | 'subtitle' | 'topic'>) {
+  if (feed.category !== 'stock') return true;
 
   const text = [
-    entry.data.eventKey,
-    entry.data.topic,
-    entry.data.title,
-    entry.data.subtitle
+    feed.eventKey,
+    feed.topic,
+    feed.title,
+    feed.subtitle
   ].join(' ').toLowerCase();
   const marketText = [
-    entry.data.topic,
-    entry.data.title,
-    entry.data.subtitle
+    feed.topic,
+    feed.title,
+    feed.subtitle
   ].join(' ');
-  const primaryMarketText = [entry.data.topic, entry.data.title].join(' ');
+  const primaryMarketText = [feed.topic, feed.title].join(' ');
   const isUnsupportedMarket = /欧洲|韩国|日本|亚洲|全球|欧元区|STOXX|KOSPI|Nikkei/i.test(primaryMarketText);
   const isSupportedMarket = /美股|美国|港股|香港|A 股|A股|沪深|上证|深证|创业板|科创/.test(marketText);
 
@@ -92,17 +98,19 @@ function isStockCloseFeed(entry: { data: { category: string; eventKey: string; t
 }
 
 export async function getAllFeeds() {
-  const feeds = await getCollection('feeds', ({ data }) => data.reviewed === true).then((entries) =>
-    entries.filter(isStockCloseFeed)
-  );
-  const now = Date.now();
+  const { getPublishedContentFeeds } = await import('@/lib/feed-sources/content');
+  const feeds = (await getPublishedContentFeeds()).filter(isStockCloseFeed);
+  return sortFeeds(feeds);
+}
+
+export function sortFeeds(feeds: Feed[], now = Date.now()) {
   const sportsCategories = new Set<string>(
     FEED_GROUPS.find((group) => group.id === 'sports')?.categories ?? []
   );
-  const isFutureSportsEvent = (entry: (typeof feeds)[number]) =>
-    sportsCategories.has(entry.data.category) && entry.data.eventAt.getTime() > now;
+  const isFutureSportsEvent = (feed: Feed) =>
+    sportsCategories.has(feed.category) && feed.eventAt.getTime() > now;
 
-  return feeds.sort((a, b) => {
+  return [...feeds].sort((a, b) => {
     const aFutureSportsEvent = isFutureSportsEvent(a);
     const bFutureSportsEvent = isFutureSportsEvent(b);
 
@@ -111,25 +119,25 @@ export async function getAllFeeds() {
     }
 
     if (aFutureSportsEvent && bFutureSportsEvent) {
-      const eventDelta = a.data.eventAt.getTime() - b.data.eventAt.getTime();
+      const eventDelta = a.eventAt.getTime() - b.eventAt.getTime();
       if (eventDelta !== 0) return eventDelta;
     } else {
-      const eventDelta = b.data.eventAt.getTime() - a.data.eventAt.getTime();
+      const eventDelta = b.eventAt.getTime() - a.eventAt.getTime();
       if (eventDelta !== 0) return eventDelta;
     }
 
-    const priorityDelta = b.data.priority - a.data.priority;
+    const priorityDelta = b.priority - a.priority;
     if (priorityDelta !== 0) return priorityDelta;
 
-    const dateDelta = b.data.date.getTime() - a.data.date.getTime();
+    const dateDelta = b.date.getTime() - a.date.getTime();
     if (dateDelta !== 0) return dateDelta;
 
-    return a.id.localeCompare(b.id);
+    return a.slug.localeCompare(b.slug);
   });
 }
 
-export function getFeedsByCategory(feeds: Awaited<ReturnType<typeof getAllFeeds>>, category: string) {
-  return feeds.filter((entry) => entry.data.category === category);
+export function getFeedsByCategory(feeds: Feed[], category: string) {
+  return feeds.filter((feed) => feed.category === category);
 }
 
 export function getFeedGroupMeta(group: string) {
@@ -140,20 +148,53 @@ export function getFeedTopicMeta(topic: string) {
   return FEED_TOPIC_GROUPS.find((item) => item.id === topic);
 }
 
-export function getFeedsByList(feeds: Awaited<ReturnType<typeof getAllFeeds>>, list: string) {
-  if (list === 'all') return feeds;
+export function getFeedsByList(feeds: Feed[], list: string) {
+  const categories = getFeedListCategories(list);
+  return categories ? feeds.filter((feed) => categories.includes(feed.category)) : feeds;
+}
 
+export function getFeedListCategories(list: string): FeedCategory[] | undefined {
+  if (list === 'all') return undefined;
   const topic = getFeedTopicMeta(list);
-  if (topic) {
-    return feeds.filter((entry) => topic.categories.includes(entry.data.category as never));
-  }
-
+  if (topic) return [...topic.categories] as FeedCategory[];
   const group = getFeedGroupMeta(list);
-  if (group) {
-    return feeds.filter((entry) => group.categories.includes(entry.data.category as never));
+  if (group) return [...group.categories] as FeedCategory[];
+  const category = CATEGORIES.find((item) => item.id === list);
+  return category ? [category.id] : [];
+}
+
+export function createFeedPage(
+  feeds: Feed[],
+  query: PublicFeedPageQuery,
+  now = Date.now(),
+): FeedPage {
+  if (!Number.isSafeInteger(query.page) || query.page < 1 || query.page > MAX_PUBLIC_FEED_PAGE) {
+    throw new Error(`page must be an integer between 1 and ${MAX_PUBLIC_FEED_PAGE}`);
+  }
+  if (!Number.isSafeInteger(query.pageSize) || query.pageSize < 1 || query.pageSize > MAX_PUBLIC_FEED_PAGE_SIZE) {
+    throw new Error(`pageSize must be an integer between 1 and ${MAX_PUBLIC_FEED_PAGE_SIZE}`);
   }
 
-  return getFeedsByCategory(feeds, list);
+  const published = feeds.filter((feed) => feed.status === 'published' && isStockCloseFeed(feed));
+  const listed = getFeedsByList(sortFeeds(published, now), query.list);
+  const start = (query.page - 1) * query.pageSize;
+
+  return {
+    items: listed.slice(start, start + query.pageSize),
+    page: query.page,
+    pageSize: query.pageSize,
+    hasMore: start + query.pageSize < listed.length,
+  };
+}
+
+export function getFeedListMeta(list: string) {
+  return getFeedTopicMeta(list)
+    ?? getFeedGroupMeta(list)
+    ?? CATEGORIES.find((category) => category.id === list);
+}
+
+export function isPublicFeedList(list: string) {
+  return list === 'all' || getFeedListMeta(list) !== undefined;
 }
 
 export function formatDate(value: Date) {

@@ -1,0 +1,229 @@
+# Feed Runtime Production Cutover Runbook
+
+Status: execution template. Nothing in this document proves that a Production migration, import, deployment, canary, or cutover has run.
+
+This runbook is Production-only. Do not create or use a Vercel Preview deployment, Preview database, arbitrary SQL runner, destructive down migration, reset, truncate, delete, or physical Feed deletion. `src/content/**` and `ContentFeedSource` remain available throughout every phase.
+
+## Execution record — fill before the change
+
+Do not start while any required value is blank.
+
+| Evidence | Execution-time value |
+|---|---|
+| Change owner | _required_ |
+| Rollback owner | _required_ |
+| Approver / review record | _required_ |
+| Change window, Asia/Shanghai | _required_ |
+| Change window, UTC | _required_ |
+| Target local `main` commit | _required_ |
+| Target `origin/main` commit | _fill after push; must equal target local commit_ |
+| Target deployment source commit | _fill after deploy; must equal target local commit_ |
+| Pre-change known-good Production deployment ID | _required_ |
+| Pre-change known-good Production URL | _required; must identify the same deployment ID_ |
+| Pre-change known-good deployment source commit | _required; must match that deployment's metadata, but may differ from target_ |
+| Target Vercel project / scope | _required_ |
+| Redacted Neon database fingerprint | _required_ |
+| Runtime role | _must equal `feeds_runtime`_ |
+| Migration owner role | _required; must differ from `feeds_runtime`_ |
+| Backup / restore identifier | _required before each database mutation_ |
+| Backup creation time | _required; less than 24 hours old and before mutation_ |
+| Backup retention deadline | _required; after the change window_ |
+| Neon recovery entry | _required; record reference, never credentials_ |
+| Phase deployment IDs | _fill after each deployment_ |
+| Start / finish / result | _fill during execution_ |
+
+Record evidence in the approved operational system. Never commit database URLs, bearer tokens, recovery credentials, or unredacted provider secrets.
+
+## Global preflight
+
+1. Prepare the reviewed target commit on local `main` with a clean worktree. Fetch the remote and stop unless `origin/main` is still the reviewed base commit; do not overwrite unexpected remote changes.
+2. Verify the linked Vercel project is `idaibin/feeds-hub` in the approved scope.
+3. Capture the current public home, one category, one detail page, pagination JSON, and the pre-change known-good Production deployment ID, URL, and source commit. These three values must describe one deployment, but its commit is not required to equal the new target commit.
+4. Confirm `vercel.json` disables Git automatic deployments with minimatch `**` (including branch names containing `/`) and explicitly enables `main`. Vercel treats unspecified branches as enabled and lets any matching `true` rule win, so both entries are required. A push to `main` therefore starts the Phase A Production deployment; no database preparation may precede Phase A. Do not run `vercel`, `vercel deploy`, or create a Dashboard deployment for a non-`main` branch.
+5. Before pushing, verify Production already has these safe baseline values:
+
+   ```text
+   FEED_READ_SOURCE=content
+   FEED_WRITES_ENABLED=false
+   FEED_MCP_ENABLED=false
+   ```
+
+   Vercel must contain only pooled Neon credentials using username `feeds_runtime`. Remove `DATABASE_URL_UNPOOLED` and provider-prefixed direct/owner aliases (for example Marketplace storage aliases) from every Vercel Production/build/runtime environment before Phase A. The build and runtime guard scans database-shaped environment values and intentionally fails without printing a URL if any Neon credential is direct or uses another role. `FEED_DB_EXPECTED_MIGRATION_ROLE` and the direct owner URL belong only in the separately controlled operator environment.
+
+6. Run the local non-Production checks listed in `docs/progress/feed-runtime.md`. Stop on any failure.
+
+## Phase A — Content baseline
+
+Push the reviewed local `main` target to `origin/main`. The reviewed `vercel.json` starts the Production deployment automatically with:
+
+```text
+FEED_READ_SOURCE=content
+FEED_WRITES_ENABLED=false
+FEED_MCP_ENABLED=false
+```
+
+Record `origin/main`, the target deployment ID, and its source commit. Stop unless all three equal or identify the reviewed local target commit. Verify home, representative categories, detail pages, pagination JSON, ordering, historical feeds, write API rejection, and `/api/mcp` disabled behavior.
+
+Stop gate: do not prepare or mutate the database unless the target deployment source commit and public output match the baseline. On failure, restore the pre-change known-good Production deployment and its safe environment configuration.
+
+## Database preflight after Phase A
+
+1. Keep Phase A live on Content with writes and MCP disabled.
+2. In the controlled operator environment, verify pooled `DATABASE_URL` uses fixed role `feeds_runtime`, direct `DATABASE_URL_UNPOOLED` uses the distinct owner named by `FEED_DB_EXPECTED_MIGRATION_ROLE`, both identify the same reviewed Neon endpoint/database, and `FEED_DB_EXPECTED_FINGERPRINT` covers endpoint/database/both roles. Neither owner credential nor the expected owner variable may be copied into Vercel.
+3. Provision the fixed `feeds_runtime` login through the reviewed Neon console/operator procedure if it does not exist. No repository command creates a role, accepts a role name, changes a password, or exposes credentials.
+4. Create and record a usable Neon backup or restore point. Each mutation command requires a fresh, operation-scoped confirmation and complete backup evidence.
+5. Stop unless the recorded target deployment remains healthy and its source commit still equals local `main` and `origin/main`.
+
+## Database preparation while Content remains live
+
+All commands in this section require `FEED_DB_TARGET=production`, Content reads, writes off, MCP off, a clean worktree, matching pooled/direct identity, matching fingerprint, and explicit `--apply`. They fail closed when evidence is incomplete.
+
+### Empty database: foundation migration
+
+Run only when the application schema is verified empty. This runner executes only reviewed journal entry `0` / `0000_windy_trish_tilby`; later journal entries do not broaden it.
+
+```bash
+pnpm run db:migrate -- \
+  --apply \
+  --confirm-production=feeds-hub-production:foundation-migration:<fingerprint> \
+  --backup-id=<provider-id> \
+  --backup-created-at=<ISO-8601> \
+  --backup-database-fingerprint=<fingerprint> \
+  --backup-retain-until=<ISO-8601> \
+  --recovery-reference=<https-console-neon-tech-entry>
+```
+
+Stop unless post-verification confirms `feeds`, `feed_import_runs`, `drizzle.__drizzle_migrations`, and exactly the reviewed foundation journal row.
+
+### First deterministic Markdown import
+
+Run the offline plan first, then a database comparison. Apply only when the plan has no invalid/conflict/unexpected rows and the backup evidence has been refreshed if required.
+
+```bash
+pnpm run content:import:dry
+pnpm run content:import:dry -- --database
+pnpm run content:import -- \
+  --apply \
+  --confirm-production=feeds-hub-production:markdown-import:<fingerprint> \
+  --backup-id=<provider-id> \
+  --backup-created-at=<ISO-8601> \
+  --backup-database-fingerprint=<fingerprint> \
+  --backup-retain-until=<ISO-8601> \
+  --recovery-reference=<https-console-neon-tech-entry>
+pnpm run content:verify
+```
+
+Do not repeat the import unless a reviewed plan and a new operation-scoped confirmation authorize that exact idempotent run.
+
+### Exact runtime forward migration
+
+Run only after the database journal contains exactly reviewed `0000` and before `0001` has been applied. The runner executes only reviewed entry `1` / `0001_swift_ben_parker`; it accepts no migration name, SQL, file, shell, down, delete, or reset input.
+
+```bash
+pnpm run db:migrate:forward -- \
+  --apply \
+  --confirm-production=feeds-hub-production:runtime-forward-migration:<fingerprint> \
+  --backup-id=<provider-id> \
+  --backup-created-at=<ISO-8601> \
+  --backup-database-fingerprint=<fingerprint> \
+  --backup-retain-until=<ISO-8601> \
+  --recovery-reference=<https-console-neon-tech-entry>
+```
+
+Stop unless post-verification confirms `pg_trgm`, `feed_revisions`, `feed_audit_events`, `feed_idempotency_keys`, the delete/history protection triggers, and exactly the reviewed `0000` then `0001` journal rows.
+
+## Phase B — Database reads
+
+While Phase A still serves Content, apply only the fixed read grant runner. It removes runtime/public table and sequence grants, public-schema/database creation, and database temporary-object creation, then grants only `SELECT` on `public.feeds`. It accepts no SQL, role, table, file, or shell input and fails unless the runtime role has no elevated attributes, inherited roles, or owned objects.
+
+```bash
+pnpm run db:grant:runtime-read -- \
+  --apply \
+  --confirm-production=feeds-hub-production:runtime-read-grants:<fingerprint> \
+  --backup-id=<provider-id> \
+  --backup-created-at=<ISO-8601> \
+  --backup-database-fingerprint=<fingerprint> \
+  --backup-retain-until=<ISO-8601> \
+  --recovery-reference=<https-console-neon-tech-entry>
+```
+
+Stop unless verification reports `feeds_runtime` with no elevated attributes, inherited roles, owned objects, schema/database create or temporary privileges, unexpected table privileges, or sequence privileges.
+
+Change only:
+
+```text
+FEED_READ_SOURCE=database
+FEED_WRITES_ENABLED=false
+FEED_MCP_ENABLED=false
+```
+
+Redeploy the same reviewed commit. Verify home, all categories, selected detail pages, pagination JSON, list membership, sorting, stock close filtering, selected historical feeds, response status, database latency, and connection errors.
+
+Stop gate: on mismatch or unacceptable database behavior, restore Content reads with writes/MCP off and roll back to the pre-change known-good Production deployment. Preserve all Neon rows and logs.
+
+## Phase C — Read-only MCP canary
+
+Change only:
+
+```text
+FEED_READ_SOURCE=database
+FEED_WRITES_ENABLED=false
+FEED_MCP_ENABLED=true
+```
+
+Configure a separate strong `FEED_MCP_TOKEN` and the reviewed exact Origin allowlist if browser origins are required. Redeploy the same reviewed commit. Verify Streamable HTTP initialize, `tools/list`, `list_feeds`, `get_feed`, and `find_feed_duplicates` with redacted evidence.
+
+`tools/list` currently advertises all seven narrow tools. Read-only behavior is enforced by `FEED_WRITES_ENABLED=false`; explicitly verify `save_feed_draft`, `publish_feed`, `update_published_feed`, and `archive_feed` are rejected with `WRITES_DISABLED` and create no Feed, revision, audit, or idempotency record.
+
+Stop gate: on protocol, auth, origin, latency, or unexpected mutation behavior, set `FEED_MCP_ENABLED=false`, rotate the MCP token when exposure is possible, and redeploy. Database reads may remain enabled only if Phase B was independently approved.
+
+## Phase D — Writes
+
+This phase requires a separate Production write authorization after Phase C review. Local integration success does not authorize it.
+
+First disable MCP while keeping database reads and writes off, then redeploy and verify `/api/mcp` is disabled:
+
+```text
+FEED_READ_SOURCE=database
+FEED_WRITES_ENABLED=false
+FEED_MCP_ENABLED=false
+```
+
+From the controlled operator environment, apply the fixed write grant runner with fresh confirmation and backup evidence:
+
+```bash
+pnpm run db:grant:runtime-write -- \
+  --apply \
+  --confirm-production=feeds-hub-production:runtime-write-grants:<fingerprint> \
+  --backup-id=<provider-id> \
+  --backup-created-at=<ISO-8601> \
+  --backup-database-fingerprint=<fingerprint> \
+  --backup-retain-until=<ISO-8601> \
+  --recovery-reference=<https-console-neon-tech-entry>
+```
+
+Stop unless the verified matrix is exact: `feeds` gets `SELECT/INSERT/UPDATE`; `feed_revisions`, `feed_audit_events`, and `feed_idempotency_keys` get `SELECT/INSERT`; `feed_import_runs` and all sequence/DDL/DELETE/TRUNCATE/REFERENCES/TRIGGER privileges remain unavailable.
+
+Only after that result is reviewed, change to:
+
+```text
+FEED_READ_SOURCE=database
+FEED_WRITES_ENABLED=true
+FEED_MCP_ENABLED=true
+```
+
+Use a dedicated write token and least-privilege operator. Verify one minimal draft, replay with the same idempotency key, conflicting replay, duplicate evidence, review, publish, public page appearance, optimistic version conflict, update, archive, revisions, audit events, and absence of any physical delete path. Record created Feed IDs and audit IDs without recording credentials.
+
+Stop gate: on unauthorized/unaudited mutation, idempotency failure, version failure, page mismatch, or unexpected write scope, immediately set `FEED_WRITES_ENABLED=false` and `FEED_MCP_ENABLED=false`. Run the fixed read grant runner with a fresh `runtime-read-grants` confirmation to revoke database write privileges; rotate tokens when containment requires it. Preserve Feed rows and all history for diagnosis.
+
+## Rollback matrix
+
+| Failure stage | Immediate rollback |
+|---|---|
+| Database preparation | Stop; use the recorded Neon recovery procedure only under provider/operator review. Never run a down migration, reset, truncate, or delete. |
+| Phase A | Restore the execution record's pre-change known-good Production deployment and safe environment configuration. |
+| Phase B | Set Content reads, writes off, MCP off; restore the pre-change known-good Production deployment. |
+| Phase C | Disable MCP and rotate its token if needed; retain database reads only if Phase B remains approved. |
+| Phase D | Disable writes and MCP immediately; reapply the fixed read-only privilege matrix with fresh evidence; rotate tokens if needed; fall back to Content reads if public output is affected. |
+
+After rollback, verify public routes and pagination, retain Neon data/revisions/audit/idempotency records and logs, and keep `src/content/**` plus `ContentFeedSource`. Record the trigger, owner, time, deployment ID, and verification result.

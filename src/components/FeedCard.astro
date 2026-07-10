@@ -1,38 +1,38 @@
 ---
-import type { CollectionEntry } from 'astro:content';
 import FeedMarkdownBody from '@/components/FeedMarkdownBody.astro';
+import type { Feed } from '@/domain/feed';
 import { getDisplaySubtitle, getDisplaySummary, getDisplayTitle } from '@/lib/feed-display';
 import { formatDate, getCategoryMeta } from '@/lib/feeds';
 
 interface Props {
-  entry: CollectionEntry<'feeds'>;
+  feed: Feed;
   mode?: 'list' | 'detail';
 }
 
-const { entry, mode = 'list' } = Astro.props;
+const { feed, mode = 'list' } = Astro.props;
 const isDetail = mode === 'detail';
-const category = getCategoryMeta(entry.data.category);
-const href = `/feed/${entry.id}/`;
-const title = getDisplayTitle(entry.data.title, entry.data.source);
-const subtitle = isDetail ? getDisplaySubtitle(entry.data.subtitle, entry.data.source, [title]) : '';
+const category = getCategoryMeta(feed.category);
+const href = `/feed/${feed.slug}/`;
+const title = getDisplayTitle(feed.title, feed.source);
+const subtitle = isDetail ? getDisplaySubtitle(feed.subtitle, feed.source, [title]) : '';
 const summary = getDisplaySummary(
-  entry.data.summary,
+  feed.summary,
   title,
-  entry.data.source,
+  feed.source,
   subtitle ? [subtitle] : []
 );
 const detailNote = isDetail ? [subtitle, summary].filter(Boolean).join('；') : '';
-const chineseAuthorityUrl = entry.data.category === 'lol' ? 'https://lolesports.com/zh-TW' : '';
-const sourceHref = chineseAuthorityUrl || entry.data.sourceUrl;
+const chineseAuthorityUrl = feed.category === 'lol' ? 'https://lolesports.com/zh-TW' : '';
+const sourceHref = chineseAuthorityUrl || feed.sourceUrl;
 ---
-<article class:list={['feed-card', `category-${entry.data.category}`, { 'is-detail': isDetail }]} data-feed-card>
+<article class:list={['feed-card', `category-${feed.category}`, { 'is-detail': isDetail }]} data-feed-card>
   {
     isDetail ? (
       <div class="card-link detail-frame">
         <div class="feed-body">
           <div class="feed-meta">
             <a class="category-chip" href={`/category/${category.id}/`}>{category.shortName}</a>
-            <time datetime={entry.data.eventAt.toISOString()}>{formatDate(entry.data.eventAt)}</time>
+            <time datetime={feed.eventAt.toISOString()}>{formatDate(feed.eventAt)}</time>
           </div>
           <h1>{title}</h1>
           {detailNote && (
@@ -42,8 +42,8 @@ const sourceHref = chineseAuthorityUrl || entry.data.sourceUrl;
           )}
           <FeedMarkdownBody
             class="markdown-body"
-            body={entry.body}
-            source={entry.data.source}
+            body={feed.body}
+            source={feed.source}
             title={title}
             subtitle={subtitle}
             summary={summary}
@@ -51,7 +51,7 @@ const sourceHref = chineseAuthorityUrl || entry.data.sourceUrl;
           <p class="source-line">
             {sourceHref && (
               <a class="source-original-link" href={sourceHref} target="_blank" rel="noreferrer">
-                <span>{entry.data.source ?? '原文'}</span>
+                <span>{feed.source ?? '原文'}</span>
                 <svg aria-hidden="true" viewBox="0 0 24 24">
                   <path d="M7 17L17 7" />
                   <path d="M9 7h8v8" />
@@ -66,7 +66,7 @@ const sourceHref = chineseAuthorityUrl || entry.data.sourceUrl;
         <div class="feed-body">
           <div class="feed-meta">
             <span class="category-chip">{category.shortName}</span>
-            <time datetime={entry.data.eventAt.toISOString()}>{formatDate(entry.data.eventAt)}</time>
+            <time datetime={feed.eventAt.toISOString()}>{formatDate(feed.eventAt)}</time>
           </div>
           <h2>{title}</h2>
           {summary && <p class="summary">{summary}</p>}

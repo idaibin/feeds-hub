@@ -1,20 +1,18 @@
 ---
 import FeedList from '@/components/FeedList.astro';
 import BaseLayout from '@/components/BaseLayout.astro';
-import { CATEGORIES, FEED_GROUPS, getAllFeeds, getFeedGroupMeta, getFeedTopicMeta, getFeedsByList } from '@/lib/feeds';
+import { getFeedSource } from '@/lib/feed-sources';
+import { getFeedListMeta } from '@/lib/feeds';
 
-export function getStaticPaths() {
-  return [...CATEGORIES, ...FEED_GROUPS].map((category) => ({ params: { category: category.id }, props: { category } }));
-}
+export const prerender = false;
 
-const { category } = Astro.props;
-const allFeeds = await getAllFeeds();
-const feeds = getFeedsByList(allFeeds, category.id);
-const topic = getFeedTopicMeta(category.id);
-const group = getFeedGroupMeta(category.id);
-const listLabel = topic?.name ?? group?.name ?? category.name;
-const listDescription = topic?.description ?? group?.description ?? category.description;
+const listId = Astro.params.category ?? '';
+const listMeta = getFeedListMeta(listId);
+if (!listMeta) return new Response(null, { status: 404, statusText: 'Not found' });
+const page = await (await getFeedSource()).listPublished({ list: listId, page: 1, pageSize: 10 });
+const listLabel = listMeta.name;
+const listDescription = listMeta.description;
 ---
 <BaseLayout title={`${listLabel}｜Feeds Hub`} description={listDescription} hideFooter>
-  <FeedList entries={feeds} ariaLabel={`${listLabel}信息`} listId={category.id} />
+  <FeedList entries={page.items} ariaLabel={`${listLabel}信息`} listId={listId} hasMore={page.hasMore} />
 </BaseLayout>

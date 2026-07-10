@@ -2,101 +2,186 @@
 
 ## 当前任务
 
-- 任务：Task 0 — 运行时信息流架构、接口、迁移与回滚设计。
-- 状态：Task 0 Production-only 决策与 review 修复完成，等待分支复审。
+- 任务：Task 6 — Production-only 部署配置、精确 forward migration、分阶段 cutover 与回滚材料。
+- 状态：Task 1–6 已在当前组合分支形成独立提交；最终 release review 无 blocker，定向修复已完成本地验证并保留在工作树中，尚未 squash/push `main`、部署或连接 Production 数据库。
+- 本次整合例外：根据用户最新明确授权，Task 1–6 在当前组合分支完成 review 后可单次 squash 到 `main`。这不改变 Production 逐阶段确认、无 Preview、无 PR 和禁止破坏性数据库操作的边界。
 
 ## 分支
 
-`content/feed-runtime-architecture`
+`feat/feed-database-foundation`
 
 ## 起始 commit
 
-`f77e5b8e845ded0709bc7ccd95e76f810a3573c7` (`origin/main`)
+`0b338c231333fd267f7b0a5c3b1d5dd4e3b92341` (`origin/main`，Task 0 架构文档)
 
-本任务明确从远端 `origin/main` 创建，未包含工作区本地 `main` 上已有但未推送的其它提交。
+当前组合分支在 Task 6 工作开始前包含：
+
+- `fa22fe8` — Task 1 database foundation
+- `82dbf5d` — Task 2 Feed domain model 解耦
+- `3bc5ed1` — Task 3 runtime read source switching
+- `1dcd704` — Task 4 protected write API
+- `0f74651` — Task 5 Remote MCP Server
+- `1c2245c` — Task 6 Production cutover controls
+
+上述 Task 1–6 提交均已存在；当前未提交工作树仅包含最终 release review 的定向修复，未改写这些提交。
 
 ## 修改范围
 
-- `docs/architecture/feed-runtime.md`
-- `docs/architecture/feed-runtime-contracts.md`
-- `docs/architecture/feed-runtime-migration.md`
-- `docs/architecture/feed-runtime-architecture.png`
-- `docs/architecture/feed-runtime-update-flow.png`
-- `docs/progress/feed-runtime.md`
-- `README.md`
+Task 1–5 已实现 Drizzle/Neon foundation、Markdown import/verify、稳定 Feed domain、Content/Database 双读取源、Vercel Astro adapter、动态首页/分类/详情/分页、受保护写入 API、审计/幂等/乐观锁，以及 Astro 内 `/api/mcp`。
 
-未修改运行时代码、依赖、配置、内容文案或 UI 规则；README 仅增加目标架构说明和图片入口。
+Task 6 提交修改：
+
+- `scripts/db-migrate.ts`
+- `scripts/db-migrate-forward.ts`
+- `scripts/lib/production-guard.ts`
+- `scripts/lib/reviewed-migrations.ts`
+- `tests/migration-runners.test.ts`
+- `tests/deployment-config.test.ts`
+- `tests/production-guard.test.ts`
+- `package.json`
+- `vercel.json`
+- `README.md`
+- `docs/operations/feed-runtime-production-cutover.md`
+- `docs/architecture/feed-runtime-migration.md`
+- `docs/architecture/feed-runtime-contracts.md`
+- `docs/progress/feed-runtime.md`
+
+未修改 `src/content/**`、前台 UI 文案、页面结构、Feed API/MCP 工具能力或 Content/Database 读取实现；未增加 SQL、shell、delete、reset、truncate、down migration 或物理删除入口。
+
+最终 release review 的定向修复仅涉及：数据库 authorized cursor 无损保留 PostgreSQL 微秒精度及真实数据库回归测试、分页 JSON 对超大页码返回 404、Phase A 自动部署早于数据库准备的 runbook 顺序，以及相应测试/状态文档。
 
 ## 已完成项
 
-- 记录当前 Astro Content Collection 静态读取基线。
-- 定义 Content/Database 双数据源边界和 `FEED_READ_SOURCE` 开关。
-- 定义 Feed 领域模型、读取接口、Repository、FeedService 和排序/URL/分页兼容契约。
-- 定义 Neon + Drizzle 的任务边界、Schema 所有权和数据库命令安全门槛。
-- 定义 draft/published/archived 生命周期、幂等、乐观锁、revision 和审计契约。
-- 定义受保护 HTTP 写入 API；未设计删除接口。
-- 定义 7 个允许的 MCP Tool 及禁止 SQL/shell/物理删除的边界。
-- 将 Astro + `@astrojs/vercel` + `mcp-handler` + Streamable HTTP 兼容性设为 Task 5 前置阻断门槛。
-- 定义 Tasks 1-7 的依赖、验证、Preview/Production 切换和回滚顺序。
-- 将运行时架构图和后续更新流程图加入 README，并标注尚未上线及 Markdown 回滚边界。
-- 根据独立 review 统一四类写操作的幂等契约：save draft、publish、published update 和 archive 均要求幂等键，并同步 HTTP、MCP、审计与集成测试要求。
-- 针对 `vercel.json` 跳过非 `main` Git 构建的现状，定义 Task 5 显式、非 Production、可追溯到功能分支 commit 的 Preview 验证门禁。
-- 记录用户明确确认的 Production-only 数据库决策：不创建 Preview 数据库，Task 1 仅可在严格门禁下执行 Production foundation migration 和首次幂等 Markdown import。
-- 补齐 Production 导入原子性、数据库双 URL 同库/角色校验、可复核备份证据和非破坏回滚要求；Task 4 不继承 Task 1 的 Production 授权。
-- 记录 Task 0 内容快照：234 feeds、233 reviewed、1 unreviewed、eventKey 无重复、sourceUrl 存在预期重复。
+- Foundation runner 在组合 journal 中固定选择并校验 `idx=0` / `0000_windy_trish_tilby`、journal `when=1783660331886` 和不可变 SHA-256；空 schema 下只执行 `0000`，不会因存在 `0001` 而拒绝或顺带执行它。
+- Foundation runner 保留 exact Production identity、pooled/direct 同库、备份证据、Content 读取、writes/MCP 关闭、clean worktree、Serializable transaction 和 post-journal verification。
+- 新增 `db:migrate:forward`，只允许 `runtime-forward-migration` operation，且固定执行 `idx=1` / `0001_swift_ben_parker`、journal `when=1783672823432` 和不可变 SHA-256。
+- Forward runner 执行前要求数据库存在确切 foundation schema 且 migration journal 只有 reviewed `0000`；执行后验证 `pg_trgm`、三张历史表、四个 delete/history trigger，以及 reviewed `0000 → 0001` journal。
+- Forward runner 不接受 migration 名称、SQL、文件、shell、down、delete 或 reset 输入；migration DDL 与 journal 仍在单一 Serializable transaction 内。
+- Production mutation guard 新增独立 `runtime-forward-migration` confirmation scope，并继续强制 24 小时内备份/恢复证据、Content 读取、writes false、MCP false。
+- Vercel 配置改为 `pnpm install --frozen-lockfile` 和 `pnpm run build`；移除可能覆盖 `@astrojs/vercel` Build Output 的 `outputDirectory`。使用官方 `git.deploymentEnabled` 的 `"**": false` + `"main": true` 覆盖含 `/` 的非 `main` 分支并阻止 Git push 创建自动 deployment；不再把 Ignored Build Step 描述为不创建 deployment。
+- README 保留两张架构图，更新为当前代码能力，并明确 Production 真实状态只能来自执行证据。
+- 新增 Production-only runbook，固定 `content → database → read-only MCP → writes`，每阶段有 stop gate、验证与回滚；明确不用 Preview，且执行时必须填写 change owner、rollback owner、change window 和 known-good deployment。
+- 明确保留 Markdown、`src/content/**`、`ContentFeedSource` 和 Neon 历史数据作为回滚/诊断来源。
 
 ## 未完成项
 
-- Task 1：Drizzle Schema、migration、Neon 客户端、幂等 Markdown 导入和验证。
-- Task 2：Feed 领域模型落地及 UI 与 `CollectionEntry<"feeds">` 解耦。
-- Task 3：Vercel runtime read、数据源开关和 Playwright 页面测试。
-- Task 4：FeedService、Repository、写入 API、幂等、乐观锁、revision 和审计。
-- Task 5：MCP 兼容性验证及 Remote MCP Server。
-- Task 6：Production 读取切换、核对、另行确认的 forward migration 和回滚材料。
-- Task 7：`aicraft` MCP writer 集成。
+- 最终 release review 已完成且无 blocker；定向修复尚未 commit 或 push。
+- 未 squash 到 `main`，未推送 `main`。
+- 未部署 Vercel Production，未创建 Vercel Preview。
+- 父任务已实际执行 `vercel pull --environment=production`；命令曾将 Production 环境写入 gitignored 的 `.vercel/.env.production.local`。检查仅输出变量名和值长度，未展示值；Production-only 数据库凭据仍是不可读占位符，未用于数据库连接或 mutation。短期 OIDC token 所在本地文件随后已删除。
+- 最终切换前只读核对发现 Vercel Marketplace 向 Production/Preview 注入了 owner/direct 数据库凭据。为满足最小权限与 Production-only 边界，已从 Vercel 项目环境删除这些数据库/Neon 集成变量；未删除或修改 Neon 数据库。随后只在 Production 显式设置 `FEED_READ_SOURCE=content`、`FEED_WRITES_ENABLED=false`、`FEED_MCP_ENABLED=false`，Preview 当前无环境变量。
+- 未连接 Production Neon；未执行 foundation migration、Markdown import、runtime forward migration 或 Production `content:verify`。
+- 未执行 Production 页面 database canary、read-only MCP canary 或 write canary。
+- `docs/operations/feed-runtime-production-cutover.md` 的 owner、change window、known-good deployment、数据库 fingerprint、备份和阶段 deployment ID 必须由执行者在真实变更时填写，当前不可预填。
 
 ## 执行过的验证命令
 
-- `CI=true volta run pnpm install --frozen-lockfile --store-dir /private/tmp/pnpm-store`
+父任务在当前 Task 4/5 代码上已实际执行：
+
+- `TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true volta run pnpm run test:integration`
+- `CI=true volta run pnpm run test:mcp`
+- `CI=true volta run pnpm run test`
 - `CI=true volta run pnpm run check`
+- `CI=true volta run pnpm run db:generate`
+- `CI=true volta run pnpm run db:check`
 - `CI=true volta run pnpm run build`
-- `file docs/architecture/feed-runtime-architecture.png docs/architecture/feed-runtime-update-flow.png`
-- `git diff --check`
+- `vercel pull --environment=production`（父任务；下载到 gitignored 本地文件，随后安全删除）
+- Task 3：`pnpm run test:e2e`（Content source；完整命令由父任务执行记录保存）
+
+Task 6 本轮执行：
+
+- `pnpm run test`（首次）
+- `CI=true pnpm install --frozen-lockfile`
+- `CI=true pnpm run test`（依赖恢复后复跑）
+- `CI=true pnpm run test:mcp`
+- `CI=true pnpm run content:import:dry`
+- `CI=true pnpm run db:generate`
+- `CI=true pnpm run db:check`
+- `CI=true pnpm run check`（首次）
+- `CI=true pnpm run test` 与 `CI=true pnpm run check`（类型修复后复跑）
+- `CI=true pnpm run build`
+- `CI=true pnpm run test && git diff --check`（最终复跑）
+- Task 6 review 修复后：`CI=true pnpm run test`、`CI=true pnpm run check`、`CI=true pnpm run build`、`git diff --check`
+- 最终 release review 定向修复：`pnpm run test`、`pnpm run check`、`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true pnpm run test:integration`、`CI=true pnpm run test`、`CI=true pnpm run check`、`CI=true pnpm run build`、`git diff --check`
+- 主代理最终串行验证：`CI=true pnpm install --frozen-lockfile --store-dir /private/tmp/pnpm-store`、`CI=true pnpm run test`、`CI=true pnpm run test:mcp`、`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true pnpm run test:integration`、`CI=true pnpm run test:e2e`、`CI=true pnpm run content:import:dry`、`CI=true pnpm run db:generate`、`CI=true pnpm run db:check`、`CI=true pnpm run check`、`CI=true pnpm run build`、`pnpm audit --prod --registry=https://registry.npmjs.org/`、`git diff --check`
+- Vercel 环境核对：`vercel env ls production`、`vercel env ls preview`；删除 Marketplace owner/direct 数据库变量后再次核对，并仅向 Production 写入三个安全开关。
 
 ## 命令真实结果
 
-- `pnpm install --frozen-lockfile`：通过；lockfile 已是最新，依赖无需更新，pnpm `11.7.0`。
-- `pnpm run check`：通过；检查 14 个 Astro/TypeScript 文件，0 errors、0 warnings、0 hints。
-- `pnpm run build`：通过；保持 `output: "static"`，成功生成 248 个页面。
-- 图片检查：通过；两张图片均为 1672 × 941、8-bit RGB、非隔行 PNG。
-- `git diff --check`：通过；无空白或补丁格式错误。
+- 父任务 `test:integration`：通过；13/13，使用明确隔离的本地 `feeds_hub_test`，覆盖 Feed API/MCP 七工具和 database cursor。Task 6 未重置或复跑该共享数据库。
+- 父任务 `test:mcp`：通过；8/8。
+- 父任务当时的 `test`：通过；45/45。Task 6 加入迁移与部署配置测试后的最新结果见下方 51/51。
+- 父任务 `check`：通过；69 files，0 errors、0 warnings、0 hints。
+- 父任务 `db:generate`：通过；`No schema changes, nothing to migrate`。
+- 父任务 `db:check`：通过；migration hash 前缀 `38a653...`。
+- 父任务 `build`：通过；生成 Vercel server bundle。
+- 父任务 `vercel pull --environment=production`：通过；Production 环境曾下载到 gitignored 本地文件。只输出了变量名和值长度，未展示值；数据库凭据为不可读占位符，未用于连接或 mutation。包含短期 OIDC token 的本地文件随后已删除；未修改远端环境变量。
+- Task 3 Content-source e2e：3 passed、1 database case skipped；skip 原因是没有可安全使用的 Production database URL。Database parity 尚未执行。
+- 首次 `pnpm run test`：未进入测试；pnpm 因非 TTY 环境需要重建 `node_modules`，报 `ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY`。未连接数据库、未运行测试用例。
+- `CI=true pnpm install --frozen-lockfile`：通过；lockfile 无变化，复用本地 store 安装 497 packages，pnpm `11.7.0`。
+- `CI=true pnpm run test`：通过；50 tests、50 passed、0 failed。包含新增 foundation/forward 固定迁移选择、不可变 hash、destructive SQL 拒绝、journal 状态和 Production operation scope 测试。
+- `CI=true pnpm run test:mcp`：通过；8 tests、8 passed、0 failed。
+- `CI=true pnpm run content:import:dry`：通过；离线解析 234 feeds，234 insert、0 update、0 unchanged、0 conflict、0 invalid；29 组重复 `sourceUrl` 仅作信息报告，未比较数据库。
+- `CI=true pnpm run db:generate`：通过；识别 5 tables，`No schema changes, nothing to migrate`，未产生 drift 文件。
+- `CI=true pnpm run db:check`：通过；Drizzle journal/snapshot 一致，两个 migration 通过破坏性 SQL 检查，combined migration hash `38a653b70f50af03740f0d5edbc93f3fa5c4d3b2717148535a9976ece84b3b8c`。
+- 首次 `CI=true pnpm run check`：失败；`reviewed-migrations.ts` 的内部 spec 参数错误保留 `idx: 0` 字面类型，导致 reviewed `idx: 1` 在类型检查中被拒绝。未运行数据库或部署。
+- 类型修复后的 `CI=true pnpm run check`：通过；72 files，0 errors、0 warnings、0 hints。
+- `CI=true pnpm run build`：通过；Astro `output: static` / `mode: server`，`@astrojs/vercel` server bundle 与 `.vercel/output/static` 生成成功。
+- 最终 `CI=true pnpm run test`：通过；50/50。`git diff --check`：通过。
+- Task 6 review 修复后 `CI=true pnpm run test`：通过；51/51，新增 Vercel `git.deploymentEnabled` 配置回归，并覆盖两个 journal `when` 篡改拒绝。
+- Task 6 review 修复后 `CI=true pnpm run check`：通过；73 files，0 errors、0 warnings、0 hints。
+- Task 6 review 修复后 `CI=true pnpm run build`：通过；Vercel server bundle 与 static output 成功生成。
+- 最终 release review 首轮 `pnpm run test`：通过；51/51。随后同一命令链中的 `pnpm run check` 首次失败；测试 mock 把 `updatedAtMicros` 错放进 `Feed` 对象，1 个 TypeScript error，修正到数据库查询 row 后复跑通过。
+- 最终 release review 的真实 PostgreSQL `test:integration`：通过；13/13，连接明确隔离的本地 `feeds_hub_test`，新增用例固定同一毫秒内 `.123456` 与 `.123400` 两个 `updated_at`，验证 database cursor 两页均返回且不漏记录。
+- 最终复跑 `CI=true pnpm run test`：通过；51/51。
+- 最终复跑 `CI=true pnpm run check`：通过；73 files，0 errors、0 warnings、0 hints。
+- 最终复跑 `CI=true pnpm run build`：通过；Vercel server bundle 与 static output 成功生成。`git diff --check`：通过。
+- 主代理最终冻结安装首次未加 `CI=true`，因 pnpm 在非 TTY 下拒绝切换 store 而报 `ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY`；加 `CI=true` 后通过，lockfile 无变化。
+- 主代理首次并行执行 `test` / `test:mcp` / `check` 时，两个 Astro 进程同时重建 `.astro`，`test` 的独立 HTTP 用例因临时文件 rename 竞态失败；同批 `test:mcp` 8/8、`check` 77 files 0 diagnostics、`db:generate` / `db:check` / `content:import:dry` 均通过。改为串行后 `CI=true pnpm run test` 通过，55/55。
+- 主代理最终 `test:integration`：通过，16/16，使用明确隔离的本地 PostgreSQL；包含 SQL 有界分页、stock/sports parity、微秒 cursor、Phase B/Phase D 权限矩阵与完整 API/MCP 生命周期。
+- 主代理最终 `test:e2e`：3 passed、1 database parity skipped；Content 页面、无效路由和超大页码 404 通过，database parity 仍因尚无最小权限 Production URL 跳过。
+- 主代理最终 `content:import:dry`：通过；234 insert、0 update/unchanged/conflict/invalid，29 组重复 `sourceUrl` 仅报告。
+- 主代理最终 `db:generate` / `db:check`：通过；无 schema drift，migration hash `38a653b70f50af03740f0d5edbc93f3fa5c4d3b2717148535a9976ece84b3b8c`。
+- 主代理最终 `check`：通过；77 files、0 diagnostics。`build`：通过；生成 Vercel server bundle。`git diff --check`：通过。
+- `pnpm audit --prod`：非零，报告 `@astrojs/vercel -> @vercel/routing-utils -> path-to-regexp@6.1.0` 的 1 个 high advisory。已复核当前生成路由不包含 advisory 要求的同 segment 多参数模式；上游当前依赖树仍未完全移除 6.1.0，作为供应链残余风险记录。
+- 最终独立 release review：无 blocker、无 Medium；定向 guard/migration/feed-source 测试 17/17 通过。
 
 ## 未执行验证及原因
 
-- `pnpm run test`：当前 `package.json` 没有 `test` script；Task 0 不新增测试运行时。
-- `pnpm run test:integration`：当前没有该 script；数据库/写入集成尚未实现。
-- `pnpm run db:generate`：当前没有该 script；属于 Task 1。
-- `pnpm run db:check`：当前没有该 script；属于 Task 1。
-- `pnpm run content:import:dry`：当前没有该 script；属于 Task 1。
-- `pnpm run content:verify`：当前没有该 script；属于 Task 1。
-- `pnpm run test:e2e`：当前没有该 script；属于 Task 3。
-- 真实 Neon migration/import：Task 0 不连接数据库；Production-only 授权仅供 Task 1 在本分支复审并 squash 合入最新 `main` 后使用。
-- Vercel Preview 验证：Task 0 不修改运行时或部署配置；Task 5 必须使用已授权、可证明 commit 的显式非 Production Preview，缺少授权或 commit 证据时停止。
-- MCP Inspector/Streamable HTTP：属于 Task 5，当前不得提前安装或声明兼容。
+- Task 6 原实现轮未复跑 `pnpm run test:integration`；最终 release review 已在同一个明确隔离的本地测试数据库上复跑并通过 13/13，结果见上方。
+- `pnpm run content:import:dry -- --database`、`pnpm run content:verify`：需要经过审查的数据库身份；本轮不连接 Production。
+- `pnpm run db:migrate -- --apply ...`、`pnpm run db:migrate:forward -- --apply ...`、`pnpm run content:import -- --apply ...`、两个 grant runner：用户已授权 Production 执行，但仍缺少可登录的 Neon operator 会话、独立 `feeds_runtime` 凭据、数据库 fingerprint、可恢复备份和 fresh operation confirmation；在这些 fail-closed 前置条件完成前不执行。
+- Vercel Production deploy/canary：代码提交前未执行；Phase A 将在 squash 后通过 `main` push 自动触发，Phase B/C/D 仍依赖上述数据库前置条件。
+- Vercel Preview：按任务边界明确禁止，不执行。
 
 ## 已知风险
 
-- `mcp-handler` 官方公开支持面当前以 Next.js/Nuxt 为主，Astro 兼容性未验证；Task 5 必须先做阻断性 spike，失败即停止。
-- 当前 `vercel.json` 跳过非 `main` Git 自动构建；Task 5 依赖已授权的显式 Preview 部署能力，无法获得授权项目链接或 commit 证明时必须停止。
-- Neon/Drizzle 的 Production 导入原子批处理路径尚未用本仓库 Schema 证明；Task 1 不能在此门槛通过前执行真实 import。
-- Vercel 集成生成的 `STORAGE_*` 变量尚未核对；Task 1 必须建立并验证 `DATABASE_URL` / `DATABASE_URL_UNPOOLED` 同库且角色正确的服务端别名，禁止输出连接串或用字符串改写推导直连 URL。
-- 当前没有 test/Preview 数据库；Task 4 若仍只有 Production 数据库，必须停止写入集成测试并等待另行授权的非 Production 数据库。
-- 现有 `sourceUrl` 有预期重复，后续去重不能把 URL 设为唯一键。
-- 当前 `ai`/`dev` list id 与 topic group 的解析顺序属于既有输出契约；任务 2/3 不得顺手改变。
-- 本任务分支基于远端 `origin/main`；工作区本地 `main` 的其它未推送提交不属于本任务，后续整合前必须单独处理，不能混入 Task 0 squash。
+- 迁移 runner 的 Production 网络、Neon 角色权限、`CREATE EXTENSION pg_trgm` 权限和 Vercel Production runtime 尚未在本轮验证。
+- Production 数据库当前实际 journal/schema/import 状态未读取；runbook 必须先核对，不能假设为空或已完成 foundation。
+- `tools/list` 会展示七个窄 MCP tools；read-only MCP 阶段依靠 `FEED_WRITES_ENABLED=false` 拒绝四个 mutation tools，canary 必须验证拒绝行为和零写入证据。
+- Vercel link metadata 与 Production environment key metadata 已读取，但不等于敏感值、目标部署或 pre-change known-good deployment 已核验；真实 project scope、target commit、deployment source commit 和 pre-change known-good ID/URL/commit 必须在执行时重新确认。
+- Forward migration 只允许当前 reviewed `0001`。未来 schema 变化必须新增独立、重新 review 的 runner/operation，不得把该入口泛化为任意 migration。
+- 当前组合分支相对 `origin/main` 包含多个任务提交；最终 squash 前仍需完整 diff/security/validation review。
+- 依赖审计仍有 1 个当前路由不可达的 `path-to-regexp` high advisory；需持续跟踪 `@vercel/routing-utils` 上游修复，不能把当前不可达判断当作永久豁免。
 
 ## 下一任务依赖
 
-Task 1 只能在本分支完成 review、以单一 squash commit 合入最新 `main` 并同步远端后开始。
+- Task 6 全套非 Production 验证与只读 review 已完成，无 blocker。
+- 按用户明确授权，将当前组合分支单次 squash 到隔离的最新 `origin/main` 工作树并 push `main`；不创建 PR，不触碰本地分叉 `main`。
+- Production 执行前填写 runbook：确认 target `main = origin/main = target deployment source commit`；另行记录内部一致但可来自旧 commit 的 pre-change known-good deployment ID/URL/commit，以及 owner/window、Neon identity/fingerprint 和可恢复备份。
+- 严格逐阶段执行并 review：Content baseline → Database reads → read-only MCP → separately authorized writes。
+- Task 7 `aicraft` MCP writer 只有在 Task 6 Production cutover 有真实证据并完成 review 后才能开始。
 
-Task 1 分支必须从届时最新 `main` 创建：`feat/feed-database-foundation`。
+## Production 最小权限角色拆分复审修复
+
+- Public database list 不再读取全部 published rows：list/category、stock close filter、future sports 排序、稳定 tie-break 和分页均下推 PostgreSQL，`page <= 1000`、`pageSize <= 100`，单次只取 `pageSize + 1` 个投影行且排除 `body`；详情查询仍读取完整正文。
+- 真实本地 PostgreSQL regression 覆盖 past/future sports、stock include/exclude、global 两页 parity，以及完全相同 `updated_at` 微秒值时按 UUID 升序跨页无重复/遗漏。
+- Production pooled `DATABASE_URL` 固定使用 `feeds_runtime`；direct `DATABASE_URL_UNPOOLED` 使用 `FEED_DB_EXPECTED_MIGRATION_ROLE` 锁定的独立 migration owner。两者必须同 Neon endpoint/database、不同 role，数据库 fingerprint 同时覆盖两角色。
+- Vercel config load、database read client 与默认 `NeonFeedRepository` 写路径均执行 runtime guard：只允许 pooled Neon `feeds_runtime` 凭据，并扫描/拒绝任何 provider-prefixed direct/owner Neon URL；错误不输出连接串。`DATABASE_URL_UNPOOLED` 与 migration owner 变量只属于受控 operator 环境。
+- 新增固定 `db:grant:runtime-read` / `db:grant:runtime-write` runners。它们不接受 SQL、role、table、file 或 shell 输入；撤销 public/runtime table、sequence、schema CREATE、database CREATE/TEMP 权限并验证 role attributes、membership、ownership 和完整 effective privilege matrix。
+- Phase B 只授予 `feeds SELECT`。Phase D 只增加 `feeds SELECT/INSERT/UPDATE` 和三张 revision/audit/idempotency 表的 `SELECT/INSERT`；不授予 `feed_import_runs`、sequence、DDL、DELETE、TRUNCATE、REFERENCES 或 TRIGGER。
+- 修改/新增范围：`astro.config.mjs`、`package.json`、`src/db/client.ts`、`src/db/neon-feed-repository.ts`、`src/db/runtime-environment.ts`、`scripts/lib/production-guard.ts`、`scripts/lib/runtime-grants.ts`、`scripts/db-grant-runtime-read.ts`、`scripts/db-grant-runtime-write.ts`、`tests/production-guard.test.ts`、`tests/migration-runners.test.ts`、三份 runtime architecture/migration/operations 文档与本进度文档。
+- 实际验证：最终 `CI=true volta run pnpm run test` 通过，55/55；定向 `production-guard`/`migration-runners` 测试通过，11/11；`CI=true volta run pnpm run check` 通过，77 files、0 diagnostics；`CI=true volta run pnpm run build` 通过，生成 Vercel server bundle；`git diff --check` 通过。provider alias guard 收紧后的两次中间全量测试曾仅因测试期望错误文案的正则不匹配而各为 54/55，修正测试后已完成上述最终全量复跑。
+- 合并 SQL pagination 与权限真实数据库用例后：`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true volta run pnpm run test:integration` 通过，16/16；`CI=true volta run pnpm run check` 通过，77 files、0 diagnostics。
+- 负向 build guard：以假 credential 设置 `VERCEL=1` 与 `DATABASE_URL_UNPOOLED` 后执行 build，Astro config 在加载阶段按预期非零退出并只报告 `DATABASE_URL_UNPOOLED`/通用 guard 错误，未连接数据库。
+- 未执行两个 grant runners、migration/import/verify 或任何 Vercel deploy：这些命令需要真实 Production identity、owner/change window、备份证据和 fresh operation confirmation；本轮未访问 Production。

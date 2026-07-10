@@ -1,0 +1,24 @@
+diff --git a/dist/index.js b/dist/index.js
+index 11072f724e74ff9e0b4c3bfec04a6fafa1b0a7bd..f0b583afb1bc40fb36a9d0c9c83716a5afb0fbe2 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -271,6 +271,7 @@ function initializeMcpApiHandler(initializeServer, serverOptions = {}, config =
+         return true;
+       });
+     }, 30 * 1e3);
++    cleanupInterval.unref?.();
+   }
+   return function mcpApiHandler(req, res) {
+     return chunkUILOG6SR_js.__async(this, null, function* () {
+diff --git a/dist/index.mjs b/dist/index.mjs
+index c1110409315d81bd1d440dc5910ba720c17f3722..c7e1fe1d3e7f47cb12fca3e21cb210d18fe438a3 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -265,6 +265,7 @@ function initializeMcpApiHandler(initializeServer, serverOptions = {}, config =
+         return true;
+       });
+     }, 30 * 1e3);
++    cleanupInterval.unref?.();
+   }
+   return function mcpApiHandler(req, res) {
+     return __async(this, null, function* () {

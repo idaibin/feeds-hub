@@ -26,6 +26,7 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 | `docs/architecture/feed-runtime.md` | 运行时架构、任务边界和依赖顺序 |
 | `docs/architecture/feed-runtime-contracts.md` | Feed 领域模型、API 与 MCP 契约 |
 | `docs/architecture/feed-runtime-migration.md` | 数据迁移、切换与回滚方案 |
+| `docs/operations/feed-runtime-production-cutover.md` | Production-only 上线、验证与回滚 runbook |
 | `docs/progress/feed-runtime.md` | 分阶段实施进度和真实验证结果 |
 
 ## 默认主题
@@ -59,13 +60,13 @@ topics -> sources -> dedupe -> kind -> markdown -> validation
 - 信息准确、可核验、去重表达优先。
 - `cover` / `coverStatus` 只作 schema 兼容；`coverStatus` 固定为 `pending`。
 
-## 运行时架构规划
+## 运行时架构
 
-以下为分阶段目标架构，尚未在当前 `main` 启用。当前站点仍由 Astro Content Collection 静态读取；实际任务边界、开关和回滚规则以 [`docs/architecture/feed-runtime.md`](docs/architecture/feed-runtime.md) 为准。
+当前代码已具备 Astro Content Collection / Neon Postgres 双读取源、受保护的 Feed 写入 API，以及 Astro 内的 Remote MCP Server。默认开关仍以 Content 读取为准，写入和 MCP 默认关闭；Production 是否已切换必须以 [`Production cutover runbook`](docs/operations/feed-runtime-production-cutover.md) 中的实际执行记录为准，不能仅根据代码存在推断。
 
 ![Feeds Hub 运行时架构图](docs/architecture/feed-runtime-architecture.png)
 
-目标写入流程将在后续集成任务中切换为 MCP 草稿、复核和发布流程。迁移完成并经过明确确认前，`src/content/**` 和 Content Feed Source 继续作为归档与回滚来源，不会提前删除。
+上线顺序固定为 `content → database → read-only MCP → writes`。本项目不使用 Vercel Preview 或 Preview 数据库做这次切换；每一阶段只从 `main` 部署到 Production，验证通过并完成 review 后才进入下一阶段。即使数据库读取和 MCP 写入启用，`src/content/**` 与 `ContentFeedSource` 仍作为归档和回滚来源，不会在本阶段删除。
 
 ![Feeds 后续更新流程图](docs/architecture/feed-runtime-update-flow.png)
 
@@ -93,9 +94,17 @@ pnpm run dev
 ## 校验
 
 ```bash
+pnpm install --frozen-lockfile
+pnpm run test
+pnpm run test:mcp
+pnpm run db:generate
+pnpm run db:check
+pnpm run content:import:dry
 pnpm run check
 pnpm run build
 ```
+
+`pnpm run test:integration` 只能连接明确隔离的非 Production 测试数据库；Production migration、import、切换和回滚必须逐项执行 [`Production cutover runbook`](docs/operations/feed-runtime-production-cutover.md)。
 
 ## 部署
 
@@ -104,6 +113,8 @@ pnpm run build
 ```text
 Framework Preset: Astro
 Build Command: pnpm run build
-Output Directory: dist
-Install Command: pnpm install
+Output Directory: 由 @astrojs/vercel 生成，不手工覆盖
+Install Command: pnpm install --frozen-lockfile
 ```
+
+`vercel.json` 使用 Vercel 官方 [`git.deploymentEnabled`](https://vercel.com/docs/project-configuration/git-configuration#gitdeploymentenabled) minimatch 分支匹配：`main` 显式为 `true`，覆盖含 `/` 分支名的 `**` 为 `false`。这会阻止非 `main` push 触发 Git 自动 deployment；它不是 Ignored Build Step。操作者也不得用 CLI 或 Dashboard 为其他分支手工创建 Preview。

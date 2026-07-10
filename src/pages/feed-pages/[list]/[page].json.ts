@@ -1,49 +1,44 @@
-import type { APIRoute, GetStaticPaths } from 'astro';
-import { CATEGORIES, FEED_GROUPS, getAllFeeds, getFeedsByList } from '@/lib/feeds';
+import type { APIRoute } from 'astro';
+import { getFeedSource } from '@/lib/feed-sources';
+import { isPublicFeedList } from '@/lib/feeds';
 import { toFeedCardData, type FeedCardData } from '@/lib/feed-card-data';
+import { MAX_PUBLIC_FEED_PAGE } from '@/domain/feed-source';
 
 const PAGE_SIZE = 10;
+export const prerender = false;
 
 interface FeedPagePayload {
   items: FeedCardData[];
   hasMore: boolean;
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const allFeeds = await getAllFeeds();
-  const lists = [
-    { id: 'all', entries: allFeeds },
-    ...CATEGORIES.map((category) => ({
-      id: category.id,
-      entries: getFeedsByList(allFeeds, category.id)
-    })),
-    ...FEED_GROUPS.map((group) => ({
-      id: group.id,
-      entries: getFeedsByList(allFeeds, group.id)
-    }))
-  ];
+export const GET: APIRoute = async ({ params }) => {
+  const list = params.list ?? '';
+  const pageValue = params.page ?? '';
+  const pageNumber = Number(pageValue);
+  if (
+    !isPublicFeedList(list)
+    || !/^[1-9]\d*$/.test(pageValue)
+    || !Number.isSafeInteger(pageNumber)
+    || pageNumber < 2
+    || pageNumber > MAX_PUBLIC_FEED_PAGE
+  ) {
+    return new Response(null, { status: 404, statusText: 'Not found' });
+  }
 
-  return lists.flatMap(({ id, entries }) => {
-    const pageCount = Math.ceil(entries.length / PAGE_SIZE);
-
-    return Array.from({ length: Math.max(pageCount - 1, 0) }, (_, index) => {
-      const page = index + 2;
-      const start = (page - 1) * PAGE_SIZE;
-      const pageEntries = entries.slice(start, start + PAGE_SIZE);
-
-      return {
-        params: { list: id, page: String(page) },
-        props: {
-          items: pageEntries.map(toFeedCardData),
-          hasMore: page < pageCount
-        } satisfies FeedPagePayload
-      };
-    });
+  const page = await (await getFeedSource()).listPublished({
+    list,
+    page: pageNumber,
+    pageSize: PAGE_SIZE,
   });
-};
+  if (page.items.length === 0) return new Response(null, { status: 404, statusText: 'Not found' });
 
-export const GET: APIRoute = ({ props }) => {
-  return new Response(JSON.stringify(props), {
+  const payload: FeedPagePayload = {
+    items: page.items.map(toFeedCardData),
+    hasMore: page.hasMore,
+  };
+
+  return new Response(JSON.stringify(payload), {
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'public, max-age=300'
