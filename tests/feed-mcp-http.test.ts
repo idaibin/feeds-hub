@@ -89,7 +89,11 @@ test('independent Astro server completes real HTTP initialize, tools/list, list,
       ASTRO_TELEMETRY_DISABLED: '1',
       ASTRO_DEV_BACKGROUND: '1',
       FEED_MCP_ENABLED: 'true',
+      FEED_MCP_AUTH_MODE: 'token',
       FEED_MCP_TOKEN: token,
+      FEED_MCP_OAUTH_ISSUER: 'https://issuer.example',
+      FEED_MCP_OAUTH_RESOURCE: 'https://feeds.example/api/mcp',
+      FEED_MCP_OAUTH_JWKS_URL: 'https://issuer.example/.well-known/jwks.json',
       FEED_READ_SOURCE: 'content',
       FEED_WRITES_ENABLED: 'false',
     },
@@ -103,6 +107,12 @@ test('independent Astro server completes real HTTP initialize, tools/list, list,
   try {
     await waitForPort(port, true);
     const baseUrl = `http://127.0.0.1:${port}`;
+    const metadataResponse = await fetch(`${baseUrl}/.well-known/oauth-protected-resource`, {
+      signal: AbortSignal.timeout(5_000),
+    });
+    assert.equal(metadataResponse.status, 200);
+    assert.deepEqual((await metadataResponse.json()).authorization_servers, ['https://issuer.example']);
+    assert.equal(metadataResponse.headers.get('access-control-allow-origin'), '*');
     const getResponse = await fetch(`${baseUrl}/api/mcp`, {
       headers: {
         authorization: `Bearer ${token}`,

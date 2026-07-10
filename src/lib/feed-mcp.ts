@@ -8,7 +8,11 @@ import {
   type Feed,
 } from '@/domain/feed';
 import { AuthorizedFeedReadError } from '@/lib/feed-authorized-read';
-import { MCP_FEED_ACTOR } from '@/lib/feed-mcp-security';
+import {
+  McpScopeError,
+  mcpActor,
+  requireMcpScope,
+} from '@/lib/feed-mcp-security';
 import { FeedService, FeedServiceError } from '@/lib/feed-service';
 import {
   FeedValidationError,
@@ -56,6 +60,19 @@ function result(value: unknown) {
 }
 
 function failure(error: unknown) {
+  if (error instanceof McpScopeError) {
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          code: 'MCP_SCOPE_REQUIRED',
+          message: error.message,
+          requiredScope: error.requiredScope,
+        }),
+      }],
+      isError: true,
+    };
+  }
   if (error instanceof FeedValidationError || error instanceof AuthorizedFeedReadError) {
     return {
       content: [{
@@ -172,8 +189,9 @@ export function createFeedMcpHandler(service = new FeedService()) {
           inputSchema: authorizedSearchSchema,
           annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         },
-        async (input) => {
+        async (input, extra) => {
           return call(async () => {
+            requireMcpScope(extra.authInfo, 'feeds:read');
             const page = await service.listAuthorized(input);
             return result({ items: page.items.map(summary), nextCursor: page.nextCursor });
           });
@@ -188,7 +206,8 @@ export function createFeedMcpHandler(service = new FeedService()) {
           inputSchema: feedLookupSchema,
           annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         },
-        async (input) => call(async () => {
+        async (input, extra) => call(async () => {
+          requireMcpScope(extra.authInfo, 'feeds:read');
           const feed = await service.getAuthorized(input);
           if (!feed) throw new FeedServiceError('FEED_NOT_FOUND', 'Feed was not found');
           return result({ feed: serializedFeed(feed) });
@@ -203,7 +222,10 @@ export function createFeedMcpHandler(service = new FeedService()) {
           inputSchema: duplicateSchema,
           annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         },
-        async (input) => call(async () => result({ candidates: await service.findDuplicates(parseDuplicateQuery(input)) })),
+        async (input, extra) => call(async () => {
+          requireMcpScope(extra.authInfo, 'feeds:read');
+          return result({ candidates: await service.findDuplicates(parseDuplicateQuery(input)) });
+        }),
       );
 
       server.registerTool(
@@ -214,10 +236,13 @@ export function createFeedMcpHandler(service = new FeedService()) {
           inputSchema: saveDraftSchema,
           annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         },
-        async ({ idempotencyKey: key, ...input }) => call(async () => mutationResult(await service.saveDraft(parseSaveDraftCommand(
-          input,
-          { actor: MCP_FEED_ACTOR, origin: 'mcp', idempotencyKey: key, reason: input.reason },
-        )))),
+        async ({ idempotencyKey: key, ...input }, extra) => call(async () => {
+          const authInfo = requireMcpScope(extra.authInfo, 'feeds:write');
+          return mutationResult(await service.saveDraft(parseSaveDraftCommand(
+            input,
+            { actor: mcpActor(authInfo), origin: 'mcp', idempotencyKey: key, reason: input.reason },
+          )));
+        }),
       );
 
       server.registerTool(
@@ -228,11 +253,14 @@ export function createFeedMcpHandler(service = new FeedService()) {
           inputSchema: existingMutationSchema,
           annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         },
-        async ({ feedId: id, idempotencyKey: key, ...input }) => call(async () => mutationResult(await service.publish(parsePublishCommand(
-          input,
-          { actor: MCP_FEED_ACTOR, origin: 'mcp', idempotencyKey: key, reason: input.reason },
-          id,
-        )))),
+        async ({ feedId: id, idempotencyKey: key, ...input }, extra) => call(async () => {
+          const authInfo = requireMcpScope(extra.authInfo, 'feeds:publish');
+          return mutationResult(await service.publish(parsePublishCommand(
+            input,
+            { actor: mcpActor(authInfo), origin: 'mcp', idempotencyKey: key, reason: input.reason },
+            id,
+          )));
+        }),
       );
 
       server.registerTool(
@@ -243,11 +271,14 @@ export function createFeedMcpHandler(service = new FeedService()) {
           inputSchema: updatePublishedSchema,
           annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         },
-        async ({ feedId: id, idempotencyKey: key, ...input }) => call(async () => mutationResult(await service.updatePublished(parseUpdatePublishedCommand(
-          input,
-          { actor: MCP_FEED_ACTOR, origin: 'mcp', idempotencyKey: key, reason: input.reason },
-          id,
-        )))),
+        async ({ feedId: id, idempotencyKey: key, ...input }, extra) => call(async () => {
+          const authInfo = requireMcpScope(extra.authInfo, 'feeds:write');
+          return mutationResult(await service.updatePublished(parseUpdatePublishedCommand(
+            input,
+            { actor: mcpActor(authInfo), origin: 'mcp', idempotencyKey: key, reason: input.reason },
+            id,
+          )));
+        }),
       );
 
       server.registerTool(
@@ -258,11 +289,14 @@ export function createFeedMcpHandler(service = new FeedService()) {
           inputSchema: existingMutationSchema,
           annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
         },
-        async ({ feedId: id, idempotencyKey: key, ...input }) => call(async () => mutationResult(await service.archive(parseArchiveCommand(
-          input,
-          { actor: MCP_FEED_ACTOR, origin: 'mcp', idempotencyKey: key, reason: input.reason },
-          id,
-        )))),
+        async ({ feedId: id, idempotencyKey: key, ...input }, extra) => call(async () => {
+          const authInfo = requireMcpScope(extra.authInfo, 'feeds:archive');
+          return mutationResult(await service.archive(parseArchiveCommand(
+            input,
+            { actor: mcpActor(authInfo), origin: 'mcp', idempotencyKey: key, reason: input.reason },
+            id,
+          )));
+        }),
       );
     },
     { serverInfo: { name: 'feeds-hub', version: '1.0.0' } },

@@ -29,6 +29,9 @@ importers:
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@neondatabase/serverless@1.1.0)(@types/pg@8.20.0)(pg@8.22.0)
+      jose:
+        specifier: ^6.2.3
+        version: 6.2.3
       mcp-handler:
         specifier: 1.1.0
         version: 1.1.0(patch_hash=23bec62caa674f7f9b2f071b58a967a01fb7b7d060ad89b575c648bf8bd37b0b)(@modelcontextprotocol/sdk@1.26.0(zod@3.25.76))

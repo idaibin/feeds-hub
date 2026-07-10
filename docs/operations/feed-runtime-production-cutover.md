@@ -171,11 +171,11 @@ FEED_WRITES_ENABLED=false
 FEED_MCP_ENABLED=true
 ```
 
-Configure a separate strong `FEED_MCP_TOKEN` and the reviewed exact Origin allowlist if browser origins are required. Redeploy the same reviewed commit. Verify Streamable HTTP initialize, `tools/list`, `list_feeds`, `get_feed`, and `find_feed_duplicates` with redacted evidence.
+Configure the reviewed OAuth issuer, canonical resource/audience and JWKS values from [`feed-mcp-oauth.md`](feed-mcp-oauth.md). Production must use `FEED_MCP_AUTH_MODE=oauth`; do not configure the legacy `FEED_MCP_TOKEN`. Redeploy the same reviewed commit. Verify protected-resource discovery, the OAuth login flow, Streamable HTTP initialize, `tools/list`, `list_feeds`, `get_feed`, and `find_feed_duplicates` with redacted evidence.
 
 `tools/list` currently advertises all seven narrow tools. Read-only behavior is enforced by `FEED_WRITES_ENABLED=false`; explicitly verify `save_feed_draft`, `publish_feed`, `update_published_feed`, and `archive_feed` are rejected with `WRITES_DISABLED` and create no Feed, revision, audit, or idempotency record.
 
-Stop gate: on protocol, auth, origin, latency, or unexpected mutation behavior, set `FEED_MCP_ENABLED=false`, rotate the MCP token when exposure is possible, and redeploy. Database reads may remain enabled only if Phase B was independently approved.
+Stop gate: on protocol, OAuth metadata/token validation, origin, latency, or unexpected mutation behavior, set `FEED_MCP_ENABLED=false`, revoke affected OAuth grants when exposure is possible, and redeploy. Database reads may remain enabled only if Phase B was independently approved.
 
 ## Phase D — Writes
 
@@ -212,7 +212,7 @@ FEED_WRITES_ENABLED=true
 FEED_MCP_ENABLED=true
 ```
 
-Use a dedicated write token and least-privilege operator. Verify one minimal draft, replay with the same idempotency key, conflicting replay, duplicate evidence, review, publish, public page appearance, optimistic version conflict, update, archive, revisions, audit events, and absence of any physical delete path. Record created Feed IDs and audit IDs without recording credentials.
+Grant only the reviewed OAuth write scopes to the dedicated operator. Verify one minimal draft, replay with the same idempotency key, conflicting replay, duplicate evidence, review, publish, public page appearance, optimistic version conflict, update, archive, revisions, audit events, and absence of any physical delete path. Record created Feed IDs and audit IDs without recording credentials.
 
 Stop gate: on unauthorized/unaudited mutation, idempotency failure, version failure, page mismatch, or unexpected write scope, immediately set `FEED_WRITES_ENABLED=false` and `FEED_MCP_ENABLED=false`. Run the fixed read grant runner with a fresh `runtime-read-grants` confirmation to revoke database write privileges; rotate tokens when containment requires it. Preserve Feed rows and all history for diagnosis.
 

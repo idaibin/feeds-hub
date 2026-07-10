@@ -157,7 +157,14 @@ draft -> published -> archived
 | `FEED_WRITES_ENABLED` | `false` | Global write kill switch. |
 | `FEED_WRITE_TOKEN` | unset | Bearer token for protected HTTP writes. |
 | `FEED_MCP_ENABLED` | `false` | Remote MCP kill switch. |
-| `FEED_MCP_TOKEN` | unset | Separate bearer token for `/api/mcp`. |
+| `FEED_MCP_AUTH_MODE` | `oauth` | `/api/mcp` authentication mode. Production uses `oauth`; `token` is retained only for explicit local compatibility tests. |
+| `FEED_MCP_OAUTH_ISSUER` | unset | Exact OAuth/OIDC issuer identifier used to validate `iss`. |
+| `FEED_MCP_OAUTH_RESOURCE` | unset | Canonical HTTPS MCP resource URL, for example `https://feeds.idaibin.dev/api/mcp`. |
+| `FEED_MCP_OAUTH_AUDIENCE` | resource URL | Access-token audience required by the MCP resource server. |
+| `FEED_MCP_OAUTH_JWKS_URL` | unset | HTTPS JWKS endpoint used to verify signed OAuth access tokens. |
+| `FEED_MCP_OAUTH_ALGORITHMS` | `RS256` | Comma-separated allowlist limited to `RS256`, `PS256`, `ES256`, or `EdDSA`. |
+| `FEED_MCP_OAUTH_REQUIRED_SCOPES` | `feeds:read` | Scopes required before MCP dispatch. Expand only during a separately reviewed write cutover. |
+| `FEED_MCP_TOKEN` | unset | Legacy local compatibility credential; do not configure it in Production OAuth mode. |
 | `FEED_MCP_ALLOWED_ORIGINS` | unset | Optional exact Origin allowlist for MCP request-origin enforcement; not a CORS switch. |
 
 All variables are server-only. They must not use a public client prefix or appear in logs, API errors, rendered HTML, or MCP tool output.
@@ -169,7 +176,8 @@ The Production-only decision grants a narrow exception to Task 1 for the generat
 ## Security Invariants
 
 - Writes and MCP are disabled by default.
-- Tokens are compared through one authentication helper and can be rotated independently.
+- MCP OAuth access tokens are verified against exact issuer, audience, expiry, signature algorithm, and JWKS. HTTP write tokens remain independent.
+- MCP tools enforce `feeds:read`, `feeds:write`, `feeds:publish`, or `feeds:archive` scopes before service calls; the global write kill switch remains a second boundary.
 - Payload size and field length limits are enforced before repository calls.
 - `sourceUrl` accepts HTTP/HTTPS only.
 - Duplicate detection is advisory before save and mandatory before publish.

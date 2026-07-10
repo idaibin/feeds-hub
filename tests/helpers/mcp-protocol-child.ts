@@ -95,6 +95,7 @@ async function callTool(route: ReturnType<typeof createMcpRoute>, id: number, na
 async function compatibility() {
   const env = {
     FEED_MCP_ENABLED: 'true',
+    FEED_MCP_AUTH_MODE: 'token',
     FEED_MCP_TOKEN: token,
     FEED_READ_SOURCE: 'content',
     FEED_WRITES_ENABLED: 'false',
@@ -148,7 +149,7 @@ async function integration() {
       return output.rows as T[];
     },
   };
-  const env = { FEED_MCP_ENABLED: 'true', FEED_MCP_TOKEN: token, FEED_READ_SOURCE: 'database', FEED_WRITES_ENABLED: 'true' };
+  const env = { FEED_MCP_ENABLED: 'true', FEED_MCP_AUTH_MODE: 'token', FEED_MCP_TOKEN: token, FEED_READ_SOURCE: 'database', FEED_WRITES_ENABLED: 'true' };
   const repository = new NeonFeedRepository(executor);
   const source = new DatabaseFeedSource(drizzle(pool) as never);
   const service = new FeedService(repository, env, source);
