@@ -23,6 +23,10 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 | `docs/topics/<category>.md` | 单主题范围、来源、跳过条件 |
 | `docs/rules/content-format.md` | frontmatter、标题、摘要、正文格式 |
 | `docs/rules/ui-spec.md` | 页面、card 和详情页展示规则 |
+| `docs/architecture/feed-runtime.md` | 运行时架构、任务边界和依赖顺序 |
+| `docs/architecture/feed-runtime-contracts.md` | Feed 领域模型、API 与 MCP 契约 |
+| `docs/architecture/feed-runtime-migration.md` | 数据迁移、切换与回滚方案 |
+| `docs/progress/feed-runtime.md` | 分阶段实施进度和真实验证结果 |
 
 ## 默认主题
 
@@ -54,6 +58,16 @@ topics -> sources -> dedupe -> kind -> markdown -> validation
 - 1 feed = 1 event。
 - 信息准确、可核验、去重表达优先。
 - `cover` / `coverStatus` 只作 schema 兼容；`coverStatus` 固定为 `pending`。
+
+## 运行时架构规划
+
+以下为分阶段目标架构，尚未在当前 `main` 启用。当前站点仍由 Astro Content Collection 静态读取；实际任务边界、开关和回滚规则以 [`docs/architecture/feed-runtime.md`](docs/architecture/feed-runtime.md) 为准。
+
+![Feeds Hub 运行时架构图](docs/architecture/feed-runtime-architecture.png)
+
+目标写入流程将在后续集成任务中切换为 MCP 草稿、复核和发布流程。迁移完成并经过明确确认前，`src/content/**` 和 Content Feed Source 继续作为归档与回滚来源，不会提前删除。
+
+![Feeds 后续更新流程图](docs/architecture/feed-runtime-update-flow.png)
 
 ## 内容结构
 
