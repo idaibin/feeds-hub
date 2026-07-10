@@ -3,7 +3,7 @@
 ## 当前任务
 
 - 任务：Task 6 — Production-only 部署配置、精确 forward migration、分阶段 cutover 与回滚材料。
-- 状态：Task 1–6 已在当前组合分支形成独立提交；最终 release review 无 blocker，定向修复已完成本地验证并保留在工作树中，尚未 squash/push `main`、部署或连接 Production 数据库。
+- 状态：Task 1–6、最终 release review 和 Phase A Production Content baseline 已完成；功能分支已推送，已单次 squash 到远端 `main` 并完成 Production 页面/kill-switch canary。尚未连接或修改 Production 数据库。
 - 本次整合例外：根据用户最新明确授权，Task 1–6 在当前组合分支完成 review 后可单次 squash 到 `main`。这不改变 Production 逐阶段确认、无 Preview、无 PR 和禁止破坏性数据库操作的边界。
 
 ## 分支
@@ -65,9 +65,9 @@ Task 6 提交修改：
 
 ## 未完成项
 
-- 最终 release review 已完成且无 blocker；定向修复尚未 commit 或 push。
-- 未 squash 到 `main`，未推送 `main`。
-- 未部署 Vercel Production，未创建 Vercel Preview。
+- 最终 release review 已完成且无 blocker；定向修复已提交为 `ab04ad7` 并推送功能分支。
+- 功能实现已 squash 为 `cc2795a6b374a1af11e7cea521c384a4229e6dee` 并推送远端 `main`；本地分叉 `main` 未切换、未改写。
+- Vercel Phase A Production deployment 已完成；未创建新的 Vercel Preview。
 - 父任务已实际执行 `vercel pull --environment=production`；命令曾将 Production 环境写入 gitignored 的 `.vercel/.env.production.local`。检查仅输出变量名和值长度，未展示值；Production-only 数据库凭据仍是不可读占位符，未用于数据库连接或 mutation。短期 OIDC token 所在本地文件随后已删除。
 - 最终切换前只读核对发现 Vercel Marketplace 向 Production/Preview 注入了 owner/direct 数据库凭据。为满足最小权限与 Production-only 边界，已从 Vercel 项目环境删除这些数据库/Neon 集成变量；未删除或修改 Neon 数据库。随后只在 Production 显式设置 `FEED_READ_SOURCE=content`、`FEED_WRITES_ENABLED=false`、`FEED_MCP_ENABLED=false`，Preview 当前无环境变量。
 - 未连接 Production Neon；未执行 foundation migration、Markdown import、runtime forward migration 或 Production `content:verify`。
@@ -151,7 +151,7 @@ Task 6 本轮执行：
 - Task 6 原实现轮未复跑 `pnpm run test:integration`；最终 release review 已在同一个明确隔离的本地测试数据库上复跑并通过 13/13，结果见上方。
 - `pnpm run content:import:dry -- --database`、`pnpm run content:verify`：需要经过审查的数据库身份；本轮不连接 Production。
 - `pnpm run db:migrate -- --apply ...`、`pnpm run db:migrate:forward -- --apply ...`、`pnpm run content:import -- --apply ...`、两个 grant runner：用户已授权 Production 执行，但仍缺少可登录的 Neon operator 会话、独立 `feeds_runtime` 凭据、数据库 fingerprint、可恢复备份和 fresh operation confirmation；在这些 fail-closed 前置条件完成前不执行。
-- Vercel Production deploy/canary：代码提交前未执行；Phase A 将在 squash 后通过 `main` push 自动触发，Phase B/C/D 仍依赖上述数据库前置条件。
+- Vercel Phase A Production deploy/canary：已执行并通过；Phase B/C/D 仍依赖上述数据库前置条件。
 - Vercel Preview：按任务边界明确禁止，不执行。
 
 ## 已知风险
@@ -167,10 +167,22 @@ Task 6 本轮执行：
 ## 下一任务依赖
 
 - Task 6 全套非 Production 验证与只读 review 已完成，无 blocker。
-- 按用户明确授权，将当前组合分支单次 squash 到隔离的最新 `origin/main` 工作树并 push `main`；不创建 PR，不触碰本地分叉 `main`。
+- 已按用户明确授权将当前组合分支单次 squash 到隔离的最新 `origin/main` 工作树并 push `main`；未创建 PR，未触碰本地分叉 `main`。
 - Production 执行前填写 runbook：确认 target `main = origin/main = target deployment source commit`；另行记录内部一致但可来自旧 commit 的 pre-change known-good deployment ID/URL/commit，以及 owner/window、Neon identity/fingerprint 和可恢复备份。
 - 严格逐阶段执行并 review：Content baseline → Database reads → read-only MCP → separately authorized writes。
 - Task 7 `aicraft` MCP writer 只有在 Task 6 Production cutover 有真实证据并完成 review 后才能开始。
+
+## Phase A Production 实际执行记录
+
+- 功能分支：`feat/feed-database-foundation`；结束 commit `ab04ad77784968f7aa5715d6c22557d4f748fadc`，已 push。
+- 集成方式：从最新 `origin/main` `0b338c231333fd267f7b0a5c3b1d5dd4e3b92341` 创建隔离 detached worktree，`git merge --squash feat/feed-database-foundation`，生成 `main` commit `cc2795a6b374a1af11e7cea521c384a4229e6dee`；squash tree 与功能分支 tree 完全一致。
+- 远端核对：`git ls-remote origin refs/heads/main` 返回 `cc2795a6b374a1af11e7cea521c384a4229e6dee`。
+- Vercel 环境：删除 Marketplace 注入的 Production/Preview owner/direct 数据库变量；Production 只保留 `FEED_READ_SOURCE=content`、`FEED_WRITES_ENABLED=false`、`FEED_MCP_ENABLED=false`，Preview 无环境变量。未删除 Neon 数据库。
+- Pre-change known-good：deployment `dpl_4v7RnhJs14HiFWmi9PVSRuErmN5b`，URL `https://feeds-pp3vtl4cb-abin-projects.vercel.app`，source commit `0b338c231333fd267f7b0a5c3b1d5dd4e3b92341`。
+- Phase A deployment：`dpl_5TxGKSJfP346KKgAGRcNCEgw3pio`，URL `https://feeds-las8k9qcy-abin-projects.vercel.app`，Production `READY`，source commit filter `cc2795a6b374a1af11e7cea521c384a4229e6dee`；alias `https://feeds.idaibin.dev` 已指向该 deployment。
+- Live canary：`/`、`/category/ai/`、代表性详情页、`/feed-pages/all/2.json` 均为 200；首页含 `Feeds Hub`；`POST /api/feeds/drafts` 为 503 / `WRITES_DISABLED`；`POST /api/mcp` 为 404 / `MCP_DISABLED`。
+- 功能分支 push 后按 commit/ref 查询只看到 6 小时前的 canceled Preview，没有本轮新 Preview deployment。
+- 未执行：Production database migration/import/verify/grants、database-source page parity、MCP read-only canary、write canary。原因是仍缺少可登录 Neon operator 会话、独立 `feeds_runtime` URL、fingerprint、恢复点和 fresh operation confirmation；保持 fail closed。
 
 ## Production 最小权限角色拆分复审修复
 
