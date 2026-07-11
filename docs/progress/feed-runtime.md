@@ -197,3 +197,12 @@ Task 6 本轮执行：
 - 合并 SQL pagination 与权限真实数据库用例后：`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true volta run pnpm run test:integration` 通过，16/16；`CI=true volta run pnpm run check` 通过，77 files、0 diagnostics。
 - 负向 build guard：以假 credential 设置 `VERCEL=1` 与 `DATABASE_URL_UNPOOLED` 后执行 build，Astro config 在加载阶段按预期非零退出并只报告 `DATABASE_URL_UNPOOLED`/通用 guard 错误，未连接数据库。
 - 未执行两个 grant runners、migration/import/verify 或任何 Vercel deploy：这些命令需要真实 Production identity、owner/change window、备份证据和 fresh operation confirmation；本轮未访问 Production。
+
+## 2026-07-11 Vercel bootstrap 与 MCP Production 切换
+
+- 在 `feat/feed-vercel-bootstrap` 增加 fail-closed Vercel Production `prebuild`：固定 source commit、24 小时内备份证据、Content reads、writes/MCP disabled、同库同 owner pooled/direct 身份和固定 migration/grant runners。
+- Vercel Production bootstrap 已完成 foundation/forward schema、固定 `feeds_app_runtime` 登录角色和 write grants；随后验证 schema、权限与 runtime identity。
+- bootstrap 完成后，Production 只保留低权限 `FEED_RUNTIME_DATABASE_URL`；Marketplace owner/direct aliases、`DATABASE_URL`、`DATABASE_URL_UNPOOLED` 与全部 `FEED_DB_BOOTSTRAP_*` 已移除。
+- Production 已切换 `FEED_READ_SOURCE=database`、`FEED_WRITES_ENABLED=true`、`FEED_MCP_ENABLED=true`，OAuth protected-resource metadata 公布 `feeds:read`、`feeds:write`、`feeds:publish`、`feeds:archive`。
+- Live canary：站点首页 200；bootstrap 状态文件 404；无 token 的规范 MCP initialize 返回 401，并通过 `WWW-Authenticate` 指向 protected-resource metadata 和四个 scopes。
+- 未执行携带最终 ChatGPT access token 的 Production mutation canary；ChatGPT Pro 实际只展示三个 read/fetch tools。服务端七工具与数据库写入已就绪，但该客户端套餐不能验证或调用 write/modify tools。

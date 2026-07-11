@@ -28,6 +28,7 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 | `docs/architecture/feed-runtime-migration.md` | 数据迁移、切换与回滚方案 |
 | `docs/operations/feed-runtime-production-cutover.md` | Production-only 上线、验证与回滚 runbook |
 | `docs/operations/feed-mcp-oauth.md` | Remote MCP OAuth、Vercel 与 ChatGPT Dev Mode 配置 |
+| `docs/operations/feed-mcp-auth0-chatgpt-setup.md` | MCP 设计、开发、Auth0、Vercel、Neon、验证与踩坑完整复盘 |
 | `docs/progress/feed-runtime.md` | 分阶段实施进度和真实验证结果 |
 
 ## 默认主题

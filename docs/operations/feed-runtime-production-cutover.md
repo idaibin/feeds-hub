@@ -48,7 +48,7 @@ Record evidence in the approved operational system. Never commit database URLs, 
    FEED_MCP_ENABLED=false
    ```
 
-   Vercel must contain only pooled Neon credentials using username `feeds_app_runtime`. Remove `DATABASE_URL_UNPOOLED` and provider-prefixed direct/owner aliases (for example Marketplace storage aliases) from every Vercel Production/build/runtime environment before Phase A. The build and runtime guard scans database-shaped environment values and intentionally fails without printing a URL if any Neon credential is direct or uses another role. `FEED_DB_EXPECTED_MIGRATION_ROLE` and the direct owner URL belong only in the separately controlled operator environment.
+   Outside the explicitly enabled one-time bootstrap deployment, Vercel must contain only `FEED_RUNTIME_DATABASE_URL` using username `feeds_app_runtime`. Remove `DATABASE_URL`, `DATABASE_URL_UNPOOLED` and provider-prefixed direct/owner aliases (for example Marketplace storage aliases) after bootstrap. The runtime guard scans database-shaped environment values and intentionally fails without printing a URL if any Neon credential is direct or uses another role.
 
 6. Run the local non-Production checks listed in `docs/progress/feed-runtime.md`. Stop on any failure.
 
@@ -69,10 +69,23 @@ Stop gate: do not prepare or mutate the database unless the target deployment so
 ## Database preflight after Phase A
 
 1. Keep Phase A live on Content with writes and MCP disabled.
-2. In the controlled operator environment, verify pooled `DATABASE_URL` uses fixed role `feeds_app_runtime`, direct `DATABASE_URL_UNPOOLED` uses the distinct owner named by `FEED_DB_EXPECTED_MIGRATION_ROLE`, both identify the same reviewed Neon endpoint/database, and `FEED_DB_EXPECTED_FINGERPRINT` covers endpoint/database/both roles. Neither owner credential nor the expected owner variable may be copied into Vercel.
-3. Provision the fixed `feeds_app_runtime` login through the reviewed Neon console/operator procedure if it does not exist. No repository command creates a role, accepts a role name, changes a password, or exposes credentials.
+2. For the normal operator path, verify pooled `DATABASE_URL` uses fixed role `feeds_app_runtime`, direct `DATABASE_URL_UNPOOLED` uses the distinct owner named by `FEED_DB_EXPECTED_MIGRATION_ROLE`, both identify the same Neon endpoint/database, and `FEED_DB_EXPECTED_FINGERPRINT` covers both roles. For the one-time bootstrap path below, the temporary input pooled/direct aliases use the same owner; bootstrap derives the fixed-role runtime URL before invoking the normal runners.
+3. Provision `feeds_app_runtime` either through a reviewed Neon operator procedure or the fixed one-time Vercel bootstrap. The bootstrap creates only the constant role name, accepts a constrained generated password, and does not expose credentials in output.
 4. Create and record a usable Neon backup or restore point. Each mutation command requires a fresh, operation-scoped confirmation and complete backup evidence.
 5. Stop unless the recorded target deployment remains healthy and its source commit still equals local `main` and `origin/main`.
+
+### One-time Vercel bootstrap path
+
+Use this path only when the operator cannot safely run database preparation locally. It does not weaken the backup, commit, identity or disabled-service gates above.
+
+1. Set `FEED_DB_BOOTSTRAP_ENABLED=true`, the exact reviewed source commit, fresh backup evidence, a generated runtime password, and the same-owner pooled/direct Neon URLs in Production only.
+2. Keep `FEED_READ_SOURCE=content`, `FEED_WRITES_ENABLED=false` and `FEED_MCP_ENABLED=false`.
+3. Deploy the exact reviewed commit. `prebuild` runs the fixed foundation migration, forward migration and write-grant runners, then verifies schema, grants and runtime identity.
+4. Record the redacted bootstrap status and create `FEED_RUNTIME_DATABASE_URL` with role `feeds_app_runtime`.
+5. Remove `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, all `FEED_DB_BOOTSTRAP_*` variables and any Marketplace owner aliases; disable bootstrap and redeploy.
+6. Confirm the bootstrap status artifact is no longer public before enabling database reads or MCP.
+
+The bootstrap accepts no caller-supplied role, SQL, migration path or shell command. Re-running against an initialized database verifies the reviewed schema and grants instead of applying arbitrary migrations.
 
 ## Database preparation while Content remains live
 
