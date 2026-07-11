@@ -149,7 +149,7 @@ draft -> published -> archived
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | unset | Server-only pooled URL using the fixed `feeds_runtime` role. This is the only database credential allowed in Vercel. |
+| `DATABASE_URL` | unset | Server-only pooled URL using the fixed `feeds_app_runtime` role. This is the only database credential allowed in Vercel. |
 | `DATABASE_URL_UNPOOLED` | unset | Direct migration-owner URL for reviewed operator commands only; it must be absent from Vercel build/runtime environments. |
 | `FEED_DB_EXPECTED_MIGRATION_ROLE` | unset | Exact reviewed owner role expected in `DATABASE_URL_UNPOOLED`; never a grant target supplied by a caller. |
 | `FEED_DB_TARGET` | unset | Required mutation target: `test`, `preview`, or `production`. |
@@ -169,7 +169,7 @@ draft -> published -> archived
 
 All variables are server-only. They must not use a public client prefix or appear in logs, API errors, rendered HTML, or MCP tool output.
 
-The current rollout uses one Production Neon database and does not create or use a Preview database. Operator commands require pooled `DATABASE_URL` and direct `DATABASE_URL_UNPOOLED` aliases that resolve to the same Neon endpoint and database but intentionally use different roles: the pooled URL must use fixed role `feeds_runtime`; the direct URL must use the separately reviewed owner in `FEED_DB_EXPECTED_MIGRATION_ROLE`. The identity fingerprint covers endpoint, database and both roles. Missing aliases, same-role credentials, role mismatch, or fingerprint mismatch stops before connection or mutation. Vercel receives only pooled `feeds_runtime` credentials; configuration loading scans database-shaped environment values and rejects any Neon direct/owner credential even when a Marketplace integration gives it another prefix. Provider-generated names are not application fallbacks, and neither URL is derived by rewriting the other.
+The current rollout uses one Production Neon database and does not create or use a Preview database. Operator commands require pooled `DATABASE_URL` and direct `DATABASE_URL_UNPOOLED` aliases that resolve to the same Neon endpoint and database but intentionally use different roles: the pooled URL must use fixed role `feeds_app_runtime`; the direct URL must use the separately reviewed owner in `FEED_DB_EXPECTED_MIGRATION_ROLE`. The identity fingerprint covers endpoint, database and both roles. Missing aliases, same-role credentials, role mismatch, or fingerprint mismatch stops before connection or mutation. Vercel receives only pooled `feeds_app_runtime` credentials; configuration loading scans database-shaped environment values and rejects any Neon direct/owner credential even when a Marketplace integration gives it another prefix. Provider-generated names are not application fallbacks, and neither URL is derived by rewriting the other.
 
 The Production-only decision grants a narrow exception to Task 1 for the generated foundation migration and the first deterministic Markdown import. Both operations remain gated by the migration document: a successful dry run, verified Production database identity, a recorded backup or restore point, an operation-scoped `--confirm-production` flag, `FEED_READ_SOURCE=content`, disabled runtime writes/MCP, rejection of unexpected non-empty application schema or data, and post-import verification. It does not authorize reset, truncate, delete, destructive rollback, Task 4 mutation tests, Task 5 database access, or the later Production MCP canary to write data.
 

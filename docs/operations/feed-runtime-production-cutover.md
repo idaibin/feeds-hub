@@ -23,8 +23,8 @@ Do not start while any required value is blank.
 | Pre-change known-good deployment source commit | _required; must match that deployment's metadata, but may differ from target_ |
 | Target Vercel project / scope | _required_ |
 | Redacted Neon database fingerprint | _required_ |
-| Runtime role | _must equal `feeds_runtime`_ |
-| Migration owner role | _required; must differ from `feeds_runtime`_ |
+| Runtime role | _must equal `feeds_app_runtime`_ |
+| Migration owner role | _required; must differ from `feeds_app_runtime`_ |
 | Backup / restore identifier | _required before each database mutation_ |
 | Backup creation time | _required; less than 24 hours old and before mutation_ |
 | Backup retention deadline | _required; after the change window_ |
@@ -48,7 +48,7 @@ Record evidence in the approved operational system. Never commit database URLs, 
    FEED_MCP_ENABLED=false
    ```
 
-   Vercel must contain only pooled Neon credentials using username `feeds_runtime`. Remove `DATABASE_URL_UNPOOLED` and provider-prefixed direct/owner aliases (for example Marketplace storage aliases) from every Vercel Production/build/runtime environment before Phase A. The build and runtime guard scans database-shaped environment values and intentionally fails without printing a URL if any Neon credential is direct or uses another role. `FEED_DB_EXPECTED_MIGRATION_ROLE` and the direct owner URL belong only in the separately controlled operator environment.
+   Vercel must contain only pooled Neon credentials using username `feeds_app_runtime`. Remove `DATABASE_URL_UNPOOLED` and provider-prefixed direct/owner aliases (for example Marketplace storage aliases) from every Vercel Production/build/runtime environment before Phase A. The build and runtime guard scans database-shaped environment values and intentionally fails without printing a URL if any Neon credential is direct or uses another role. `FEED_DB_EXPECTED_MIGRATION_ROLE` and the direct owner URL belong only in the separately controlled operator environment.
 
 6. Run the local non-Production checks listed in `docs/progress/feed-runtime.md`. Stop on any failure.
 
@@ -69,8 +69,8 @@ Stop gate: do not prepare or mutate the database unless the target deployment so
 ## Database preflight after Phase A
 
 1. Keep Phase A live on Content with writes and MCP disabled.
-2. In the controlled operator environment, verify pooled `DATABASE_URL` uses fixed role `feeds_runtime`, direct `DATABASE_URL_UNPOOLED` uses the distinct owner named by `FEED_DB_EXPECTED_MIGRATION_ROLE`, both identify the same reviewed Neon endpoint/database, and `FEED_DB_EXPECTED_FINGERPRINT` covers endpoint/database/both roles. Neither owner credential nor the expected owner variable may be copied into Vercel.
-3. Provision the fixed `feeds_runtime` login through the reviewed Neon console/operator procedure if it does not exist. No repository command creates a role, accepts a role name, changes a password, or exposes credentials.
+2. In the controlled operator environment, verify pooled `DATABASE_URL` uses fixed role `feeds_app_runtime`, direct `DATABASE_URL_UNPOOLED` uses the distinct owner named by `FEED_DB_EXPECTED_MIGRATION_ROLE`, both identify the same reviewed Neon endpoint/database, and `FEED_DB_EXPECTED_FINGERPRINT` covers endpoint/database/both roles. Neither owner credential nor the expected owner variable may be copied into Vercel.
+3. Provision the fixed `feeds_app_runtime` login through the reviewed Neon console/operator procedure if it does not exist. No repository command creates a role, accepts a role name, changes a password, or exposes credentials.
 4. Create and record a usable Neon backup or restore point. Each mutation command requires a fresh, operation-scoped confirmation and complete backup evidence.
 5. Stop unless the recorded target deployment remains healthy and its source commit still equals local `main` and `origin/main`.
 
@@ -147,7 +147,7 @@ pnpm run db:grant:runtime-read -- \
   --recovery-reference=<https-console-neon-tech-entry>
 ```
 
-Stop unless verification reports `feeds_runtime` with no elevated attributes, inherited roles, owned objects, schema/database create or temporary privileges, unexpected table privileges, or sequence privileges.
+Stop unless verification reports `feeds_app_runtime` with no elevated attributes, inherited roles, owned objects, schema/database create or temporary privileges, unexpected table privileges, or sequence privileges.
 
 Change only:
 

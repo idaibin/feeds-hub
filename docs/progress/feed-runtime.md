@@ -150,7 +150,7 @@ Task 6 本轮执行：
 
 - Task 6 原实现轮未复跑 `pnpm run test:integration`；最终 release review 已在同一个明确隔离的本地测试数据库上复跑并通过 13/13，结果见上方。
 - `pnpm run content:import:dry -- --database`、`pnpm run content:verify`：需要经过审查的数据库身份；本轮不连接 Production。
-- `pnpm run db:migrate -- --apply ...`、`pnpm run db:migrate:forward -- --apply ...`、`pnpm run content:import -- --apply ...`、两个 grant runner：用户已授权 Production 执行，但仍缺少可登录的 Neon operator 会话、独立 `feeds_runtime` 凭据、数据库 fingerprint、可恢复备份和 fresh operation confirmation；在这些 fail-closed 前置条件完成前不执行。
+- `pnpm run db:migrate -- --apply ...`、`pnpm run db:migrate:forward -- --apply ...`、`pnpm run content:import -- --apply ...`、两个 grant runner：用户已授权 Production 执行，但仍缺少可登录的 Neon operator 会话、独立 `feeds_app_runtime` 凭据、数据库 fingerprint、可恢复备份和 fresh operation confirmation；在这些 fail-closed 前置条件完成前不执行。
 - Vercel Phase A Production deploy/canary：已执行并通过；Phase B/C/D 仍依赖上述数据库前置条件。
 - Vercel Preview：按任务边界明确禁止，不执行。
 
@@ -182,14 +182,14 @@ Task 6 本轮执行：
 - Phase A deployment：`dpl_5TxGKSJfP346KKgAGRcNCEgw3pio`，URL `https://feeds-las8k9qcy-abin-projects.vercel.app`，Production `READY`，source commit filter `cc2795a6b374a1af11e7cea521c384a4229e6dee`；alias `https://feeds.idaibin.dev` 已指向该 deployment。
 - Live canary：`/`、`/category/ai/`、代表性详情页、`/feed-pages/all/2.json` 均为 200；首页含 `Feeds Hub`；`POST /api/feeds/drafts` 为 503 / `WRITES_DISABLED`；`POST /api/mcp` 为 404 / `MCP_DISABLED`。
 - 功能分支 push 后按 commit/ref 查询只看到 6 小时前的 canceled Preview，没有本轮新 Preview deployment。
-- 未执行：Production database migration/import/verify/grants、database-source page parity、MCP read-only canary、write canary。原因是仍缺少可登录 Neon operator 会话、独立 `feeds_runtime` URL、fingerprint、恢复点和 fresh operation confirmation；保持 fail closed。
+- 未执行：Production database migration/import/verify/grants、database-source page parity、MCP read-only canary、write canary。原因是仍缺少可登录 Neon operator 会话、独立 `feeds_app_runtime` URL、fingerprint、恢复点和 fresh operation confirmation；保持 fail closed。
 
 ## Production 最小权限角色拆分复审修复
 
 - Public database list 不再读取全部 published rows：list/category、stock close filter、future sports 排序、稳定 tie-break 和分页均下推 PostgreSQL，`page <= 1000`、`pageSize <= 100`，单次只取 `pageSize + 1` 个投影行且排除 `body`；详情查询仍读取完整正文。
 - 真实本地 PostgreSQL regression 覆盖 past/future sports、stock include/exclude、global 两页 parity，以及完全相同 `updated_at` 微秒值时按 UUID 升序跨页无重复/遗漏。
-- Production pooled `DATABASE_URL` 固定使用 `feeds_runtime`；direct `DATABASE_URL_UNPOOLED` 使用 `FEED_DB_EXPECTED_MIGRATION_ROLE` 锁定的独立 migration owner。两者必须同 Neon endpoint/database、不同 role，数据库 fingerprint 同时覆盖两角色。
-- Vercel config load、database read client 与默认 `NeonFeedRepository` 写路径均执行 runtime guard：只允许 pooled Neon `feeds_runtime` 凭据，并扫描/拒绝任何 provider-prefixed direct/owner Neon URL；错误不输出连接串。`DATABASE_URL_UNPOOLED` 与 migration owner 变量只属于受控 operator 环境。
+- Production pooled `DATABASE_URL` 固定使用 `feeds_app_runtime`；direct `DATABASE_URL_UNPOOLED` 使用 `FEED_DB_EXPECTED_MIGRATION_ROLE` 锁定的独立 migration owner。两者必须同 Neon endpoint/database、不同 role，数据库 fingerprint 同时覆盖两角色。
+- Vercel config load、database read client 与默认 `NeonFeedRepository` 写路径均执行 runtime guard：只允许 pooled Neon `feeds_app_runtime` 凭据，并扫描/拒绝任何 provider-prefixed direct/owner Neon URL；错误不输出连接串。`DATABASE_URL_UNPOOLED` 与 migration owner 变量只属于受控 operator 环境。
 - 新增固定 `db:grant:runtime-read` / `db:grant:runtime-write` runners。它们不接受 SQL、role、table、file 或 shell 输入；撤销 public/runtime table、sequence、schema CREATE、database CREATE/TEMP 权限并验证 role attributes、membership、ownership 和完整 effective privilege matrix。
 - Phase B 只授予 `feeds SELECT`。Phase D 只增加 `feeds SELECT/INSERT/UPDATE` 和三张 revision/audit/idempotency 表的 `SELECT/INSERT`；不授予 `feed_import_runs`、sequence、DDL、DELETE、TRUNCATE、REFERENCES 或 TRIGGER。
 - 修改/新增范围：`astro.config.mjs`、`package.json`、`src/db/client.ts`、`src/db/neon-feed-repository.ts`、`src/db/runtime-environment.ts`、`scripts/lib/production-guard.ts`、`scripts/lib/runtime-grants.ts`、`scripts/db-grant-runtime-read.ts`、`scripts/db-grant-runtime-write.ts`、`tests/production-guard.test.ts`、`tests/migration-runners.test.ts`、三份 runtime architecture/migration/operations 文档与本进度文档。

@@ -4,12 +4,12 @@ import test from 'node:test';
 import { sanitizeDatabaseError, validateProductionDatabaseContext } from '../scripts/lib/production-guard';
 import { assertRuntimeDatabaseEnvironment, getRuntimeDatabaseUrl } from '../src/db/runtime-environment';
 
-const pooledUrl = 'postgresql://feeds_runtime:runtime-secret@ep-example-pooler.us-east-2.aws.neon.tech/feeds?sslmode=require';
+const pooledUrl = 'postgresql://feeds_app_runtime:runtime-secret@ep-example-pooler.us-east-2.aws.neon.tech/feeds?sslmode=require';
 const directUrl = 'postgresql://feeds_migration_owner:owner-secret@ep-example.us-east-2.aws.neon.tech/feeds?sslmode=require';
 const fingerprint = createHash('sha256').update(JSON.stringify({
   endpoint: 'ep-example.us-east-2.aws.neon.tech',
   database: 'feeds',
-  runtimeRole: 'feeds_runtime',
+  runtimeRole: 'feeds_app_runtime',
   migrationRole: 'feeds_migration_owner',
 })).digest('hex');
 
@@ -26,7 +26,7 @@ function baseEnv(): NodeJS.ProcessEnv {
 test('accepts operational access only for one database with separate reviewed runtime and migration roles', () => {
   const context = validateProductionDatabaseContext({ mutation: false, env: baseEnv(), argv: [] });
   assert.equal(context.fingerprint.length, 64);
-  assert.equal(context.runtimeRole, 'feeds_runtime');
+  assert.equal(context.runtimeRole, 'feeds_app_runtime');
   assert.equal(context.migrationRole, 'feeds_migration_owner');
 
   assert.throws(() => validateProductionDatabaseContext({
@@ -46,9 +46,9 @@ test('accepts operational access only for one database with separate reviewed ru
   }), /does not match/);
   assert.throws(() => validateProductionDatabaseContext({
     mutation: false,
-    env: { ...baseEnv(), DATABASE_URL: pooledUrl.replace('feeds_runtime', 'feeds_admin') },
+    env: { ...baseEnv(), DATABASE_URL: pooledUrl.replace('feeds_app_runtime', 'feeds_admin') },
     argv: [],
-  }), /fixed feeds_runtime/);
+  }), /fixed feeds_app_runtime/);
   assert.throws(() => validateProductionDatabaseContext({
     mutation: false,
     env: { ...baseEnv(), FEED_DB_EXPECTED_MIGRATION_ROLE: 'other_owner' },
@@ -58,8 +58,8 @@ test('accepts operational access only for one database with separate reviewed ru
     mutation: false,
     env: {
       ...baseEnv(),
-      FEED_DB_EXPECTED_MIGRATION_ROLE: 'feeds_runtime',
-      DATABASE_URL_UNPOOLED: directUrl.replace('feeds_migration_owner', 'feeds_runtime'),
+      FEED_DB_EXPECTED_MIGRATION_ROLE: 'feeds_app_runtime',
+      DATABASE_URL_UNPOOLED: directUrl.replace('feeds_migration_owner', 'feeds_app_runtime'),
     },
     argv: [],
   }), /roles must be different/);
@@ -71,6 +71,13 @@ test('Vercel build and runtime reject owner credentials and require the fixed po
     DATABASE_URL: pooledUrl,
   }));
   assert.equal(getRuntimeDatabaseUrl({ VERCEL_ENV: 'production', DATABASE_URL: pooledUrl }), pooledUrl);
+  assert.equal(getRuntimeDatabaseUrl({
+    VERCEL: '1',
+    VERCEL_ENV: 'production',
+    FEED_DB_BOOTSTRAP_ENABLED: 'true',
+    FEED_RUNTIME_DATABASE_URL: pooledUrl,
+    DATABASE_URL: pooledUrl.replace('feeds_app_runtime', 'feeds_migration_owner'),
+  }), pooledUrl);
   assert.throws(() => assertRuntimeDatabaseEnvironment({
     VERCEL: '1',
     DATABASE_URL: pooledUrl,
@@ -88,15 +95,21 @@ test('Vercel build and runtime reject owner credentials and require the fixed po
   }), /STORAGE_URL_UNPOOLED must be pooled/);
   assert.throws(() => assertRuntimeDatabaseEnvironment({
     VERCEL_ENV: 'production',
-    DATABASE_URL: pooledUrl.replace('feeds_runtime', 'feeds_migration_owner'),
-  }), /fixed feeds_runtime/);
+    FEED_RUNTIME_DATABASE_URL: pooledUrl.replace('feeds_app_runtime', 'feeds_migration_owner'),
+  }), /fixed feeds_app_runtime/);
   assert.throws(() => assertRuntimeDatabaseEnvironment({
     VERCEL: '1',
-    DATABASE_URL: directUrl.replace('feeds_migration_owner', 'feeds_runtime'),
+    DATABASE_URL: directUrl.replace('feeds_migration_owner', 'feeds_app_runtime'),
   }), /must be pooled/);
 
   const localTestUrl = 'postgresql://feeds_hub_test:test@127.0.0.1:55432/feeds_hub_test';
   assert.doesNotThrow(() => assertRuntimeDatabaseEnvironment({ DATABASE_URL: localTestUrl }));
+  assert.doesNotThrow(() => assertRuntimeDatabaseEnvironment({
+    VERCEL: '1',
+    VERCEL_ENV: 'production',
+    FEED_DB_BOOTSTRAP_ENABLED: 'true',
+    DATABASE_URL_UNPOOLED: directUrl,
+  }));
 });
 
 test('runtime grant operations require their own safe deployment posture and confirmation scope', () => {

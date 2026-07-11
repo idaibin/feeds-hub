@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "tsx scripts/vercel-db-bootstrap.ts",
     "build": "astro build",
     "check": "astro check",
     "preview": "astro preview",

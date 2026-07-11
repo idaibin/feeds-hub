@@ -1,4 +1,5 @@
-export const PRODUCTION_RUNTIME_ROLE = 'feeds_runtime';
+export const PRODUCTION_RUNTIME_ROLE = 'feeds_app_runtime';
+export const RUNTIME_DATABASE_URL_KEY = 'FEED_RUNTIME_DATABASE_URL';
 
 function isVercelRuntime(env: NodeJS.ProcessEnv) {
   return env.VERCEL === '1' || Boolean(env.VERCEL_ENV);
@@ -6,17 +7,22 @@ function isVercelRuntime(env: NodeJS.ProcessEnv) {
 
 export function assertRuntimeDatabaseEnvironment(env: NodeJS.ProcessEnv = process.env) {
   if (!isVercelRuntime(env)) return;
-  if (env.DATABASE_URL_UNPOOLED) {
+  const bootstrapEnabled = env.FEED_DB_BOOTSTRAP_ENABLED === 'true';
+  if (env.DATABASE_URL_UNPOOLED && !bootstrapEnabled) {
     throw new Error('DATABASE_URL_UNPOOLED must not be available to the Vercel build or runtime');
   }
+  if (bootstrapEnabled) return;
+  const connectionString = env[RUNTIME_DATABASE_URL_KEY] ?? env.DATABASE_URL;
+  if (!connectionString) return;
+
   for (const [key, value] of Object.entries(env)) {
-    if (!value || !/^postgres(?:ql)?:\/\//i.test(value)) continue;
+    if (!value || !/^postgres(?:ql)?:\/\//i.test(value) || key === RUNTIME_DATABASE_URL_KEY) continue;
+    if (bootstrapEnabled && key !== RUNTIME_DATABASE_URL_KEY) continue;
     let candidate: URL;
     try {
       candidate = new URL(value);
     } catch {
-      if (key === 'DATABASE_URL') throw new Error('DATABASE_URL is invalid');
-      continue;
+      throw new Error(`Vercel database credential ${key} is invalid`);
     }
     if (!candidate.hostname.endsWith('.neon.tech')) continue;
     if (
@@ -28,29 +34,28 @@ export function assertRuntimeDatabaseEnvironment(env: NodeJS.ProcessEnv = proces
       );
     }
   }
-  if (!env.DATABASE_URL) return;
 
   let url: URL;
   try {
-    url = new URL(env.DATABASE_URL);
+    url = new URL(connectionString);
   } catch {
-    throw new Error('DATABASE_URL is invalid');
+    throw new Error(`${RUNTIME_DATABASE_URL_KEY} is invalid`);
   }
   if (
     !['postgres:', 'postgresql:'].includes(url.protocol)
     || !url.hostname.endsWith('.neon.tech')
     || !url.hostname.split('.')[0].endsWith('-pooler')
   ) {
-    throw new Error('Vercel DATABASE_URL must be a pooled Neon PostgreSQL URL');
+    throw new Error(`Vercel ${RUNTIME_DATABASE_URL_KEY} must be a pooled Neon PostgreSQL URL`);
   }
   if (decodeURIComponent(url.username) !== PRODUCTION_RUNTIME_ROLE) {
-    throw new Error(`Vercel DATABASE_URL must use the fixed ${PRODUCTION_RUNTIME_ROLE} runtime role`);
+    throw new Error(`Vercel ${RUNTIME_DATABASE_URL_KEY} must use the fixed ${PRODUCTION_RUNTIME_ROLE} runtime role`);
   }
 }
 
 export function getRuntimeDatabaseUrl(env: NodeJS.ProcessEnv = process.env) {
   assertRuntimeDatabaseEnvironment(env);
-  const connectionString = env.DATABASE_URL;
-  if (!connectionString) throw new Error('DATABASE_URL is not configured');
+  const connectionString = env[RUNTIME_DATABASE_URL_KEY] ?? env.DATABASE_URL;
+  if (!connectionString) throw new Error(`${RUNTIME_DATABASE_URL_KEY} is not configured`);
   return connectionString;
 }

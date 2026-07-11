@@ -1,4 +1,5 @@
 import type { FeedSource } from '@/domain/feed-source';
+import { getRuntimeDatabaseUrl } from '@/db/runtime-environment';
 
 export type FeedReadSource = 'content' | 'database';
 
@@ -17,7 +18,7 @@ export async function getFeedSource(env: NodeJS.ProcessEnv = process.env): Promi
     return new ContentFeedSource();
   }
 
-  if (!env.DATABASE_URL) throw new Error('DATABASE_URL is required when FEED_READ_SOURCE=database');
+  getRuntimeDatabaseUrl(env);
   const { DatabaseFeedSource } = await import('@/lib/feed-sources/database');
   return new DatabaseFeedSource();
 }

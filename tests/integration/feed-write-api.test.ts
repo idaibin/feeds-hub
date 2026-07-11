@@ -336,11 +336,11 @@ test('database public pages push sports ordering, stock filtering, and bounded p
 
 test('fixed runtime grants enforce read-only Phase B and append-only write Phase D privileges', async () => {
   await pool.query(`do $$ begin
-    if not exists (select 1 from pg_roles where rolname = 'feeds_runtime') then
-      create role feeds_runtime nologin;
+    if not exists (select 1 from pg_roles where rolname = 'feeds_app_runtime') then
+      create role feeds_app_runtime nologin;
     end if;
   end $$`);
-  await pool.query('alter role feeds_runtime nologin nosuperuser nocreatedb nocreaterole noreplication nobypassrls');
+  await pool.query('alter role feeds_app_runtime nologin nosuperuser nocreatedb nocreaterole noreplication nobypassrls');
   for (const statement of RUNTIME_READ_GRANT_STATEMENTS) await pool.query(statement);
 
   const client = await pool.connect();
@@ -351,7 +351,7 @@ test('fixed runtime grants enforce read-only Phase B and append-only write Phase
     );
   };
   try {
-    await client.query('set role feeds_runtime');
+    await client.query('set role feeds_app_runtime');
     await client.query('select count(*) from feeds');
     await denied("insert into feeds (slug) values ('ai/runtime-read-denied')");
     await denied('create table public.runtime_read_denied(id integer)');
@@ -361,7 +361,7 @@ test('fixed runtime grants enforce read-only Phase B and append-only write Phase
 
     for (const statement of RUNTIME_WRITE_GRANT_STATEMENTS) await client.query(statement);
     await client.query('begin');
-    await client.query('set local role feeds_runtime');
+    await client.query('set local role feeds_app_runtime');
     const inserted = await client.query<{ id: string }>(`
       insert into feeds (
         slug, title, subtitle, category, kind, topic, date, event_at, event_key, cover,
@@ -395,7 +395,7 @@ test('fixed runtime grants enforce read-only Phase B and append-only write Phase
     await client.query('update feeds set summary = summary where id = $1', [feedId]);
     await client.query('rollback');
 
-    await client.query('set role feeds_runtime');
+    await client.query('set role feeds_app_runtime');
     await denied('delete from feeds');
     await denied('truncate feeds');
     await denied('update feed_audit_events set reason = reason');

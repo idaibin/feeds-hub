@@ -410,7 +410,14 @@ export function getGitSourceCommit() {
 }
 
 export function assertCleanGitWorktree() {
-  const status = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim();
+  let status: string;
+  try {
+    status = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim();
+  } catch {
+    const immutableCommit = process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.FEED_DB_BOOTSTRAP_SOURCE_COMMIT;
+    if (process.env.VERCEL === '1' && /^[0-9a-f]{40}$/.test(immutableCommit ?? '')) return;
+    throw new Error('Git worktree status is unavailable before a Production mutation');
+  }
   if (status) throw new Error('Git worktree must be clean before a Production mutation');
 }
 

@@ -88,10 +88,10 @@ test('runtime grant runners target only the fixed least-privilege role and expos
   const readSql = RUNTIME_READ_GRANT_STATEMENTS.join('; ');
   const writeSql = RUNTIME_WRITE_GRANT_STATEMENTS.join('; ');
 
-  assert.match(readSql, /GRANT SELECT ON TABLE public\.feeds TO feeds_runtime/);
+  assert.match(readSql, /GRANT SELECT ON TABLE public\.feeds TO feeds_app_runtime/);
   assert.doesNotMatch(readSql, /GRANT[^;]*(?:INSERT|UPDATE|DELETE|TRUNCATE)/);
-  assert.match(writeSql, /GRANT SELECT, INSERT, UPDATE ON TABLE public\.feeds TO feeds_runtime/);
-  assert.match(writeSql, /GRANT SELECT, INSERT ON TABLE public\.feed_audit_events TO feeds_runtime/);
+  assert.match(writeSql, /GRANT SELECT, INSERT, UPDATE ON TABLE public\.feeds TO feeds_app_runtime/);
+  assert.match(writeSql, /GRANT SELECT, INSERT ON TABLE public\.feed_audit_events TO feeds_app_runtime/);
   assert.doesNotMatch(writeSql, /GRANT[^;]*(?:DELETE|TRUNCATE|CREATE ON SCHEMA)/);
 
   for (const runner of ['scripts/db-grant-runtime-read.ts', 'scripts/db-grant-runtime-write.ts']) {
