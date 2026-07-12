@@ -45,7 +45,7 @@ FEED_WRITES_ENABLED=false
 The provider must issue the local audience for local testing. Start Astro:
 
 ```bash
-pnpm run dev -- --host 127.0.0.1 --port 4321
+npm run dev -- --host 127.0.0.1 --port 4321
 ```
 
 ChatGPT cannot connect directly to localhost. Use a reviewed HTTPS tunnel for local testing, or deploy the same reviewed commit to Vercel.

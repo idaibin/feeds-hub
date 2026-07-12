@@ -316,7 +316,7 @@ The route's method gate admits authenticated Streamable HTTP `POST` and `GET`; t
 
 Production OAuth mode follows the MCP authorization specification and RFC 9728. Unauthorized responses advertise the protected-resource metadata URL through `WWW-Authenticate`. The authorization server must publish OAuth/OIDC metadata, support authorization code with PKCE S256, issue JWT access tokens for the exact MCP resource/audience, and expose JWKS. ChatGPT may use client-ID metadata documents, dynamic client registration, or a separately configured static OAuth client. Tool callbacks enforce `feeds:read`, `feeds:write`, `feeds:publish`, and `feeds:archive`; validated OAuth subject/client identity is carried into mutation audit actors.
 
-The pinned `mcp-handler@1.1.0` package is maintained through the repository's `pnpm` patch. The patch calls `unref()` on the package-global cleanup interval in both published CJS and ESM builds, preserving cleanup behavior while allowing idle serverless/test processes to exit naturally.
+The pinned `mcp-handler@1.1.0` package is maintained through the repository's `patch-package` postinstall patch. The patch calls `unref()` on the package-global cleanup interval in both published CJS and ESM builds, preserving cleanup behavior while allowing idle serverless/test processes to exit naturally.
 
 If any gate fails, Task 5 stops with evidence and does not implement the tools.
 

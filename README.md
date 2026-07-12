@@ -89,24 +89,24 @@ frontmatter 中的 `cover` 是历史兼容占位，不参与展示，也不要�
 ## 本地运行
 
 ```bash
-pnpm install
-pnpm run dev
+npm install
+npm run dev
 ```
 
 ## 校验
 
 ```bash
-pnpm install --frozen-lockfile
-pnpm run test
-pnpm run test:mcp
-pnpm run db:generate
-pnpm run db:check
-pnpm run content:import:dry
-pnpm run check
-pnpm run build
+npm ci
+npm run test
+npm run test:mcp
+npm run db:generate
+npm run db:check
+npm run content:import:dry
+npm run check
+npm run build
 ```
 
-`pnpm run test:integration` 只能连接明确隔离的非 Production 测试数据库；Production migration、import、切换和回滚必须逐项执行 [`Production cutover runbook`](docs/operations/feed-runtime-production-cutover.md)。
+`npm run test:integration` 只能连接明确隔离的非 Production 测试数据库；Production migration、import、切换和回滚必须逐项执行 [`Production cutover runbook`](docs/operations/feed-runtime-production-cutover.md)。
 
 ## 部署
 
@@ -114,9 +114,9 @@ pnpm run build
 
 ```text
 Framework Preset: Astro
-Build Command: pnpm run build
+Build Command: npm run build
 Output Directory: 由 @astrojs/vercel 生成，不手工覆盖
-Install Command: pnpm install --frozen-lockfile
+Install Command: npm ci
 ```
 
 `vercel.json` 使用 Vercel 官方 [`git.deploymentEnabled`](https://vercel.com/docs/project-configuration/git-configuration#gitdeploymentenabled) minimatch 分支匹配：`main` 显式为 `true`，覆盖含 `/` 分支名的 `**` 为 `false`。这会阻止非 `main` push 触发 Git 自动 deployment；它不是 Ignored Build Step。操作者也不得用 CLI 或 Dashboard 为其他分支手工创建 Preview。

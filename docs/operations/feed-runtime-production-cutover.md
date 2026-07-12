@@ -96,7 +96,7 @@ All commands in this section require `FEED_DB_TARGET=production`, Content reads,
 Run only when the application schema is verified empty. This runner executes only reviewed journal entry `0` / `0000_windy_trish_tilby`; later journal entries do not broaden it.
 
 ```bash
-pnpm run db:migrate -- \
+npm run db:migrate -- \
   --apply \
   --confirm-production=feeds-hub-production:foundation-migration:<fingerprint> \
   --backup-id=<provider-id> \
@@ -113,9 +113,9 @@ Stop unless post-verification confirms `feeds`, `feed_import_runs`, `drizzle.__d
 Run the offline plan first, then a database comparison. Apply only when the plan has no invalid/conflict/unexpected rows and the backup evidence has been refreshed if required.
 
 ```bash
-pnpm run content:import:dry
-pnpm run content:import:dry -- --database
-pnpm run content:import -- \
+npm run content:import:dry
+npm run content:import:dry -- --database
+npm run content:import -- \
   --apply \
   --confirm-production=feeds-hub-production:markdown-import:<fingerprint> \
   --backup-id=<provider-id> \
@@ -123,7 +123,7 @@ pnpm run content:import -- \
   --backup-database-fingerprint=<fingerprint> \
   --backup-retain-until=<ISO-8601> \
   --recovery-reference=<https-console-neon-tech-entry>
-pnpm run content:verify
+npm run content:verify
 ```
 
 Do not repeat the import unless a reviewed plan and a new operation-scoped confirmation authorize that exact idempotent run.
@@ -133,7 +133,7 @@ Do not repeat the import unless a reviewed plan and a new operation-scoped confi
 Run only after the database journal contains exactly reviewed `0000` and before `0001` has been applied. The runner executes only reviewed entry `1` / `0001_swift_ben_parker`; it accepts no migration name, SQL, file, shell, down, delete, or reset input.
 
 ```bash
-pnpm run db:migrate:forward -- \
+npm run db:migrate:forward -- \
   --apply \
   --confirm-production=feeds-hub-production:runtime-forward-migration:<fingerprint> \
   --backup-id=<provider-id> \
@@ -150,7 +150,7 @@ Stop unless post-verification confirms `pg_trgm`, `feed_revisions`, `feed_audit_
 While Phase A still serves Content, apply only the fixed read grant runner. It removes runtime/public table and sequence grants, public-schema/database creation, and database temporary-object creation, then grants only `SELECT` on `public.feeds`. It accepts no SQL, role, table, file, or shell input and fails unless the runtime role has no elevated attributes, inherited roles, or owned objects.
 
 ```bash
-pnpm run db:grant:runtime-read -- \
+npm run db:grant:runtime-read -- \
   --apply \
   --confirm-production=feeds-hub-production:runtime-read-grants:<fingerprint> \
   --backup-id=<provider-id> \
@@ -205,7 +205,7 @@ FEED_MCP_ENABLED=false
 From the controlled operator environment, apply the fixed write grant runner with fresh confirmation and backup evidence:
 
 ```bash
-pnpm run db:grant:runtime-write -- \
+npm run db:grant:runtime-write -- \
   --apply \
   --confirm-production=feeds-hub-production:runtime-write-grants:<fingerprint> \
   --backup-id=<provider-id> \

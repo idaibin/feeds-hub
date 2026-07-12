@@ -1,5 +1,4 @@
 node_modules/
-.pnpm-store/
 public/.well-known/feed-db-bootstrap.json
 dist/
 .astro/

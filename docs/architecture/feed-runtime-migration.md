@@ -120,17 +120,17 @@ Scope:
 
 Required validation:
 
-- `pnpm install --frozen-lockfile`
-- `pnpm run db:generate`
-- `pnpm run db:check`
-- `pnpm run content:import:dry`
+- `npm ci`
+- `npm run db:generate`
+- `npm run db:check`
+- `npm run content:import:dry`
 - verify the exact Production database identity and recorded backup/restore point without exposing connection strings
 - prove that the selected Neon/Drizzle apply path atomically commits feed rows and `feed_import_runs`, with no partial state on failure
 - apply only the generated foundation migration with `FEED_DB_TARGET=production` and a fresh operation-scoped `--confirm-production` flag
 - apply the first deterministic Markdown import with a new operation-scoped `--confirm-production` flag
-- `pnpm run content:verify` against the verified Production database
-- `pnpm run check`
-- `pnpm run build`
+- `npm run content:verify` against the verified Production database
+- `npm run check`
+- `npm run build`
 
 Rollback:
 

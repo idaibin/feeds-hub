@@ -2,9 +2,9 @@
   "name": "feeds-hub",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@11.7.0",
   "type": "module",
   "scripts": {
+    "postinstall": "patch-package",
     "dev": "astro dev",
     "prebuild": "tsx scripts/vercel-db-bootstrap.ts",
     "build": "astro build",
@@ -28,11 +28,11 @@
     "@astrojs/vercel": "^11.0.2",
     "@modelcontextprotocol/sdk": "1.26.0",
     "@neondatabase/serverless": "^1.1.0",
-    "astro": "^7.0.4",
+    "astro": "^7.0.7",
     "drizzle-orm": "^0.45.2",
     "jose": "^6.2.3",
     "mcp-handler": "1.1.0",
-    "zod": "3.25.76"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
@@ -41,12 +41,16 @@
     "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",
     "drizzle-kit": "^0.31.10",
+    "patch-package": "^8.0.1",
     "pg": "^8.22.0",
     "tailwindcss": "^4.3.2",
     "tsx": "^4.23.0",
     "typescript": "^6.0.3",
-    "vite": "^8.1.2",
+    "vite": "8.1.4",
     "yaml": "^2.9.0"
+  },
+  "overrides": {
+    "vite": "8.1.4"
   },
   "engines": {
     "node": ">=22.12.0"

@@ -68,8 +68,9 @@ try {
   } else {
     for (const [script, operation] of steps) {
       if (operation === 'runtime-write-grants') commandEnv.FEED_READ_SOURCE = 'database';
-      const result = spawnSync('pnpm', [
+      const result = spawnSync('npm', [
         'exec',
+        '--',
         'tsx',
         script,
         ...getBootstrapArguments(operation, fingerprint, configuration),

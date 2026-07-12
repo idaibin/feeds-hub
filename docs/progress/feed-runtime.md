@@ -58,7 +58,7 @@ Task 6 提交修改：
 - Forward runner 执行前要求数据库存在确切 foundation schema 且 migration journal 只有 reviewed `0000`；执行后验证 `pg_trgm`、三张历史表、四个 delete/history trigger，以及 reviewed `0000 → 0001` journal。
 - Forward runner 不接受 migration 名称、SQL、文件、shell、down、delete 或 reset 输入；migration DDL 与 journal 仍在单一 Serializable transaction 内。
 - Production mutation guard 新增独立 `runtime-forward-migration` confirmation scope，并继续强制 24 小时内备份/恢复证据、Content 读取、writes false、MCP false。
-- Vercel 配置改为 `pnpm install --frozen-lockfile` 和 `pnpm run build`；移除可能覆盖 `@astrojs/vercel` Build Output 的 `outputDirectory`。使用官方 `git.deploymentEnabled` 的 `"**": false` + `"main": true` 覆盖含 `/` 的非 `main` 分支并阻止 Git push 创建自动 deployment；不再把 Ignored Build Step 描述为不创建 deployment。
+- Vercel 配置改为 `npm ci` 和 `npm run build`；移除可能覆盖 `@astrojs/vercel` Build Output 的 `outputDirectory`。使用官方 `git.deploymentEnabled` 的 `"**": false` + `"main": true` 覆盖含 `/` 的非 `main` 分支并阻止 Git push 创建自动 deployment；不再把 Ignored Build Step 描述为不创建 deployment。
 - README 保留两张架构图，更新为当前代码能力，并明确 Production 真实状态只能来自执行证据。
 - 新增 Production-only runbook，固定 `content → database → read-only MCP → writes`，每阶段有 stop gate、验证与回滚；明确不用 Preview，且执行时必须填写 change owner、rollback owner、change window 和 known-good deployment。
 - 明确保留 Markdown、`src/content/**`、`ContentFeedSource` 和 Neon 历史数据作为回滚/诊断来源。
@@ -78,32 +78,32 @@ Task 6 提交修改：
 
 父任务在当前 Task 4/5 代码上已实际执行：
 
-- `TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true volta run pnpm run test:integration`
-- `CI=true volta run pnpm run test:mcp`
-- `CI=true volta run pnpm run test`
-- `CI=true volta run pnpm run check`
-- `CI=true volta run pnpm run db:generate`
-- `CI=true volta run pnpm run db:check`
-- `CI=true volta run pnpm run build`
+- `TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true volta run npm run test:integration`
+- `CI=true volta run npm run test:mcp`
+- `CI=true volta run npm run test`
+- `CI=true volta run npm run check`
+- `CI=true volta run npm run db:generate`
+- `CI=true volta run npm run db:check`
+- `CI=true volta run npm run build`
 - `vercel pull --environment=production`（父任务；下载到 gitignored 本地文件，随后安全删除）
-- Task 3：`pnpm run test:e2e`（Content source；完整命令由父任务执行记录保存）
+- Task 3：`npm run test:e2e`（Content source；完整命令由父任务执行记录保存）
 
 Task 6 本轮执行：
 
-- `pnpm run test`（首次）
-- `CI=true pnpm install --frozen-lockfile`
-- `CI=true pnpm run test`（依赖恢复后复跑）
-- `CI=true pnpm run test:mcp`
-- `CI=true pnpm run content:import:dry`
-- `CI=true pnpm run db:generate`
-- `CI=true pnpm run db:check`
-- `CI=true pnpm run check`（首次）
-- `CI=true pnpm run test` 与 `CI=true pnpm run check`（类型修复后复跑）
-- `CI=true pnpm run build`
-- `CI=true pnpm run test && git diff --check`（最终复跑）
-- Task 6 review 修复后：`CI=true pnpm run test`、`CI=true pnpm run check`、`CI=true pnpm run build`、`git diff --check`
-- 最终 release review 定向修复：`pnpm run test`、`pnpm run check`、`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true pnpm run test:integration`、`CI=true pnpm run test`、`CI=true pnpm run check`、`CI=true pnpm run build`、`git diff --check`
-- 主代理最终串行验证：`CI=true pnpm install --frozen-lockfile --store-dir /private/tmp/pnpm-store`、`CI=true pnpm run test`、`CI=true pnpm run test:mcp`、`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true pnpm run test:integration`、`CI=true pnpm run test:e2e`、`CI=true pnpm run content:import:dry`、`CI=true pnpm run db:generate`、`CI=true pnpm run db:check`、`CI=true pnpm run check`、`CI=true pnpm run build`、`pnpm audit --prod --registry=https://registry.npmjs.org/`、`git diff --check`
+- `npm run test`（首次）
+- `CI=true npm ci`
+- `CI=true npm run test`（依赖恢复后复跑）
+- `CI=true npm run test:mcp`
+- `CI=true npm run content:import:dry`
+- `CI=true npm run db:generate`
+- `CI=true npm run db:check`
+- `CI=true npm run check`（首次）
+- `CI=true npm run test` 与 `CI=true npm run check`（类型修复后复跑）
+- `CI=true npm run build`
+- `CI=true npm run test && git diff --check`（最终复跑）
+- Task 6 review 修复后：`CI=true npm run test`、`CI=true npm run check`、`CI=true npm run build`、`git diff --check`
+- 最终 release review 定向修复：`npm run test`、`npm run check`、`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true npm run test:integration`、`CI=true npm run test`、`CI=true npm run check`、`CI=true npm run build`、`git diff --check`
+- 主代理最终串行验证：`CI=true npm ci`、`CI=true npm run test`、`CI=true npm run test:mcp`、`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true npm run test:integration`、`CI=true npm run test:e2e`、`CI=true npm run content:import:dry`、`CI=true npm run db:generate`、`CI=true npm run db:check`、`CI=true npm run check`、`CI=true npm run build`、`npm audit --prod --registry=https://registry.npmjs.org/`、`git diff --check`
 - Vercel 环境核对：`vercel env ls production`、`vercel env ls preview`；删除 Marketplace owner/direct 数据库变量后再次核对，并仅向 Production 写入三个安全开关。
 
 ## 命令真实结果
@@ -117,40 +117,40 @@ Task 6 本轮执行：
 - 父任务 `build`：通过；生成 Vercel server bundle。
 - 父任务 `vercel pull --environment=production`：通过；Production 环境曾下载到 gitignored 本地文件。只输出了变量名和值长度，未展示值；数据库凭据为不可读占位符，未用于连接或 mutation。包含短期 OIDC token 的本地文件随后已删除；未修改远端环境变量。
 - Task 3 Content-source e2e：3 passed、1 database case skipped；skip 原因是没有可安全使用的 Production database URL。Database parity 尚未执行。
-- 首次 `pnpm run test`：未进入测试；pnpm 因非 TTY 环境需要重建 `node_modules`，报 `ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY`。未连接数据库、未运行测试用例。
-- `CI=true pnpm install --frozen-lockfile`：通过；lockfile 无变化，复用本地 store 安装 497 packages，pnpm `11.7.0`。
-- `CI=true pnpm run test`：通过；50 tests、50 passed、0 failed。包含新增 foundation/forward 固定迁移选择、不可变 hash、destructive SQL 拒绝、journal 状态和 Production operation scope 测试。
-- `CI=true pnpm run test:mcp`：通过；8 tests、8 passed、0 failed。
-- `CI=true pnpm run content:import:dry`：通过；离线解析 234 feeds，234 insert、0 update、0 unchanged、0 conflict、0 invalid；29 组重复 `sourceUrl` 仅作信息报告，未比较数据库。
-- `CI=true pnpm run db:generate`：通过；识别 5 tables，`No schema changes, nothing to migrate`，未产生 drift 文件。
-- `CI=true pnpm run db:check`：通过；Drizzle journal/snapshot 一致，两个 migration 通过破坏性 SQL 检查，combined migration hash `38a653b70f50af03740f0d5edbc93f3fa5c4d3b2717148535a9976ece84b3b8c`。
-- 首次 `CI=true pnpm run check`：失败；`reviewed-migrations.ts` 的内部 spec 参数错误保留 `idx: 0` 字面类型，导致 reviewed `idx: 1` 在类型检查中被拒绝。未运行数据库或部署。
-- 类型修复后的 `CI=true pnpm run check`：通过；72 files，0 errors、0 warnings、0 hints。
-- `CI=true pnpm run build`：通过；Astro `output: static` / `mode: server`，`@astrojs/vercel` server bundle 与 `.vercel/output/static` 生成成功。
-- 最终 `CI=true pnpm run test`：通过；50/50。`git diff --check`：通过。
-- Task 6 review 修复后 `CI=true pnpm run test`：通过；51/51，新增 Vercel `git.deploymentEnabled` 配置回归，并覆盖两个 journal `when` 篡改拒绝。
-- Task 6 review 修复后 `CI=true pnpm run check`：通过；73 files，0 errors、0 warnings、0 hints。
-- Task 6 review 修复后 `CI=true pnpm run build`：通过；Vercel server bundle 与 static output 成功生成。
-- 最终 release review 首轮 `pnpm run test`：通过；51/51。随后同一命令链中的 `pnpm run check` 首次失败；测试 mock 把 `updatedAtMicros` 错放进 `Feed` 对象，1 个 TypeScript error，修正到数据库查询 row 后复跑通过。
+- 首次 `npm run test`：未进入测试；旧包管理器因非 TTY 环境需要重建 `node_modules` 而中止。未连接数据库、未运行测试用例。
+- `CI=true npm ci`：通过；lockfile 无变化，安装 497 packages。
+- `CI=true npm run test`：通过；50 tests、50 passed、0 failed。包含新增 foundation/forward 固定迁移选择、不可变 hash、destructive SQL 拒绝、journal 状态和 Production operation scope 测试。
+- `CI=true npm run test:mcp`：通过；8 tests、8 passed、0 failed。
+- `CI=true npm run content:import:dry`：通过；离线解析 234 feeds，234 insert、0 update、0 unchanged、0 conflict、0 invalid；29 组重复 `sourceUrl` 仅作信息报告，未比较数据库。
+- `CI=true npm run db:generate`：通过；识别 5 tables，`No schema changes, nothing to migrate`，未产生 drift 文件。
+- `CI=true npm run db:check`：通过；Drizzle journal/snapshot 一致，两个 migration 通过破坏性 SQL 检查，combined migration hash `38a653b70f50af03740f0d5edbc93f3fa5c4d3b2717148535a9976ece84b3b8c`。
+- 首次 `CI=true npm run check`：失败；`reviewed-migrations.ts` 的内部 spec 参数错误保留 `idx: 0` 字面类型，导致 reviewed `idx: 1` 在类型检查中被拒绝。未运行数据库或部署。
+- 类型修复后的 `CI=true npm run check`：通过；72 files，0 errors、0 warnings、0 hints。
+- `CI=true npm run build`：通过；Astro `output: static` / `mode: server`，`@astrojs/vercel` server bundle 与 `.vercel/output/static` 生成成功。
+- 最终 `CI=true npm run test`：通过；50/50。`git diff --check`：通过。
+- Task 6 review 修复后 `CI=true npm run test`：通过；51/51，新增 Vercel `git.deploymentEnabled` 配置回归，并覆盖两个 journal `when` 篡改拒绝。
+- Task 6 review 修复后 `CI=true npm run check`：通过；73 files，0 errors、0 warnings、0 hints。
+- Task 6 review 修复后 `CI=true npm run build`：通过；Vercel server bundle 与 static output 成功生成。
+- 最终 release review 首轮 `npm run test`：通过；51/51。随后同一命令链中的 `npm run check` 首次失败；测试 mock 把 `updatedAtMicros` 错放进 `Feed` 对象，1 个 TypeScript error，修正到数据库查询 row 后复跑通过。
 - 最终 release review 的真实 PostgreSQL `test:integration`：通过；13/13，连接明确隔离的本地 `feeds_hub_test`，新增用例固定同一毫秒内 `.123456` 与 `.123400` 两个 `updated_at`，验证 database cursor 两页均返回且不漏记录。
-- 最终复跑 `CI=true pnpm run test`：通过；51/51。
-- 最终复跑 `CI=true pnpm run check`：通过；73 files，0 errors、0 warnings、0 hints。
-- 最终复跑 `CI=true pnpm run build`：通过；Vercel server bundle 与 static output 成功生成。`git diff --check`：通过。
-- 主代理最终冻结安装首次未加 `CI=true`，因 pnpm 在非 TTY 下拒绝切换 store 而报 `ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY`；加 `CI=true` 后通过，lockfile 无变化。
-- 主代理首次并行执行 `test` / `test:mcp` / `check` 时，两个 Astro 进程同时重建 `.astro`，`test` 的独立 HTTP 用例因临时文件 rename 竞态失败；同批 `test:mcp` 8/8、`check` 77 files 0 diagnostics、`db:generate` / `db:check` / `content:import:dry` 均通过。改为串行后 `CI=true pnpm run test` 通过，55/55。
+- 最终复跑 `CI=true npm run test`：通过；51/51。
+- 最终复跑 `CI=true npm run check`：通过；73 files，0 errors、0 warnings、0 hints。
+- 最终复跑 `CI=true npm run build`：通过；Vercel server bundle 与 static output 成功生成。`git diff --check`：通过。
+- 主代理最终冻结安装首次未加 `CI=true`，旧包管理器因非 TTY 环境拒绝切换 store；加 `CI=true` 后通过，lockfile 无变化。
+- 主代理首次并行执行 `test` / `test:mcp` / `check` 时，两个 Astro 进程同时重建 `.astro`，`test` 的独立 HTTP 用例因临时文件 rename 竞态失败；同批 `test:mcp` 8/8、`check` 77 files 0 diagnostics、`db:generate` / `db:check` / `content:import:dry` 均通过。改为串行后 `CI=true npm run test` 通过，55/55。
 - 主代理最终 `test:integration`：通过，16/16，使用明确隔离的本地 PostgreSQL；包含 SQL 有界分页、stock/sports parity、微秒 cursor、Phase B/Phase D 权限矩阵与完整 API/MCP 生命周期。
 - 主代理最终 `test:e2e`：3 passed、1 database parity skipped；Content 页面、无效路由和超大页码 404 通过，database parity 仍因尚无最小权限 Production URL 跳过。
 - 主代理最终 `content:import:dry`：通过；234 insert、0 update/unchanged/conflict/invalid，29 组重复 `sourceUrl` 仅报告。
 - 主代理最终 `db:generate` / `db:check`：通过；无 schema drift，migration hash `38a653b70f50af03740f0d5edbc93f3fa5c4d3b2717148535a9976ece84b3b8c`。
 - 主代理最终 `check`：通过；77 files、0 diagnostics。`build`：通过；生成 Vercel server bundle。`git diff --check`：通过。
-- `pnpm audit --prod`：非零，报告 `@astrojs/vercel -> @vercel/routing-utils -> path-to-regexp@6.1.0` 的 1 个 high advisory。已复核当前生成路由不包含 advisory 要求的同 segment 多参数模式；上游当前依赖树仍未完全移除 6.1.0，作为供应链残余风险记录。
+- `npm audit --prod`：非零，报告 `@astrojs/vercel -> @vercel/routing-utils -> path-to-regexp@6.1.0` 的 1 个 high advisory。已复核当前生成路由不包含 advisory 要求的同 segment 多参数模式；上游当前依赖树仍未完全移除 6.1.0，作为供应链残余风险记录。
 - 最终独立 release review：无 blocker、无 Medium；定向 guard/migration/feed-source 测试 17/17 通过。
 
 ## 未执行验证及原因
 
-- Task 6 原实现轮未复跑 `pnpm run test:integration`；最终 release review 已在同一个明确隔离的本地测试数据库上复跑并通过 13/13，结果见上方。
-- `pnpm run content:import:dry -- --database`、`pnpm run content:verify`：需要经过审查的数据库身份；本轮不连接 Production。
-- `pnpm run db:migrate -- --apply ...`、`pnpm run db:migrate:forward -- --apply ...`、`pnpm run content:import -- --apply ...`、两个 grant runner：用户已授权 Production 执行，但仍缺少可登录的 Neon operator 会话、独立 `feeds_app_runtime` 凭据、数据库 fingerprint、可恢复备份和 fresh operation confirmation；在这些 fail-closed 前置条件完成前不执行。
+- Task 6 原实现轮未复跑 `npm run test:integration`；最终 release review 已在同一个明确隔离的本地测试数据库上复跑并通过 13/13，结果见上方。
+- `npm run content:import:dry -- --database`、`npm run content:verify`：需要经过审查的数据库身份；本轮不连接 Production。
+- `npm run db:migrate -- --apply ...`、`npm run db:migrate:forward -- --apply ...`、`npm run content:import -- --apply ...`、两个 grant runner：用户已授权 Production 执行，但仍缺少可登录的 Neon operator 会话、独立 `feeds_app_runtime` 凭据、数据库 fingerprint、可恢复备份和 fresh operation confirmation；在这些 fail-closed 前置条件完成前不执行。
 - Vercel Phase A Production deploy/canary：已执行并通过；Phase B/C/D 仍依赖上述数据库前置条件。
 - Vercel Preview：按任务边界明确禁止，不执行。
 
@@ -193,8 +193,8 @@ Task 6 本轮执行：
 - 新增固定 `db:grant:runtime-read` / `db:grant:runtime-write` runners。它们不接受 SQL、role、table、file 或 shell 输入；撤销 public/runtime table、sequence、schema CREATE、database CREATE/TEMP 权限并验证 role attributes、membership、ownership 和完整 effective privilege matrix。
 - Phase B 只授予 `feeds SELECT`。Phase D 只增加 `feeds SELECT/INSERT/UPDATE` 和三张 revision/audit/idempotency 表的 `SELECT/INSERT`；不授予 `feed_import_runs`、sequence、DDL、DELETE、TRUNCATE、REFERENCES 或 TRIGGER。
 - 修改/新增范围：`astro.config.mjs`、`package.json`、`src/db/client.ts`、`src/db/neon-feed-repository.ts`、`src/db/runtime-environment.ts`、`scripts/lib/production-guard.ts`、`scripts/lib/runtime-grants.ts`、`scripts/db-grant-runtime-read.ts`、`scripts/db-grant-runtime-write.ts`、`tests/production-guard.test.ts`、`tests/migration-runners.test.ts`、三份 runtime architecture/migration/operations 文档与本进度文档。
-- 实际验证：最终 `CI=true volta run pnpm run test` 通过，55/55；定向 `production-guard`/`migration-runners` 测试通过，11/11；`CI=true volta run pnpm run check` 通过，77 files、0 diagnostics；`CI=true volta run pnpm run build` 通过，生成 Vercel server bundle；`git diff --check` 通过。provider alias guard 收紧后的两次中间全量测试曾仅因测试期望错误文案的正则不匹配而各为 54/55，修正测试后已完成上述最终全量复跑。
-- 合并 SQL pagination 与权限真实数据库用例后：`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true volta run pnpm run test:integration` 通过，16/16；`CI=true volta run pnpm run check` 通过，77 files、0 diagnostics。
+- 实际验证：最终 `CI=true volta run npm run test` 通过，55/55；定向 `production-guard`/`migration-runners` 测试通过，11/11；`CI=true volta run npm run check` 通过，77 files、0 diagnostics；`CI=true volta run npm run build` 通过，生成 Vercel server bundle；`git diff --check` 通过。provider alias guard 收紧后的两次中间全量测试曾仅因测试期望错误文案的正则不匹配而各为 54/55，修正测试后已完成上述最终全量复跑。
+- 合并 SQL pagination 与权限真实数据库用例后：`TEST_DATABASE_URL='postgresql://feeds_hub_test:feeds_hub_test@127.0.0.1:55432/feeds_hub_test' FEED_DB_TARGET=test CI=true volta run npm run test:integration` 通过，16/16；`CI=true volta run npm run check` 通过，77 files、0 diagnostics。
 - 负向 build guard：以假 credential 设置 `VERCEL=1` 与 `DATABASE_URL_UNPOOLED` 后执行 build，Astro config 在加载阶段按预期非零退出并只报告 `DATABASE_URL_UNPOOLED`/通用 guard 错误，未连接数据库。
 - 未执行两个 grant runners、migration/import/verify 或任何 Vercel deploy：这些命令需要真实 Production identity、owner/change window、备份证据和 fresh operation confirmation；本轮未访问 Production。
 

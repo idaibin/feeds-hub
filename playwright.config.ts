@@ -14,7 +14,7 @@ const databaseDevCommand = [
   `rsync -a --exclude='.git' --exclude='.astro' --exclude='.env*' --exclude='.vercel' --exclude='dist' --exclude='node_modules' ./ '${databaseRoot}/'`,
   `ln -s '${process.cwd()}/node_modules' '${databaseRoot}/node_modules'`,
   `cd '${databaseRoot}'`,
-  'pnpm exec astro dev --host 127.0.0.1 --port 4402',
+  'npm exec -- astro dev --host 127.0.0.1 --port 4402',
 ].join(' && ');
 
 export default defineConfig({
@@ -27,7 +27,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: 'pnpm exec astro dev --host 127.0.0.1 --port 4401',
+      command: 'npm exec -- astro dev --host 127.0.0.1 --port 4401',
       url: 'http://127.0.0.1:4401/',
       reuseExistingServer: false,
       env: { ...sharedEnv, FEED_READ_SOURCE: 'content' },

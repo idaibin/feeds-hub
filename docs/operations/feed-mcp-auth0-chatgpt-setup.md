@@ -331,12 +331,12 @@ Production 不应继续保留：
 仓库命令：
 
 ```bash
-pnpm run test
-pnpm run test:mcp
-pnpm run test:integration
-pnpm run db:check
-pnpm run check
-pnpm run build
+npm run test
+npm run test:mcp
+npm run test:integration
+npm run db:check
+npm run check
+npm run build
 ```
 
 Integration 只能连接明确隔离的测试数据库，不能把 Production 当测试数据库。
