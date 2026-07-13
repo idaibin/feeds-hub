@@ -313,3 +313,109 @@ export async function applyImport(options: {
   if (!result[0]) throw new Error('Atomic import did not record a successful run');
   return result[0];
 }
+
+export async function applyRuntimeImport(options: {
+  sql: NeonQueryFunction<false, false>;
+  feeds: NormalizedFeed[];
+  plan: ImportPlan;
+}) {
+  const entryBySlug = new Map(options.plan.entries.map((entry) => [entry.slug, entry]));
+  const input = options.feeds.map((feed) => {
+    const planEntry = entryBySlug.get(feed.slug);
+    if (!planEntry) throw new Error(`Missing plan entry for ${feed.slug}`);
+    return {
+      action: planEntry.action,
+      expectedVersion: planEntry.expectedVersion,
+      expectedContentHash: planEntry.expectedContentHash,
+      slug: feed.slug,
+      title: feed.title,
+      subtitle: feed.subtitle,
+      category: feed.category,
+      kind: feed.kind,
+      topic: feed.topic,
+      date: feed.date,
+      eventAt: feed.eventAt,
+      eventKey: feed.eventKey,
+      cover: feed.cover,
+      coverStatus: feed.coverStatus,
+      tags: feed.tags,
+      summary: feed.summary,
+      source: feed.source,
+      sourceUrl: feed.sourceUrl,
+      body: feed.body,
+      priority: feed.priority,
+      status: feed.status,
+      publishedAt: feed.status === 'published' ? feed.date : null,
+      contentHash: feed.contentHash,
+    };
+  });
+
+  const result = await options.sql`
+    with input as (
+      select *
+      from jsonb_to_recordset(${JSON.stringify(input)}::jsonb) as item(
+        action text, "expectedVersion" integer, "expectedContentHash" text,
+        slug text, title text, subtitle text, category text, kind text, topic text,
+        date timestamptz, "eventAt" timestamptz, "eventKey" text, cover text,
+        "coverStatus" text, tags jsonb, summary text, source text, "sourceUrl" text,
+        body text, priority integer, status text, "publishedAt" timestamptz, "contentHash" text
+      )
+    ),
+    unexpected_rows as (
+      select feed.slug
+      from feeds as feed
+      where not exists (
+        select 1 from input as item
+        where item.slug = feed.slug and item."eventKey" = feed.event_key
+      )
+    ),
+    unchanged_rows as (
+      select feed.slug
+      from feeds as feed
+      join input as item on feed.slug = item.slug and feed.event_key = item."eventKey"
+      where item.action = 'unchanged'
+        and feed.origin = 'markdown'
+        and feed.status::text = item.status
+        and feed.version = item."expectedVersion"
+        and feed.content_hash = item."expectedContentHash"
+    ),
+    inserted_rows as (
+      insert into feeds (
+        slug, title, subtitle, category, kind, topic, date, event_at, event_key,
+        cover, cover_status, tags, summary, source, source_url, body, priority,
+        status, version, origin, published_at, archived_at, content_hash
+      )
+      select item.slug, item.title, item.subtitle, item.category::feed_category,
+        item.kind::feed_kind, item.topic, item.date, item."eventAt", item."eventKey",
+        item.cover, item."coverStatus"::feed_cover_status, item.tags, item.summary,
+        item.source, item."sourceUrl", item.body, item.priority, item.status::feed_status,
+        1, 'markdown'::feed_origin, item."publishedAt", null, item."contentHash"
+      from input as item where item.action = 'insert'
+      returning slug
+    ),
+    actual as (
+      select (select count(*)::integer from inserted_rows) as inserted,
+        0::integer as updated,
+        (select count(*)::integer from unchanged_rows) as unchanged,
+        (select count(*)::integer from unexpected_rows) as unexpected
+    ),
+    guarded as (
+      select *,
+        (case
+          when inserted = ${options.plan.counts.insert}
+            and updated = 0
+            and unchanged = ${options.plan.counts.unchanged}
+            and unexpected = 0
+          then '1'
+          else unexpected::text || ' import-count-mismatch'
+        end)::integer as verified
+      from actual
+    )
+    select inserted, updated, unchanged, unexpected
+    from guarded
+    where verified = 1
+  ` as Array<{ inserted: number; updated: number; unchanged: number; unexpected: number }>;
+
+  if (!result[0]) throw new Error('Atomic runtime import counts did not match the reviewed plan');
+  return result[0];
+}

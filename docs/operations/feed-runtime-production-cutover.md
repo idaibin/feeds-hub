@@ -128,6 +128,17 @@ npm run content:verify
 
 Do not repeat the import unless a reviewed plan and a new operation-scoped confirmation authorize that exact idempotent run.
 
+When Production exposes only `FEED_RUNTIME_DATABASE_URL` and the reviewed write grants are already active, the import may instead use the fixed one-time Vercel runtime importer. This exception is only for an already-migrated database and does not reintroduce owner credentials. Before the deployment:
+
+1. Record a fresh, usable Neon backup/restore point and its retention deadline. Stop if the recovery entry cannot be verified.
+2. Set `FEED_READ_SOURCE=content`, `FEED_WRITES_ENABLED=false`, `FEED_MCP_ENABLED=false`, `FEED_CONTENT_IMPORT_ENABLED=true`, `FEED_CONTENT_IMPORT_MODE=plan` and the exact `FEED_CONTENT_IMPORT_SOURCE_COMMIT`. Deploy only the exact reviewed `main` commit. The read-only plan verifies schema, grants, identity and the database comparison, then reports the redacted runtime-only fingerprint and counts without exporting the URL.
+3. Stop unless the initialization plan contains only insert or unchanged rows, with no update, invalid, conflict or unexpected rows. Record a fresh, usable Neon backup/restore point and its retention deadline. Stop if the recovery entry cannot be verified.
+4. Change only `FEED_CONTENT_IMPORT_MODE=apply` and add the plan fingerprint plus the four `FEED_CONTENT_IMPORT_BACKUP_*` / recovery evidence values. Redeploy the same commit. `prebuild` repeats every plan check and performs the deterministic plan in one database statement. It accepts no SQL, file path, role, shell command, delete, truncate or reset input.
+5. Require the build log to report matching plan, result and post-verification counts without exposing credentials. Stop on any mismatch.
+6. Remove every `FEED_CONTENT_IMPORT_*` value, restore `FEED_READ_SOURCE=database`, `FEED_WRITES_ENABLED=true`, `FEED_MCP_ENABLED=true`, and redeploy the same reviewed commit. Confirm the one-time importer is disabled by absence of its switch.
+
+This runtime-only path never updates an existing Feed and does not grant `feeds_app_runtime` access to `feed_import_runs`; the exact source commit, source tree hash, plan counts, database fingerprint and verification counts are retained in the Vercel Production build log and the execution record. Re-running still requires a new reviewed deployment and fresh backup evidence.
+
 ### Exact runtime forward migration
 
 Run only after the database journal contains exactly reviewed `0000` and before `0001` has been applied. The runner executes only reviewed entry `1` / `0001_swift_ben_parker`; it accepts no migration name, SQL, file, shell, down, delete, or reset input.

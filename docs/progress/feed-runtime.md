@@ -206,3 +206,16 @@ Task 6 本轮执行：
 - Production 已切换 `FEED_READ_SOURCE=database`、`FEED_WRITES_ENABLED=true`、`FEED_MCP_ENABLED=true`，OAuth protected-resource metadata 公布 `feeds:read`、`feeds:write`、`feeds:publish`、`feeds:archive`。
 - Live canary：站点首页 200；bootstrap 状态文件 404；无 token 的规范 MCP initialize 返回 401，并通过 `WWW-Authenticate` 指向 protected-resource metadata 和四个 scopes。
 - 未执行携带最终 ChatGPT access token 的 Production mutation canary；ChatGPT Pro 实际只展示三个 read/fetch tools。服务端七工具与数据库写入已就绪，但该客户端套餐不能验证或调用 write/modify tools。
+
+## 2026-07-13 Production Feed 内容初始化（执行中）
+
+- 启动时重新执行 `git fetch origin --prune`；本地 `main`、`origin/main` 均为 `f69aebdef38eeaf362f0c2212775ca31c54570a3`，初始工作树干净。
+- 创建任务分支 `feat/feed-production-content-import`，未创建 PR。
+- Vercel linked project 核对为 `abin-projects/feeds-hub` / `prj_C4QvpfQK78xLfHeOtJn7pLjKn4Hn`。Production 环境变量名只包含低权限 `FEED_RUNTIME_DATABASE_URL`、三个 runtime 开关和 OAuth/MCP 配置；未读取或输出其值。
+- 当前 alias `https://feeds.idaibin.dev` 指向 READY deployment `dpl_gCqY5BpHHS9JwERtrTZ6hwPRzHMp`，source commit `06c9ee5c6903ecda4828280adb3aa5e8d0a02e9b`。最新 main deployment `dpl_FZUsKq4PyYz3ZJKh45X6EP42UHLj`（`f69aebd`）因 npm lockfile 缺少 Linux/跨平台 optional packages 而在 `npm ci` 失败，未接管 alias。
+- 新增固定 one-time Vercel runtime importer：`plan` 模式先在不导出 URL 的情况下只读产生 database comparison 和 redacted fingerprint；`apply` 模式只在 Production、精确 source commit、Content reads、writes/MCP disabled、24 小时内备份证据和同一 fingerprint 全部成立时启用。两种模式都只读取 `src/content`，不接受 SQL、路径、role、shell、delete、truncate 或 reset 输入。
+- importer 在写入前验证 runtime forward schema、write grants、runtime identity 和完整计划；初始化只允许 insert/unchanged，任何 update/conflict/invalid/unexpected 都停止。计数在同一数据库语句中断言，失败会回滚整条语句；随后逐字段执行数据库/Markdown parity 和 published/draft/archived 计数验证。
+- `feeds_app_runtime` 继续无权访问 `feed_import_runs`；一次性导入的 source commit、source tree hash、plan/result/verification counts 和 redacted runtime-only fingerprint 由 Production build log 与本执行记录审计，不扩大长期 runtime grants。
+- `npm install --package-lock-only --ignore-scripts --allow-remote=all --registry=https://registry.npmjs.org/` 已刷新跨平台 lockfile；`CI=true npm ci --allow-remote=all --registry=https://registry.npmjs.org/` 成功安装 505 packages。npm audit 当前报告 4 moderate、3 high，尚未自动修改依赖。
+- 已执行 `CI=true npm run test`：70/70 通过；`CI=true npm run test:mcp`：13/13 通过；`TEST_DATABASE_URL=... FEED_DB_TARGET=test CI=true npm run test:integration`：16/16 通过；`CI=true npm run test:e2e`：Content source 3 passed、database parity 1 skipped；`CI=true npm run db:generate`：无 schema changes；`CI=true npm run db:check`：通过，migration hash `38a653b70f50af03740f0d5edbc93f3fa5c4d3b2717148535a9976ece84b3b8c`；`CI=true npm run check`：83 files、0 errors、0 warnings、5 hints；`CI=true npm run build`：通过；`CI=true npm run content:import:dry`：234 insert、0 update、0 unchanged、0 conflict、0 invalid；`git diff --check`：通过。
+- Production mutation 尚未执行：Neon Console 当前没有可复用登录会话，无法取得并核验真实 backup/restore identifier、创建时间、保留期限和 recovery entry。按 runbook stop gate 保持 fail closed；以上代码和结果不代表 Production 已导入。
