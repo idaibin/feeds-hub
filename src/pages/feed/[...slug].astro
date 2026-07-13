@@ -16,7 +16,7 @@ if (!/^[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?(?:\/[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?)*$/
 }
 const feed = await (await getFeedSource()).getBySlug(slug);
 if (!feed) return new Response(null, { status: 404, statusText: "Not found" });
-const title = getDisplayTitle(feed.title, feed.source);
+const title = getDisplayTitle(feed.title, feed.source, feed.category);
 const subtitle = getDisplaySubtitle(feed.subtitle, feed.source, [
     title,
 ]);
@@ -25,6 +25,7 @@ const summary = getDisplaySummary(
     title,
     feed.source,
     [subtitle],
+    feed.category,
 );
 const metaSummary = summary || subtitle;
 ---

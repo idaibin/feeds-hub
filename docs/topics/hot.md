@@ -39,8 +39,8 @@ Latest public hot topics from Weibo, X, and V2EX. One feed may contain multiple 
 - Write no more than 5 `hot` feeds per Beijing calendar day.
 - Prefer 1 concise hourly roundup when multiple low-depth topics are active.
 - `eventKey` format: `hot:<yyyy-mm-dd>:<hour>:<slug>` for a single topic, or `hot:<yyyy-mm-dd>:<hour>:roundup` for a roundup.
-- Title should name the hottest topic or write `热点简报：<main topic>` for a roundup.
-- Summary writes what changed in the last hour, not a platform slogan.
+- Title directly names the hottest topic; do not add `热点简报` or repeat the category label.
+- Summary leads with the concrete discussion focus or what changed; monitoring windows, platform boilerplate, and verification disclaimers belong in the body.
 - Body must separate confirmed facts from platform reaction.
 - Weibo/X/V2EX can identify that a topic is hot, but cannot alone confirm hard facts. For casualties, finance, health, legal, policy, company claims, or public safety, require official statements or authoritative media before writing as fact.
 - Do not embed screenshots as evidence. Link to platform topic pages or original posts when available.

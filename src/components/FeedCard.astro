@@ -13,13 +13,14 @@ const { feed, mode = 'list' } = Astro.props;
 const isDetail = mode === 'detail';
 const category = getCategoryMeta(feed.category);
 const href = `/feed/${feed.slug}/`;
-const title = getDisplayTitle(feed.title, feed.source);
+const title = getDisplayTitle(feed.title, feed.source, feed.category);
 const subtitle = isDetail ? getDisplaySubtitle(feed.subtitle, feed.source, [title]) : '';
 const summary = getDisplaySummary(
   feed.summary,
   title,
   feed.source,
-  subtitle ? [subtitle] : []
+  subtitle ? [subtitle] : [],
+  feed.category
 );
 const detailNote = isDetail ? [subtitle, summary].filter(Boolean).join('；') : '';
 ---

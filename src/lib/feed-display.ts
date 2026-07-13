@@ -1,3 +1,5 @@
+import type { FeedCategory } from '@/domain/feed';
+
 const sourceVerbs = [
   '报道称',
   '报道',
@@ -170,17 +172,40 @@ export function getDisplayBody(body = '', source?: string) {
     .filter(Boolean);
 }
 
-export function getDisplayTitle(title: string, source?: string) {
-  return stripSourceMentions(title, source);
+function stripHotTitleFraming(value: string) {
+  return value.replace(/^热点简报[：:]\s*/, '').trim();
+}
+
+function stripHotSummaryFraming(value: string) {
+  return value
+    .replace(/^(?:V2EX|微博|X)[^，。；]{0,48}(?:继续|仍)?(?:集中出现|显示)[，,:：\s]*/, '')
+    .replace(/；\s*本条(?:只|仅)[^。]*。?$/, '。')
+    .replace(/^本条(?:只|仅)[^。]*。?$/, '')
+    .replace(/讨论。$/, '成为讨论焦点。')
+    .trim();
+}
+
+export function getDisplayTitle(title: string, source?: string, category?: FeedCategory) {
+  const text = stripSourceMentions(title, source);
+  return category === 'hot' ? stripHotTitleFraming(text) : text;
 }
 
 function isRedundantAgainstAny(value: string, compareWith: string[]) {
   return compareWith.some((item) => item && isRedundantDisplayText(value, item));
 }
 
-export function getDisplaySummary(summary: string, title: string, source?: string, compareWith: string[] = []) {
+export function getDisplaySummary(
+  summary: string,
+  title: string,
+  source?: string,
+  compareWith: string[] = [],
+  category?: FeedCategory
+) {
   let text = stripSourceMentions(summary, source);
-  const normalizedTitle = compactText(getDisplayTitle(title, source));
+  if (category === 'hot') {
+    text = stripHotSummaryFraming(text);
+  }
+  const normalizedTitle = compactText(getDisplayTitle(title, source, category));
 
   if (normalizedTitle && text.startsWith(normalizedTitle)) {
     text = text.slice(normalizedTitle.length).replace(/^[，。,:：\s-]+/, '');

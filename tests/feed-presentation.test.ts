@@ -106,3 +106,18 @@ test('keeps the pagination card payload exactly keyed by the public slug', () =>
     eventAtLabel: '2026-07-10 10:03',
   });
 });
+
+test('shows hot cards without roundup framing or monitoring disclaimers', () => {
+  const value = feed({
+    slug: 'hot/v2ex-gpt56-codex-roundup',
+    category: 'hot',
+    title: '热点简报：V2EX 讨论 GPT-5.6 与 Codex',
+    summary: 'V2EX 热榜和最新主题在 9 点窗口集中出现 GPT-5.6、Codex memories、config.toml、账号额度和第三方渠道讨论；本条仅确认社区热度。',
+  });
+
+  assert.equal(toFeedCardData(value).title, 'V2EX 讨论 GPT-5.6 与 Codex');
+  assert.equal(
+    toFeedCardData(value).summary,
+    'GPT-5.6、Codex memories、config.toml、账号额度和第三方渠道成为讨论焦点。'
+  );
+});

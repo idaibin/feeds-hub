@@ -15,7 +15,7 @@ export interface FeedCardData {
 
 export function toFeedCardData(feed: Feed): FeedCardData {
   const category = getCategoryMeta(feed.category);
-  const title = getDisplayTitle(feed.title, feed.source);
+  const title = getDisplayTitle(feed.title, feed.source, feed.category);
 
   return {
     id: feed.slug,
@@ -23,7 +23,7 @@ export function toFeedCardData(feed: Feed): FeedCardData {
     category: feed.category,
     categoryShortName: category.shortName,
     title,
-    summary: getDisplaySummary(feed.summary, title, feed.source),
+    summary: getDisplaySummary(feed.summary, title, feed.source, [], feed.category),
     eventAt: feed.eventAt.toISOString(),
     eventAtLabel: formatDate(feed.eventAt),
   };
