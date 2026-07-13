@@ -21,9 +21,9 @@ Feeds Hub 是移动优先的信息流。卡片只展示文本信息；`cover` �
 
 ## 详情
 
-- 详情页保留 title、subtitle、summary、正文、来源。
+- 详情页保留 title、subtitle、summary 和正文，不展示来源链接。
 - subtitle/summary 可作为内容框展示，但不重复“主题/重点”等机械标签。
-- 来源放右下角；没有确定中文官方/权威入口时，只显示原始来源。
+- Content 层继续保留 `source` 和 `sourceUrl`，但页面不渲染。
 - 正文自然流动，footer 使用页面自然流，不制造额外滚动容器。
 
 ## 布局

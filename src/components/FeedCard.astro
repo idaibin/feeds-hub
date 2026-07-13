@@ -22,8 +22,6 @@ const summary = getDisplaySummary(
   subtitle ? [subtitle] : []
 );
 const detailNote = isDetail ? [subtitle, summary].filter(Boolean).join('；') : '';
-const chineseAuthorityUrl = feed.category === 'lol' ? 'https://lolesports.com/zh-TW' : '';
-const sourceHref = chineseAuthorityUrl || feed.sourceUrl;
 ---
 <article class:list={['feed-card', `category-${feed.category}`, { 'is-detail': isDetail }]} data-feed-card>
   {
@@ -48,17 +46,6 @@ const sourceHref = chineseAuthorityUrl || feed.sourceUrl;
             subtitle={subtitle}
             summary={summary}
           />
-          <p class="source-line">
-            {sourceHref && (
-              <a class="source-original-link" href={sourceHref} target="_blank" rel="noreferrer">
-                <span>{feed.source ?? '原文'}</span>
-                <svg aria-hidden="true" viewBox="0 0 24 24">
-                  <path d="M7 17L17 7" />
-                  <path d="M9 7h8v8" />
-                </svg>
-              </a>
-            )}
-          </p>
         </div>
       </div>
     ) : (
@@ -313,8 +300,7 @@ const sourceHref = chineseAuthorityUrl || feed.sourceUrl;
     margin-block: 4px;
   }
 
-  .feed-card.is-detail .markdown-body a,
-  .feed-card.is-detail .source-line a {
+  .feed-card.is-detail .markdown-body a {
     color: var(--primary-active);
     text-decoration: none;
   }
@@ -331,41 +317,6 @@ const sourceHref = chineseAuthorityUrl || feed.sourceUrl;
     font-weight: 800;
   }
 
-  .feed-card.is-detail .source-line {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    width: max-content;
-    max-width: 100%;
-    margin: 4px 0 0 auto;
-    color: var(--muted);
-    font-size: 12px;
-    line-height: 1.5;
-  }
-
-  .feed-card.is-detail .source-line a {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .feed-card.is-detail .source-original-link {
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  .feed-card.is-detail .source-line svg {
-    width: 12px;
-    height: 12px;
-    flex: 0 0 auto;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
   @media (max-width: 640px) {
     .feed-card .card-link {
       grid-template-columns: minmax(0, 1fr);
@@ -379,7 +330,6 @@ const sourceHref = chineseAuthorityUrl || feed.sourceUrl;
     .feed-card.is-detail .card-link { padding: 10px; }
     .feed-card.is-detail .detail-note { font-size: 15px; }
     .feed-card.is-detail .category-chip { font-size: 16px; }
-    .feed-card.is-detail .source-line { gap: 10px; }
     .feed-card .feed-meta { gap: 5px 8px; margin-bottom: 6px; }
   }
 </style>
