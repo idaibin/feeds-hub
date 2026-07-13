@@ -4,6 +4,7 @@ import {
   getRuntimeImportFingerprint,
   resolveVercelFeedImportConfiguration,
 } from '../scripts/lib/vercel-feed-import';
+import { readFile } from 'node:fs/promises';
 
 const runtimeUrl = 'postgresql://feeds_app_runtime:secret@ep-example-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require';
 const sourceCommit = 'a'.repeat(40);
@@ -55,4 +56,11 @@ test('one-time Feed import rejects unsafe posture and database identity', () => 
     ...enabledEnv(),
     FEED_RUNTIME_DATABASE_URL: runtimeUrl.replace('feeds_app_runtime', 'neondb_owner'),
   }, now), /feeds_app_runtime/);
+});
+
+test('runtime importer verifies hidden schema objects through catalogs without requiring table grants', async () => {
+  const source = await readFile('scripts/vercel-feed-import.ts', 'utf8');
+  assert.match(source, /to_regclass\('public\.feed_import_runs'\)/);
+  assert.match(source, /from pg_trigger/);
+  assert.doesNotMatch(source, /assertRuntimeForwardSchema/);
 });

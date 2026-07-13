@@ -2,7 +2,7 @@ import { neon } from '@neondatabase/serverless';
 import { applyRuntimeImport, fetchDatabaseFeeds, fetchExistingFeedIdentities } from './lib/database-feed';
 import { buildImportPlan, loadContentBatch, stableJson } from './lib/feed-content';
 import { verifyFeedDatabase } from './lib/feed-verify';
-import { assertRuntimeForwardSchema, sanitizeDatabaseError } from './lib/production-guard';
+import { sanitizeDatabaseError } from './lib/production-guard';
 import { assertRuntimeGrants } from './lib/runtime-grants';
 import { resolveVercelFeedImportConfiguration } from './lib/vercel-feed-import';
 
@@ -11,7 +11,33 @@ if (!configuration) process.exit(0);
 
 const sql = neon(configuration.runtimeUrl);
 try {
-  await assertRuntimeForwardSchema(sql);
+  const schema = await sql`
+    select
+      to_regclass('public.feeds')::text as feeds,
+      to_regclass('public.feed_import_runs')::text as import_runs,
+      to_regclass('public.feed_revisions')::text as revisions,
+      to_regclass('public.feed_audit_events')::text as audit_events,
+      to_regclass('public.feed_idempotency_keys')::text as idempotency_keys,
+      exists (select 1 from pg_extension where extname = 'pg_trgm') as pg_trgm,
+      (select count(*)::integer from pg_trigger
+        where not tgisinternal and tgname in (
+          'feeds_reject_delete', 'feed_revisions_reject_mutation',
+          'feed_audit_events_reject_mutation', 'feed_idempotency_keys_reject_mutation'
+        )) as protection_triggers
+  ` as Array<Record<string, string | boolean | number | null>>;
+  const verifiedSchema = schema[0];
+  if (
+    !verifiedSchema
+    || verifiedSchema.feeds !== 'feeds'
+    || verifiedSchema.import_runs !== 'feed_import_runs'
+    || verifiedSchema.revisions !== 'feed_revisions'
+    || verifiedSchema.audit_events !== 'feed_audit_events'
+    || verifiedSchema.idempotency_keys !== 'feed_idempotency_keys'
+    || verifiedSchema.pg_trgm !== true
+    || verifiedSchema.protection_triggers !== 4
+  ) {
+    throw new Error('Runtime import schema verification failed');
+  }
   await assertRuntimeGrants(sql, 'write');
   const identity = await sql`select current_user as role` as Array<{ role: string }>;
   if (identity[0]?.role !== 'feeds_app_runtime') throw new Error('Runtime import database role mismatch');
