@@ -11,6 +11,11 @@
 
 main 内容流程只写 Markdown。
 
+已批准但尚未实现的 knowledge candidate 是主内容流程完成后的独立显式交付，合同见
+`docs/architecture/knowledge-candidate-handoff.md`。它不能自动写入 AI Handbook、
+不能改变 feed 的核验状态，也不能直接触发 Blog 发布。未启用 producer 时，本任务
+不得生成或上报 candidate 成功。
+
 ## 执行顺序
 
 1. 从最新 `origin/main` 开始。

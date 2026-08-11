@@ -26,6 +26,7 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 | `docs/architecture/feed-runtime.md` | 运行时架构、任务边界和依赖顺序 |
 | `docs/architecture/feed-runtime-contracts.md` | Feed 领域模型、API 与 MCP 契约 |
 | `docs/architecture/feed-runtime-migration.md` | 数据迁移、切换与回滚方案 |
+| `docs/architecture/knowledge-candidate-handoff.md` | Feed 到 AI Handbook 的候选交接边界（目标规范，尚未实现） |
 | `docs/operations/feed-runtime-production-cutover.md` | Production-only 上线、验证与回滚 runbook |
 | `docs/operations/feed-mcp-oauth.md` | Remote MCP OAuth、Vercel 与 ChatGPT Dev Mode 配置 |
 | `docs/operations/feed-mcp-auth0-chatgpt-setup.md` | MCP 设计、开发、Auth0、Vercel、Neon、验证与踩坑完整复盘 |
@@ -61,6 +62,8 @@ topics -> sources -> dedupe -> kind -> markdown -> validation
 - 1 feed = 1 event。
 - 信息准确、可核验、去重表达优先。
 - `cover` / `coverStatus` 只作 schema 兼容；`coverStatus` 固定为 `pending`。
+- 普通 feed 不自动进入 AI Handbook 或 Blog；未来 candidate 交接必须是显式、幂等、
+  可审计的独立步骤。
 
 ## 运行时架构
 
