@@ -134,6 +134,8 @@ const currentItem =
         --primary-strong: #034a9a;
         --signal: #069fb4;
         --signal-soft: #5ccddc;
+        --error: #b42318;
+        --error-strong: #8f1d14;
         --amber: #f59e0b;
         --feed-card-min-width: 480px;
         --feed-card-gap: 16px;
@@ -496,6 +498,78 @@ const currentItem =
         width: 100%;
         height: 1px;
     }
+    .feed-load-more {
+        display: block;
+        max-width: 100%;
+        min-height: 32px;
+        margin: 8px auto 0;
+        padding-block: 4px;
+        padding-inline: 14px;
+        border: 1px solid rgba(5, 105, 237, 0.24);
+        border-radius: 7px;
+        color: var(--primary-strong);
+        background: rgba(255, 255, 255, 0.9);
+        font: inherit;
+        font-size: 12px;
+        line-height: 1.25;
+        cursor: pointer;
+    }
+    .feed-load-more[hidden] {
+        display: none;
+    }
+    .feed-load-more:hover {
+        border-color: rgba(5, 105, 237, 0.42);
+        background: #fff;
+    }
+    .feed-load-more:focus-visible {
+        outline: 2px solid #0569ed;
+        outline-offset: 2px;
+    }
+    .feed-load-more:disabled {
+        cursor: wait;
+        opacity: 0.65;
+    }
+    .feed-error-state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px 10px;
+        width: 100%;
+        margin: 8px 0 0;
+        padding-inline: 4px;
+        color: var(--error);
+        font-size: 12px;
+        line-height: 1.5;
+        text-align: center;
+    }
+    .feed-error-state[hidden] {
+        display: none;
+    }
+    .feed-retry-button {
+        min-height: 32px;
+        padding-block: 4px;
+        padding-inline: 12px;
+        border: 1px solid rgba(180, 35, 24, 0.28);
+        border-radius: 7px;
+        color: var(--error-strong);
+        background: rgba(255, 255, 255, 0.9);
+        font: inherit;
+        line-height: 1.25;
+        cursor: pointer;
+    }
+    .feed-retry-button:hover {
+        border-color: rgba(180, 35, 24, 0.46);
+        background: #fff;
+    }
+    .feed-retry-button:focus-visible {
+        outline: 2px solid #0569ed;
+        outline-offset: 2px;
+    }
+    .feed-retry-button:disabled {
+        cursor: wait;
+        opacity: 0.65;
+    }
     .feed-end-state {
         width: 100%;
         margin: 8px 0 0;
@@ -503,6 +577,11 @@ const currentItem =
         font-size: 12px;
         line-height: 1.5;
         text-align: center;
+    }
+    .feed-end-state:focus-visible {
+        border-radius: 4px;
+        outline: 2px solid #0569ed;
+        outline-offset: 2px;
     }
     .empty-state {
         padding-block: 42px;

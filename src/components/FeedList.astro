@@ -29,7 +29,12 @@ const canLoadMore = hasMore ?? entries.length > pageSize;
         {initialEntries.map((entry) => <FeedCard feed={entry} />)}
       </div>
       <div class="feed-load-sentinel" data-feed-sentinel hidden={!canLoadMore} aria-hidden="true"></div>
-      <p class="feed-end-state" data-feed-end hidden={canLoadMore}>没有更多了</p>
+      <button class="feed-load-more" data-feed-load-more type="button" hidden>加载更多</button>
+      <div class="feed-error-state" data-feed-error role="alert" hidden>
+        <span>加载失败，请重试。</span>
+        <button class="feed-retry-button" data-feed-retry type="button">重试</button>
+      </div>
+      <p class="feed-end-state" data-feed-end tabindex="-1" hidden={canLoadMore}>没有更多了</p>
     </>
   ) : (
     <div class="empty-state">{emptyLabel}</div>
@@ -54,22 +59,30 @@ const canLoadMore = hasMore ?? entries.length > pageSize;
 
       const list = section.querySelector('[data-feed-list]');
       const sentinel = section.querySelector('[data-feed-sentinel]');
+      const loadMoreButton = section.querySelector('[data-feed-load-more]');
+      const errorState = section.querySelector('[data-feed-error]');
+      const retryButton = section.querySelector('[data-feed-retry]');
       const endState = section.querySelector('[data-feed-end]');
       if (!(list instanceof HTMLElement) || !(sentinel instanceof HTMLElement)) return;
+      if (!(loadMoreButton instanceof HTMLButtonElement)) return;
+      if (!(errorState instanceof HTMLElement) || !(retryButton instanceof HTMLButtonElement)) return;
       if (!(endState instanceof HTMLElement)) return;
 
       section.dataset.feedInitialized = 'true';
 
-      const pageSize = Number(list.dataset.feedPageSize) || 10;
       const source = list.dataset.feedSource;
       if (!source) return;
 
       let nextPage = Number(list.dataset.feedNextPage) || 2;
       let isLoading = false;
       let isComplete = sentinel.hidden;
+      let hasLoadError = false;
+      const supportsIntersectionObserver = typeof window.IntersectionObserver === 'function';
 
       if (isComplete) {
         sentinel.hidden = true;
+        loadMoreButton.hidden = true;
+        errorState.hidden = true;
         endState.hidden = false;
         return;
       }
@@ -117,39 +130,130 @@ const canLoadMore = hasMore ?? entries.length > pageSize;
         return article;
       };
 
-      const loadNextBatch = async () => {
-        if (isLoading || isComplete) return;
+      const isFeedCardPayload = (item: unknown): item is FeedCardPayload => {
+        if (!item || typeof item !== 'object' || Array.isArray(item)) return false;
+        const candidate = item as Partial<FeedCardPayload>;
+        return typeof candidate.href === 'string'
+          && candidate.href.length > 0
+          && typeof candidate.category === 'string'
+          && typeof candidate.categoryShortName === 'string'
+          && typeof candidate.title === 'string'
+          && typeof candidate.summary === 'string'
+          && typeof candidate.eventAt === 'string'
+          && typeof candidate.eventAtLabel === 'string';
+      };
+
+      const setLoadingState = (loading: boolean) => {
+        retryButton.disabled = loading;
+        retryButton.textContent = loading ? '加载中…' : '重试';
+        retryButton.setAttribute('aria-busy', String(loading));
+        loadMoreButton.disabled = loading;
+        loadMoreButton.textContent = loading ? '加载中…' : '加载更多';
+        loadMoreButton.setAttribute('aria-busy', String(loading));
+        errorState.setAttribute('aria-busy', String(loading));
+      };
+
+      const existingHrefs = () => new Set(
+        Array.from(list.querySelectorAll('a.card-link'))
+          .map((link) => link.getAttribute('href'))
+          .filter((href): href is string => Boolean(href)),
+      );
+
+      let observer: IntersectionObserver | undefined;
+
+      const loadNextBatch = async (trigger: 'observer' | 'load-more' | 'retry' = 'observer') => {
+        if (isLoading || isComplete || (hasLoadError && trigger !== 'retry')) return;
         isLoading = true;
+        const retrying = trigger === 'retry';
+        const retryHadFocus = document.activeElement === retryButton;
+        const loadMoreHadFocus = document.activeElement === loadMoreButton;
+        let shouldRestoreRetryFocus = false;
+        errorState.hidden = true;
+        setLoadingState(true);
 
         try {
           const response = await fetch(`${source}${nextPage}.json`, { headers: { Accept: 'application/json' } });
           if (!response.ok) throw new Error(`Feed page ${nextPage} failed`);
 
-          const payload = await response.json();
-          const items = Array.isArray(payload.items) ? payload.items : [];
+          const payload: unknown = await response.json();
+          if (
+            !payload
+            || typeof payload !== 'object'
+            || Array.isArray(payload)
+            || !Array.isArray((payload as { items?: unknown }).items)
+            || typeof (payload as { hasMore?: unknown }).hasMore !== 'boolean'
+          ) {
+            throw new Error(`Feed page ${nextPage} returned malformed payload`);
+          }
 
-          list.append(...items.map(createCard));
+          const items = (payload as { items: unknown[] }).items;
+          if (!items.every(isFeedCardPayload)) {
+            throw new Error(`Feed page ${nextPage} returned malformed items`);
+          }
+
+          const knownHrefs = existingHrefs();
+          const batchHrefs = new Set<string>();
+          const newItems = items.filter((item) => {
+            if (knownHrefs.has(item.href) || batchHrefs.has(item.href)) return false;
+            batchHrefs.add(item.href);
+            return true;
+          });
+          const newCards = newItems.map(createCard);
+
+          list.append(...newCards);
           nextPage += 1;
           list.dataset.feedNextPage = String(nextPage);
+          hasLoadError = false;
 
-          isComplete = !payload.hasMore || items.length < pageSize;
+          isComplete = (payload as { hasMore: boolean }).hasMore === false;
           sentinel.hidden = isComplete;
           endState.hidden = !isComplete;
-          if (isComplete) observer?.disconnect();
+          errorState.hidden = true;
+          if (isComplete) {
+            loadMoreButton.hidden = true;
+            observer?.disconnect();
+          } else if (supportsIntersectionObserver) {
+            loadMoreButton.hidden = true;
+            observer?.observe(sentinel);
+          } else {
+            sentinel.hidden = true;
+            loadMoreButton.hidden = false;
+          }
+
+          if (retrying || trigger === 'load-more') {
+            const firstNewLink = newCards[0]?.querySelector('a.card-link');
+            if (firstNewLink instanceof HTMLAnchorElement) {
+              firstNewLink.focus();
+            } else if (isComplete) {
+              endState.focus();
+            } else if (!loadMoreButton.hidden) {
+              loadMoreButton.focus();
+            } else {
+              const firstExistingLink = list.querySelector('a.card-link');
+              if (firstExistingLink instanceof HTMLAnchorElement) firstExistingLink.focus();
+            }
+          }
         } catch {
-          isComplete = true;
+          hasLoadError = true;
           sentinel.hidden = true;
-          endState.hidden = false;
-          observer?.disconnect();
+          loadMoreButton.hidden = true;
+          endState.hidden = true;
+          errorState.hidden = false;
+          observer?.unobserve(sentinel);
+          shouldRestoreRetryFocus = retryHadFocus || loadMoreHadFocus;
         } finally {
           isLoading = false;
+          setLoadingState(false);
+          if (shouldRestoreRetryFocus) retryButton.focus();
         }
       };
 
-      let observer: IntersectionObserver | undefined;
+      retryButton.addEventListener('click', () => loadNextBatch('retry'));
+      loadMoreButton.addEventListener('click', () => loadNextBatch('load-more'));
 
-      if (!('IntersectionObserver' in window)) {
-        loadNextBatch();
+      if (!supportsIntersectionObserver) {
+        sentinel.hidden = true;
+        loadMoreButton.hidden = false;
         return;
       }
 

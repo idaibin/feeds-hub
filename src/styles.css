@@ -9,4 +9,6 @@
   --color-feed-primary: #0569ed;
   --color-feed-primary-strong: #034a9a;
   --color-feed-signal: #069fb4;
+  --color-feed-error: #b42318;
+  --color-feed-error-strong: #8f1d14;
 }

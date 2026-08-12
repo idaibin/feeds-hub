@@ -17,6 +17,7 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 
 | 文件 | 负责 |
 |---|---|
+| `DESIGN.md` | Google DESIGN.md 格式的共享视觉语义、tokens 和组件状态 |
 | `docs/rules/repo-scope.md` | 仓库边界和允许修改路径 |
 | `docs/automation/feeds-hub-update.md` | AI 更新任务入口 |
 | `docs/topics/README.md` | 主题列表和主题文档格式 |
