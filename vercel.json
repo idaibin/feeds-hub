@@ -5,7 +5,8 @@
   "git": {
     "deploymentEnabled": {
       "**": false,
-      "main": true
+      "main": true,
+      "verify/vercel-blob-20260813": true
     }
   },
   "installCommand": "npm ci"
