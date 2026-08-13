@@ -45,10 +45,10 @@ test('verifies every imported field and all current list orderings', async () =>
 
   assert.equal(result.ok, true);
   assert.deepEqual(result.counts, {
-    markdownTotal: 234,
-    databaseTotal: 234,
+    markdownTotal: 236,
+    databaseTotal: 236,
     draft: 1,
-    published: 233,
+    published: 235,
     archived: 0,
   });
 });

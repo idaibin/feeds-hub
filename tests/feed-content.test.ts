@@ -63,13 +63,13 @@ function identity(feed: NormalizedFeed, overrides: Partial<ExistingFeedIdentity>
 
 test('loads the full Markdown corpus without invalid records', async () => {
   const batch = await loadContentBatch();
-  assert.equal(batch.feeds.length, 234);
+  assert.equal(batch.feeds.length, 236);
   assert.equal(batch.failures.length, 0);
-  assert.equal(batch.feeds.filter((feed) => feed.status === 'published').length, 233);
+  assert.equal(batch.feeds.filter((feed) => feed.status === 'published').length, 235);
   assert.equal(batch.feeds.filter((feed) => feed.status === 'draft').length, 1);
   assert.equal(batch.duplicateSourceUrls.length, 29);
-  assert.equal(new Set(batch.feeds.map((feed) => feed.slug)).size, 234);
-  assert.equal(new Set(batch.feeds.map((feed) => feed.eventKey)).size, 234);
+  assert.equal(new Set(batch.feeds.map((feed) => feed.slug)).size, 236);
+  assert.equal(new Set(batch.feeds.map((feed) => feed.eventKey)).size, 236);
 });
 
 test('normalizes line endings and equivalent timezone values before hashing', async (t) => {
