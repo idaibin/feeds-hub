@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "patch-package",
     "dev": "astro dev",
-    "prebuild": "tsx scripts/vercel-db-bootstrap.ts && tsx scripts/vercel-feed-import.ts",
+    "prebuild": "tsx scripts/vercel-db-bootstrap.ts && tsx scripts/vercel-feed-import.ts && tsx scripts/vercel-blob-validation.ts",
     "build": "astro build",
     "check": "astro check",
     "preview": "astro preview",
