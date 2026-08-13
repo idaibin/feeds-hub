@@ -1,6 +1,6 @@
 # Feed Runtime Migration and Rollback
 
-Status: Task 0 design with Task 1–6 implementation alignment. This document does not claim that any Production database command or cutover has executed; the operator-facing procedure is `docs/operations/feed-runtime-production-cutover.md`.
+Status: historical migration/rollback design. Initial Production migration and cutover completed in July 2026. Baseline counts and Task 0–6 text below remain audit evidence, not current state; current execution facts are in `docs/progress/feed-runtime.md`, and recurring operations use `docs/operations/feed-runtime-production-cutover.md`.
 
 ## Baseline Evidence
 

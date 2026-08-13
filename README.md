@@ -2,7 +2,7 @@
 
 AI-powered information hub built with Astro.
 
-Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构化 Markdown 和静态站点发布串成一套可复制流程。仓库只保存展示层和处理后的 feed 内容；通用 Prompt、Skill、Workflow 和共享自动化规范由 [`idaibin/aicraft`](https://github.com/idaibin/aicraft) 维护。
+Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构化 Markdown、Neon 数据同步和 Production 发布串成一套可复制流程。仓库保存应用代码、项目规则、处理后的 feed 内容和运行证据；跨仓库 AI Engineering 工作流以 [`idaibin/ai-handbook/workflows/ai-engineering-system/`](https://github.com/idaibin/ai-handbook/tree/main/workflows/ai-engineering-system) 为唯一权威，可复用技能由 [`idaibin/skills`](https://github.com/idaibin/skills) 维护。
 
 ## 用途
 
@@ -54,7 +54,8 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 完整执行规则见 `docs/automation/feeds-hub-update.md`。核心顺序：
 
 ```text
-topics -> sources -> dedupe -> kind -> markdown -> validation
+topics -> sources -> dedupe -> kind -> markdown -> local validation
+       -> merge main -> Production database plan/apply -> live readback
 ```
 
 必要原则：
@@ -67,11 +68,11 @@ topics -> sources -> dedupe -> kind -> markdown -> validation
 
 ## 运行时架构
 
-当前代码已具备 Astro Content Collection / Neon Postgres 双读取源、受保护的 Feed 写入 API，以及 Astro 内的 Remote MCP Server。默认开关仍以 Content 读取为准，写入和 MCP 默认关闭；Production 是否已切换必须以 [`Production cutover runbook`](docs/operations/feed-runtime-production-cutover.md) 中的实际执行记录为准，不能仅根据代码存在推断。
+当前代码具备 Astro Content Collection / Neon Postgres 双读取源、受保护的 Feed 写入 API，以及 Astro 内的 Remote MCP Server。Production 已切换为 Neon Postgres 读取并启用受保护的写入与 MCP；截至 `2026-08-13` 的最近一次核验为 236 条 Feed（235 published、1 draft）。精确 commit、deployment、数据库计数与恢复点见 [`docs/progress/feed-runtime.md`](docs/progress/feed-runtime.md)；不得仅根据代码默认值推断线上状态。
 
 ![Feeds Hub 运行时架构图](docs/architecture/feed-runtime-architecture.png)
 
-上线顺序固定为 `content → database → read-only MCP → writes`。本项目不使用 Vercel Preview 或 Preview 数据库做这次切换；每一阶段只从 `main` 部署到 Production，验证通过并完成 review 后才进入下一阶段。即使数据库读取和 MCP 写入启用，`src/content/**` 与 `ContentFeedSource` 仍作为归档和回滚来源，不会在本阶段删除。
+初始化切换历史顺序为 `content → database → read-only MCP → writes`，该阶段已经完成。现在的例行内容发布顺序是 `Markdown → main → database plan/apply → Production readback`。`src/content/**` 与 `ContentFeedSource` 继续作为审查和回滚来源，不删除。数据库导入是独立的受控步骤；Vercel 构建成功本身不代表 Feed 已写入 Neon。
 
 ![Feeds 后续更新流程图](docs/architecture/feed-runtime-update-flow.png)
 
@@ -109,7 +110,7 @@ npm run check
 npm run build
 ```
 
-`npm run test:integration` 只能连接明确隔离的非 Production 测试数据库；Production migration、import、切换和回滚必须逐项执行 [`Production cutover runbook`](docs/operations/feed-runtime-production-cutover.md)。
+`npm run test:integration` 只能连接明确隔离的非 Production 测试数据库；Production migration、例行内容同步、切换和回滚必须逐项执行 [`Production runbook`](docs/operations/feed-runtime-production-cutover.md)。
 
 ## 部署
 

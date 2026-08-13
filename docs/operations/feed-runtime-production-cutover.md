@@ -1,8 +1,24 @@
 # Feed Runtime Production Cutover Runbook
 
-Status: execution template. Nothing in this document proves that a Production migration, import, deployment, canary, or cutover has run.
+Status: active Production runbook. Initial database/MCP/write cutover completed in July 2026; see `docs/progress/feed-runtime.md` for immutable execution evidence. The initialization phases below remain for recovery and audit, while routine content changes use the recurring sync procedure in this document.
 
 This runbook is Production-only. Do not create or use a Vercel Preview deployment, Preview database, arbitrary SQL runner, destructive down migration, reset, truncate, delete, or physical Feed deletion. `src/content/**` and `ContentFeedSource` remain available throughout every phase.
+
+## Routine Markdown → Neon sync
+
+Use this procedure after reviewed Markdown changes are merged to `main`. It updates the already-migrated Production database; it does not rerun foundation migration or bootstrap.
+
+1. Verify local `main`, `origin/main` and the target Production deployment source commit are identical. Record the commit and current known-good deployment.
+2. Run `npm ci`, `npm run test`, `npm run content:import:dry`, `npm run check`, `npm run build` and `git diff --check`. Stop on any failure.
+3. Create a fresh Neon recovery branch from Production `main`. Record branch ID, parent branch, creation time, retention deadline and console recovery entry.
+4. Temporarily set `FEED_READ_SOURCE=content`, `FEED_WRITES_ENABLED=false`, `FEED_MCP_ENABLED=false`, `FEED_CONTENT_IMPORT_ENABLED=true`, `FEED_CONTENT_IMPORT_MODE=plan` and the exact `FEED_CONTENT_IMPORT_SOURCE_COMMIT`; deploy the exact `main` commit.
+5. Require a plan with no invalid, conflict or unexpected rows. Inserts and unchanged rows are allowed. Updates require an explicit content-diff review because the runtime-only importer intentionally rejects silent overwrite.
+6. Change only the import mode to `apply` and add the plan fingerprint plus fresh backup/recovery evidence. Redeploy the same commit; require exact plan/result/post-verification agreement.
+7. Remove every `FEED_CONTENT_IMPORT_*` value; restore database reads, writes and MCP; redeploy the same commit.
+8. Verify the public category page and every new/changed detail path. Record HTTP status, expected title/content, final database totals, deployment ID and source commit.
+9. Only after all checks pass, remove the merged content branch. Keep the Neon recovery branch until its recorded retention deadline.
+
+Stop and report `awaiting-production-sync` if identity, authorization, recovery evidence or connector access is missing. A `main` push, Vercel READY state or static build alone is not proof that Production data changed.
 
 ## Execution record — fill before the change
 

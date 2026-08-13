@@ -9,7 +9,7 @@
 - 默认处理 `hot`、`ai`、`github`、`stock`、`lol`、`worldcup`。
 - 其它 topic 只报告 `skipped: disabled-by-focus`。
 - 保留 `cover` / `coverStatus` 兼容 schema，`coverStatus` 固定 `pending`。
-- 产物验证通过后 squash 到 `main` 并推送；不创建 PR。
+- 产物验证通过后 squash 到 `main` 并推送；不创建 PR。Production 读取 Neon，完整成功还要求按 runbook 同步数据库并回读公开页面。
 
 ## 必读文件
 
@@ -28,7 +28,9 @@
 - 同一轮只用一个内容分支；同名分支存在时继续该分支，不覆盖旧提交。
 - 内容分支只写 Markdown。
 - 验证通过后 squash 到 `main`，提交信息：`content: update feeds <yyyyMMdd-HHmm>`。
-- 推送 `main` 后删除本轮已合并内容分支并刷新远端分支列表。
+- 推送 `main` 后等待 Production deployment READY，再按 `docs/operations/feed-runtime-production-cutover.md` 的例行同步流程执行 Neon plan/apply/post-verify。
+- 只有公开分类页和新增详情页回读通过后才删除本轮内容分支并刷新远端分支列表。
+- 缺少 Production 授权、恢复点或所需权限时，保留分支并报告 `awaiting-production-sync`；不得把 `main` 已更新写成线上数据已更新。
 
 ## Topic 顺序
 

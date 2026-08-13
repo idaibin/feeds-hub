@@ -1,6 +1,6 @@
 # Feed Runtime Contracts
 
-Status: Task 0 contracts aligned with the Task 1–6 implementation on the current integration branch. TypeScript snippets remain illustrative; runtime behavior is defined by the reviewed source and does not prove any Production cutover has run.
+Status: implemented contract plus historical rollout commentary. Production cutover completed in July 2026; runtime behavior is defined by reviewed source, while current deployment and data-sync evidence live in `docs/progress/feed-runtime.md`. Task labels below describe provenance and are not pending work.
 
 ## Domain Model
 

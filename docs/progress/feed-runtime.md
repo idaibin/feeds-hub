@@ -225,3 +225,14 @@ Task 6 本轮执行：
 - apply deployment `dpl_5EALXrtUFueDJDbPizuc1fUxdeUr` 为 READY；实际 result 为 inserted 234、updated 0、unchanged 0、unexpected 0，conflict 0、invalid 0。post-verification 为 markdownTotal 234、databaseTotal 234、published 233、draft 1、archived 0。
 - apply 完成后删除全部 `FEED_CONTENT_IMPORT_*`，Production 只保留低权限 `FEED_RUNTIME_DATABASE_URL`、runtime switches 与 OAuth/MCP 配置；恢复 `FEED_READ_SOURCE=database`、`FEED_WRITES_ENABLED=true`、`FEED_MCP_ENABLED=true`。最终 deployment `dpl_75VCaNHUKm3CAk1oFJbpW4Z1359m` 为 READY 并由 `https://feeds.idaibin.dev` alias 提供服务。
 - 最终 live canary：`/`、`/category/ai/`、代表详情、`/feed-pages/all/2.json` 至 `/21.json` 为 200，`/feed-pages/all/22.json` 为 404；分页 JSON 页内和跨页 `eventAt` 降序通过；bootstrap status 为 404。OAuth protected-resource metadata 为 200 并公布 `feeds:read/write/publish/archive`；无 token MCP initialize 为 401 且 `WWW-Authenticate` 指向规范 resource/scopes；无 token write API 为 401，未执行携带 Production token 的 mutation canary。
+
+## 2026-08-13 例行 Feed 数据同步（已完成）
+
+- 权威工作流基线：`idaibin/ai-handbook@864ec7e30e139d18e45cae1d136c295129e1c872`，`workflows/ai-engineering-system` v0.3.0。
+- 内容 commit `766ed064da93aaa26a25a54c295d36effdd1fe02` 已进入 `main`，新增两条已核验 AI Feed；Markdown 总数由 234 增至 236。
+- Production 最初部署该 commit 后页面仍未出现新数据。根因已确认：Production 从 Neon 读取，Git 部署不会自动把新增 Markdown 导入数据库。
+- 正确 Neon 项目为 `feeds-hub-neno`（project `mute-tree-11109990`），Production branch 为 `main`（`br-raspy-rice-at72v136`）。导入前创建 recovery branch `backup-before-feed-import-20260813-766ed064`（`br-super-art-atge3fgf`）。
+- 运行时 importer plan：2 insert、0 update、234 unchanged、0 conflict、0 invalid；apply：inserted 2、updated 0、unchanged 234、unexpected 0。
+- post-verification：markdownTotal 236、databaseTotal 236、published 235、draft 1、archived 0；source tree hash `bdbf48b190c800889ab3f0cae0ee297b5e1dafc33eb9b83d48c6d551ab32f6c6`，数据库 fingerprint `fdbe3ade6d15b2dd5f63208702d96e1b9f0f4a9fdb4bf6e7d263ef043857dbf9`。
+- 最终 Production deployment `dpl_CQvNYnrAqRmGkXmy4a5p3z4fzrqS` 为 READY，`https://feeds.idaibin.dev` 已指向该部署；`/category/ai/` 和两条新详情路径均返回 200 且包含预期标题。
+- 这次事件确立例行发布门槛：`main` 与 Vercel READY 只证明代码部署；Production 数据更新必须另有 Neon plan/apply/post-verify 和公开页面回读证据。

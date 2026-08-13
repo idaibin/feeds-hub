@@ -1,6 +1,6 @@
 # Feed Runtime Architecture
 
-Status: Task 0 architecture aligned with the Task 1–6 implementation on the current integration branch. Code availability does not prove that any Production deployment, database operation, read cutover, MCP canary, or write canary has run.
+Status: historical architecture and rollout design. Tasks 0–6 were completed in July 2026. Current Production state and later content sync evidence live in `README.md` and `docs/progress/feed-runtime.md`; old commit, count and branch values below are frozen baseline evidence, not current instructions.
 
 ## Goals
 
