@@ -5,6 +5,7 @@
   "git": {
     "deploymentEnabled": {
       "**": false,
+      "agent/verify-blob-sheet-pipeline": true,
       "main": true
     }
   },
