@@ -1,10 +1,15 @@
 # Feeds Hub MCP OAuth
 
-完整的设计、开发、Auth0/CIMD/RBAC 操作、Vercel/Neon 部署、验证证据与 ChatGPT 套餐限制，见 [`feed-mcp-auth0-chatgpt-setup.md`](feed-mcp-auth0-chatgpt-setup.md)。本文件只保留协议和配置契约。
+完整的设计、开发、Auth0/CIMD/RBAC 操作、Vercel/Neon 部署、验证证据与 ChatGPT 套餐限制，见 [`feed-mcp-auth0-chatgpt-setup.md`](feed-mcp-auth0-chatgpt-setup.md)。Gemini Spark 与 Grok 的客户端接入、查询/写入验收见 [`feed-mcp-gemini-grok.md`](feed-mcp-gemini-grok.md)。本文件只保留协议和配置契约。
 
 ## Current Production state
 
-截至 2026-07-11，Production 使用 Neon database reads，服务端写入与 MCP 已开启，protected-resource metadata 公布 `feeds:read`、`feeds:write`、`feeds:publish`、`feeds:archive`。服务端可注册七个工具；ChatGPT Pro 根据产品边界只展示 read/fetch 工具，完整 write/modify MCP 需要 Business、Enterprise 或 Edu。
+截至 2026-08-14 的只读回读，Production protected-resource metadata 仍公布
+`feeds:read`、`feeds:write`、`feeds:publish`、`feeds:archive`，未授权 MCP initialize
+仍返回带 `resource_metadata` 的 `401` challenge；Auth0 discovery 公布 DCR endpoint
+与 PKCE S256。服务端可注册七个工具。客户端最终展示能力仍受套餐、workspace
+action controls 和 OAuth grants 约束；客户端只展示 read/fetch 工具不能证明服务端
+写工具不存在。
 
 ## Boundary
 
@@ -21,7 +26,7 @@ The provider must expose OAuth 2.0 Authorization Server Metadata or OpenID Conne
 - exact issuer validation;
 - the resource/audience `https://feeds.idaibin.dev/api/mcp`;
 - scopes `feeds:read`, `feeds:write`, `feeds:publish`, `feeds:archive`;
-- one ChatGPT-compatible registration path: client-ID metadata documents, dynamic client registration, or a pre-created static OAuth client.
+- one client-compatible registration path: client-ID metadata documents, dynamic client registration, or a pre-created static OAuth client.
 
 Create the API/resource in the provider first. For an initial read-only canary, grant only `feeds:read`. When `FEED_WRITES_ENABLED=false`, protected-resource metadata and `tools/list` expose only the read scope and three read tools.
 
@@ -63,7 +68,7 @@ FEED_MCP_OAUTH_AUDIENCE=https://feeds.idaibin.dev/api/mcp
 FEED_MCP_OAUTH_JWKS_URL=https://<provider-jwks>
 FEED_MCP_OAUTH_ALGORITHMS=RS256
 FEED_MCP_OAUTH_REQUIRED_SCOPES=feeds:read
-FEED_MCP_ALLOWED_ORIGINS=https://chatgpt.com
+FEED_MCP_ALLOWED_ORIGINS=https://chatgpt.com,https://grok.com,https://gemini.google.com
 FEED_WRITES_ENABLED=false
 ```
 
@@ -78,12 +83,17 @@ FEED_MCP_OAUTH_AUDIENCE=https://feeds.idaibin.dev/api/mcp
 FEED_MCP_OAUTH_JWKS_URL=https://idaibin.jp.auth0.com/.well-known/jwks.json
 FEED_MCP_OAUTH_ALGORITHMS=RS256
 FEED_MCP_OAUTH_REQUIRED_SCOPES=feeds:read feeds:write feeds:publish feeds:archive
-FEED_MCP_ALLOWED_ORIGINS=https://chatgpt.com
+FEED_MCP_ALLOWED_ORIGINS=https://chatgpt.com,https://grok.com,https://gemini.google.com
 FEED_READ_SOURCE=database
 FEED_WRITES_ENABLED=true
 ```
 
 Keep `FEED_READ_SOURCE` at the currently reviewed source. Do not enable MCP until all OAuth values exist and the provider issues a token with the exact audience. Deploy under the Production cutover runbook.
+
+`FEED_MCP_ALLOWED_ORIGINS` is request-origin enforcement, not a CORS grant. Server-side
+MCP clients normally omit `Origin`; when a client sends it, only an exact listed web
+origin is accepted. Adding an origin to documentation does not prove the deployed Vercel
+value was changed; Production must be read back separately after an authorized update.
 
 Verify without recording credentials:
 

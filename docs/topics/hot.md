@@ -33,6 +33,9 @@ Uses `docs/types/realtime.md`.
 
 Latest public hot topics from Weibo, X, and V2EX. One feed may contain multiple related hot topics when they belong to the same hour window or the same public discussion cluster.
 
+X 中与 AI 厂商、模型、GitHub、skills、Agent、UI 和 image 相关的信号，优先交给
+`ai` 或 `github` topic 形成单事件 Feed；`hot` 只保留跨平台讨论热度和社区反应。
+
 ## Overrides
 
 - Run at most hourly.

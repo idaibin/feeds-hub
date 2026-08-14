@@ -29,9 +29,20 @@ test('disabled MCP route import exits without starting the upstream cleanup time
 
 test('Astro MCP route completes Streamable HTTP reads and omits write tools while writes are disabled', async () => {
   const result = await runMcpChild('compat');
-  assert.equal(result.initializeStatus, 200);
-  assert.match(String(result.initializeContentType), /^text\/event-stream/);
-  assert.equal(result.protocolVersion, '2025-06-18');
+  assert.deepEqual(result.clientNegotiations, [
+    {
+      name: 'Gemini Spark',
+      status: 200,
+      contentType: 'text/event-stream',
+      protocolVersion: '2025-06-18',
+    },
+    {
+      name: 'Grok',
+      status: 200,
+      contentType: 'text/event-stream',
+      protocolVersion: '2025-06-18',
+    },
+  ]);
   assert.equal(result.invalidProtocolStatus, 400);
   assert.equal(result.invalidProtocolCode, -32000);
   assert.deepEqual(result.tools, [

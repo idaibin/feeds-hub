@@ -102,19 +102,26 @@ async function compatibility() {
   };
   const service = new FeedService(undefined, env, fixtureSource);
   const route = createMcpRoute({ service, env });
-  const initialized = await invoke(route, {
-    jsonrpc: '2.0', id: 1, method: 'initialize',
-    params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'compat-test', version: '1.0.0' } },
-  });
+  const clientNegotiations = [];
+  for (const [index, name] of ['Gemini Spark', 'Grok'].entries()) {
+    const initialized = await invoke(route, {
+      jsonrpc: '2.0', id: index + 1, method: 'initialize',
+      params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name, version: '1.0.0' } },
+    });
+    clientNegotiations.push({
+      name,
+      status: initialized.response.status,
+      contentType: initialized.response.headers.get('content-type'),
+      protocolVersion: initialized.payload?.result?.protocolVersion,
+    });
+  }
   const listed = await invoke(route, { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} });
   const invalidProtocol = await invoke(route, { jsonrpc: '2.0', id: 20, method: 'tools/list', params: {} }, 'unsupported');
   const feeds = await callTool(route, 3, 'list_feeds', { status: 'published', limit: 1 });
   const feed = await callTool(route, 4, 'get_feed', { id: feeds.tool.items[0].id });
   const unknownField = await callTool(route, 21, 'list_feeds', { status: 'published', limit: 1, unexpected: true });
   return {
-    initializeStatus: initialized.response.status,
-    initializeContentType: initialized.response.headers.get('content-type'),
-    protocolVersion: initialized.payload?.result?.protocolVersion,
+    clientNegotiations,
     invalidProtocolStatus: invalidProtocol.response.status,
     invalidProtocolCode: invalidProtocol.payload?.error?.code,
     tools: listed.payload?.result?.tools?.map((tool: { name: string }) => tool.name),

@@ -30,6 +30,7 @@ Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构�
 | `docs/architecture/knowledge-candidate-handoff.md` | Feed 到 AI Handbook 的候选交接边界（目标规范，尚未实现） |
 | `docs/operations/feed-runtime-production-cutover.md` | Production-only 上线、验证与回滚 runbook |
 | `docs/operations/feed-mcp-oauth.md` | Remote MCP OAuth、Vercel 与 ChatGPT Dev Mode 配置 |
+| `docs/operations/feed-mcp-gemini-grok.md` | Gemini Spark / Grok MCP 接入与查询写入验收 |
 | `docs/operations/feed-mcp-auth0-chatgpt-setup.md` | MCP 设计、开发、Auth0、Vercel、Neon、验证与踩坑完整复盘 |
 | `docs/progress/feed-runtime.md` | 分阶段实施进度和真实验证结果 |
 
