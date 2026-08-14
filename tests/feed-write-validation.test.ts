@@ -69,3 +69,29 @@ test('every mutation parser bounds expectedVersion to PostgreSQL int4', () => {
   ];
   for (const parse of invalidBodies) assert.throws(parse, FeedValidationError);
 });
+
+test('mutation context accepts server-derived OAuth MCP principals', () => {
+  const context = {
+    actor: 'mcp:auth0|user-123',
+    origin: 'mcp' as const,
+    idempotencyKey: 'validation:mcp:0001',
+    reason: '',
+  };
+
+  assert.doesNotThrow(() => parseSaveDraftCommand({ feed: draft(), reason: 'save' }, context));
+});
+
+test('mutation context couples the writer principal to its request origin', () => {
+  const base = { idempotencyKey: 'validation:actor:0001', reason: '' };
+  const invalidContexts = [
+    { ...base, actor: 'api:feed-writer', origin: 'mcp' as const },
+    { ...base, actor: 'mcp:auth0|user-123', origin: 'api' as const },
+    { ...base, actor: 'mcp:', origin: 'mcp' as const },
+    { ...base, actor: 'mcp:unknown', origin: 'mcp' as const },
+    { ...base, actor: 'mcp:user with spaces', origin: 'mcp' as const },
+  ];
+
+  for (const context of invalidContexts) {
+    assert.throws(() => parseSaveDraftCommand({ feed: draft(), reason: 'save' }, context), FeedValidationError);
+  }
+});

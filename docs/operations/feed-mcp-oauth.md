@@ -7,7 +7,8 @@
 截至 2026-08-14 的只读回读，Production protected-resource metadata 仍公布
 `feeds:read`、`feeds:write`、`feeds:publish`、`feeds:archive`，未授权 MCP initialize
 仍返回带 `resource_metadata` 的 `401` challenge；Auth0 discovery 公布 DCR endpoint
-与 PKCE S256。服务端可注册七个工具。客户端最终展示能力仍受套餐、workspace
+与 PKCE S256，但 Grok 的 2026-08-14 实际注册请求确认 tenant DCR 开关仍关闭。
+服务端可注册七个工具。客户端最终展示能力仍受套餐、workspace
 action controls 和 OAuth grants 约束；客户端只展示 read/fetch 工具不能证明服务端
 写工具不存在。
 
@@ -27,6 +28,11 @@ The provider must expose OAuth 2.0 Authorization Server Metadata or OpenID Conne
 - the resource/audience `https://feeds.idaibin.dev/api/mcp`;
 - scopes `feeds:read`, `feeds:write`, `feeds:publish`, `feeds:archive`;
 - one client-compatible registration path: client-ID metadata documents, dynamic client registration, or a pre-created static OAuth client.
+
+Metadata 中存在 `registration_endpoint` 只表示发现结果，不证明 endpoint 已允许注册。
+接入依赖 DCR 的客户端前，必须用该客户端的真实注册流程验证。Auth0 开启 DCR 属于
+Open Registration；应保持 strict security mode，并在开启前配置第三方应用的 API
+权限与 domain-level connection。不要仅为了修复连接错误无条件开放 tenant。
 
 Create the API/resource in the provider first. For an initial read-only canary, grant only `feeds:read`. When `FEED_WRITES_ENABLED=false`, protected-resource metadata and `tools/list` expose only the read scope and three read tools.
 
@@ -87,6 +93,25 @@ FEED_MCP_ALLOWED_ORIGINS=https://chatgpt.com,https://grok.com,https://gemini.goo
 FEED_READ_SOURCE=database
 FEED_WRITES_ENABLED=true
 ```
+
+Auth0 strict-mode DCR computes token scopes from the intersection of scopes requested by
+the client and its client grant. Verified 2026-08-14 Grok and Gemini Spark DCR exchanges
+did not produce recognized Feeds Hub scopes, and Auth0 also ignored scopes added by a Post
+Login Action because the clients are strict third-party applications. For individually
+reviewed clients only, Production may use the explicit, fail-closed compatibility
+configuration below after each current DCR client ID is reviewed:
+
+```text
+FEED_MCP_OAUTH_SCOPELESS_CLIENT_IDS=<exact-current-grok-client-id>,<exact-current-gemini-client-id>
+FEED_MCP_OAUTH_SCOPELESS_CLIENT_SCOPES=feeds:read feeds:write
+```
+
+The fallback still requires a valid signature, issuer, audience, expiration, and explicit
+client identity from the `client_id` or `azp` claim. It activates only when the token contains
+no recognized Feeds Hub scopes and the exact client ID is listed; unrelated values such as
+`offline_access` do not count as API authorization. Never use a wildcard; replace or remove
+an ID whenever a provider creates a
+new DCR client.
 
 Keep `FEED_READ_SOURCE` at the currently reviewed source. Do not enable MCP until all OAuth values exist and the provider issues a token with the exact audience. Deploy under the Production cutover runbook.
 

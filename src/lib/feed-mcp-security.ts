@@ -27,6 +27,8 @@ export interface McpOAuthConfig {
   jwksUrl: string;
   algorithms: string[];
   requiredScopes: McpScope[];
+  scopeLessClientIds: string[];
+  scopeLessClientScopes: McpScope[];
 }
 
 export interface PrepareMcpRequestOptions {
@@ -118,6 +120,21 @@ export function getMcpOAuthConfig(env: NodeJS.ProcessEnv = process.env): McpOAut
   ) {
     throw new McpHttpError(503, 'MCP_UNAVAILABLE', 'MCP OAuth required scopes are invalid');
   }
+  const scopeLessClientIds = (env.FEED_MCP_OAUTH_SCOPELESS_CLIENT_IDS ?? '')
+    .split(/[\s,]+/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const scopeLessClientScopes = (env.FEED_MCP_OAUTH_SCOPELESS_CLIENT_SCOPES ?? '')
+    .split(/[\s,]+/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (
+    (scopeLessClientIds.length === 0) !== (scopeLessClientScopes.length === 0)
+    || scopeLessClientIds.some((clientId) => !/^[A-Za-z0-9_-]{8,180}$/.test(clientId))
+    || scopeLessClientScopes.some((scope) => !MCP_SCOPES.includes(scope as McpScope))
+  ) {
+    throw new McpHttpError(503, 'MCP_UNAVAILABLE', 'MCP OAuth scope-less client compatibility is invalid');
+  }
   return {
     issuer: issuerValue!,
     audience,
@@ -125,6 +142,8 @@ export function getMcpOAuthConfig(env: NodeJS.ProcessEnv = process.env): McpOAut
     jwksUrl: jwksValue!,
     algorithms: configuredAlgorithms,
     requiredScopes: [...new Set(requiredScopes)] as McpScope[],
+    scopeLessClientIds: [...new Set(scopeLessClientIds)],
+    scopeLessClientScopes: [...new Set(scopeLessClientScopes)] as McpScope[],
   };
 }
 
@@ -274,9 +293,7 @@ async function oauthAuth(
     ? payload.client_id
     : typeof payload.azp === 'string'
       ? payload.azp
-      : typeof payload.sub === 'string'
-        ? payload.sub
-        : undefined;
+      : undefined;
   if (!clientId) {
     throw new McpHttpError(401, 'AUTH_REQUIRED', 'OAuth access token has no client identity', {
       'www-authenticate': oauthChallenge(config),
@@ -287,7 +304,10 @@ async function oauthAuth(
       'www-authenticate': oauthChallenge(config),
     });
   }
-  const scopes = scopesFromClaim(payload.scope);
+  const claimedScopes = scopesFromClaim(payload.scope);
+  const claimedMcpScopes = claimedScopes.filter((scope) => MCP_SCOPES.includes(scope as McpScope));
+  const usesConfiguredScopeFallback = claimedMcpScopes.length === 0 && config.scopeLessClientIds.includes(clientId);
+  const scopes = usesConfiguredScopeFallback ? [...config.scopeLessClientScopes] : claimedScopes;
   if (config.requiredScopes.some((scope) => !scopes.includes(scope))) {
     throw new McpHttpError(403, 'INSUFFICIENT_SCOPE', 'OAuth access token is missing required scopes', {
       'www-authenticate': oauthChallenge(config, 'insufficient_scope'),
@@ -302,6 +322,7 @@ async function oauthAuth(
     extra: {
       ...(typeof payload.sub === 'string' ? { subject: payload.sub } : {}),
       issuer: payload.iss,
+      ...(usesConfiguredScopeFallback ? { scopeSource: 'configured-client-fallback' } : {}),
     },
   };
 }

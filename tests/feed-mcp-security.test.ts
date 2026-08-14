@@ -130,7 +130,7 @@ test('OAuth mode validates issuer, audience, expiry, signature, and scopes', asy
     { oauthKeyResolver: keyResolver },
   );
 
-  const missingScope = await new SignJWT({ client_id: 'chatgpt-test' })
+  const missingScope = await new SignJWT({ scope: 'offline_access', client_id: 'chatgpt-test' })
     .setProtectedHeader({ alg: 'RS256', kid: publicJwk.kid })
     .setIssuer(issuer)
     .setAudience(audience)
@@ -142,6 +142,51 @@ test('OAuth mode validates issuer, audience, expiry, signature, and scopes', asy
     env,
     403,
     'INSUFFICIENT_SCOPE',
+    { oauthKeyResolver: keyResolver },
+  );
+
+  const scopeLessCompatibility = await prepareMcpRequest(
+    post({ authorization: `Bearer ${missingScope}` }),
+    {
+      ...env,
+      FEED_MCP_OAUTH_SCOPELESS_CLIENT_IDS: 'chatgpt-test',
+      FEED_MCP_OAUTH_SCOPELESS_CLIENT_SCOPES: 'feeds:read feeds:write',
+    },
+    { oauthKeyResolver: keyResolver },
+  );
+  assert.deepEqual(scopeLessCompatibility.authInfo.scopes, ['feeds:read', 'feeds:write']);
+  assert.equal(scopeLessCompatibility.authInfo.extra?.scopeSource, 'configured-client-fallback');
+  assert.doesNotThrow(() => requireMcpScope(scopeLessCompatibility.authInfo, 'feeds:write'));
+
+  await rejects(
+    post({ authorization: `Bearer ${missingScope}` }),
+    {
+      ...env,
+      FEED_MCP_OAUTH_SCOPELESS_CLIENT_IDS: 'different-client',
+      FEED_MCP_OAUTH_SCOPELESS_CLIENT_SCOPES: 'feeds:read feeds:write',
+    },
+    403,
+    'INSUFFICIENT_SCOPE',
+    { oauthKeyResolver: keyResolver },
+  );
+
+  const subjectOnlyClientIdentity = await new SignJWT({ scope: 'offline_access' })
+    .setProtectedHeader({ alg: 'RS256', kid: publicJwk.kid })
+    .setIssuer(issuer)
+    .setAudience(audience)
+    .setSubject('chatgpt-test')
+    .setIssuedAt()
+    .setExpirationTime('5m')
+    .sign(privateKey);
+  await rejects(
+    post({ authorization: `Bearer ${subjectOnlyClientIdentity}` }),
+    {
+      ...env,
+      FEED_MCP_OAUTH_SCOPELESS_CLIENT_IDS: 'chatgpt-test',
+      FEED_MCP_OAUTH_SCOPELESS_CLIENT_SCOPES: 'feeds:read feeds:write',
+    },
+    401,
+    'AUTH_REQUIRED',
     { oauthKeyResolver: keyResolver },
   );
 

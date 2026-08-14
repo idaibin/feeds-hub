@@ -165,6 +165,8 @@ draft -> published -> archived
 | `FEED_MCP_OAUTH_JWKS_URL` | unset | HTTPS JWKS endpoint used to verify signed OAuth access tokens. |
 | `FEED_MCP_OAUTH_ALGORITHMS` | `RS256` | Comma-separated allowlist limited to `RS256`, `PS256`, `ES256`, or `EdDSA`. |
 | `FEED_MCP_OAUTH_REQUIRED_SCOPES` | `feeds:read` | Scopes required before MCP dispatch. Expand only during a separately reviewed write cutover. |
+| `FEED_MCP_OAUTH_SCOPELESS_CLIENT_IDS` | unset | Exact OAuth client IDs allowed to use the reviewed scope-less-client compatibility path. Empty by default; never use a wildcard. |
+| `FEED_MCP_OAUTH_SCOPELESS_CLIENT_SCOPES` | unset | Scopes assigned only when a listed client presents a valid signed token with no recognized Feeds Hub scope. Must be configured together with the client-ID allowlist. |
 | `FEED_MCP_TOKEN` | unset | Legacy local compatibility credential; do not configure it in Production OAuth mode. |
 | `FEED_MCP_ALLOWED_ORIGINS` | unset | Optional exact Origin allowlist for MCP request-origin enforcement; not a CORS switch. |
 

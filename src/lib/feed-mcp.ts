@@ -117,15 +117,15 @@ const authorizedSearchSchema = z.object({
 
 const safeSlug = z.string().min(3).max(700).regex(/^[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?(?:\/[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?)*$/);
 const feedLookupSchema = z.object({
-  id: z.union([z.string().uuid(), safeSlug]).optional(),
+  id: z.union([z.uuid(), safeSlug]).optional(),
   slug: safeSlug.optional(),
 }).strict();
 
 const duplicateSchema = z.object({
-  feedId: z.string().uuid().optional(),
+  feedId: z.uuid().optional(),
   slug: safeSlug.optional(),
   eventKey: z.string().trim().min(2).max(700).optional(),
-  sourceUrl: z.string().url().max(4096).optional(),
+  sourceUrl: z.url().max(4096).optional(),
   title: z.string().trim().min(2).max(300).optional(),
   category: z.enum(FEED_CATEGORIES).optional(),
 }).strict();
@@ -145,7 +145,7 @@ const feedDraftSchema = z.object({
   tags: z.array(z.string().min(1).max(100)).max(64),
   summary: z.string().min(2).max(3000),
   source: z.string().min(2).max(300),
-  sourceUrl: z.string().url().max(4096),
+  sourceUrl: z.url().max(4096),
   body: z.string().min(1).max(50000),
   priority: z.number().int().min(-1000).max(1000),
 }).strict();
@@ -155,7 +155,7 @@ const publishedPatchSchema = feedDraftSchema.omit({ slug: true, eventKey: true }
 const idempotencyKey = z.string().regex(/^[A-Za-z0-9._:-]{16,200}$/);
 const reason = z.string().trim().min(1).max(500);
 const expectedVersion = z.number().int().min(1).max(POSTGRES_INT4_MAX);
-const feedId = z.string().uuid();
+const feedId = z.uuid();
 const saveDraftSchema = z.object({
   feedId: feedId.optional(),
   expectedVersion: expectedVersion.optional(),

@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { createFeedMcpHandler } from '@/lib/feed-mcp';
-import { mcpHttpErrorResponse, prepareMcpRequest } from '@/lib/feed-mcp-security';
+import { McpHttpError, mcpHttpErrorResponse, prepareMcpRequest } from '@/lib/feed-mcp-security';
 import { FeedService } from '@/lib/feed-service';
 
 export const prerender = false;
@@ -22,6 +22,12 @@ export function createMcpRoute(options: FeedMcpRouteOptions = {}): APIRoute {
       );
       return await handler(prepared.request);
     } catch (error) {
+      if (error instanceof McpHttpError && error.status === 403) {
+        console.warn('MCP request rejected', {
+          code: error.code,
+          origin: request.headers.get('origin'),
+        });
+      }
       return mcpHttpErrorResponse(error);
     }
   };

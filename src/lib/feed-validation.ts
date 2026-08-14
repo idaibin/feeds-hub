@@ -22,6 +22,7 @@ import { calculateFeedV1ContentHash } from '@/domain/feed-content-hash';
 const SLUG_PATTERN = /^[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?(?:\/[a-z0-9]+(?:[a-z0-9-]*[a-z0-9])?)*$/;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const IDEMPOTENCY_PATTERN = /^[A-Za-z0-9._:-]{16,200}$/;
+const MCP_ACTOR_PATTERN = /^mcp:[A-Za-z0-9._:@|/-]{1,180}$/;
 const ISO_WITH_ZONE_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:\d{2})$/;
 export const POSTGRES_INT4_MAX = 2_147_483_647;
 
@@ -202,7 +203,12 @@ export function validateMutationContext(context: MutationContext) {
   if (!IDEMPOTENCY_PATTERN.test(context.idempotencyKey)) {
     issues.push({ path: 'Idempotency-Key', message: 'must be 16-200 safe ASCII characters' });
   }
-  if (context.actor !== 'api:feed-writer' && context.actor !== 'mcp:feed-writer') {
+  const hasValidActor = context.origin === 'api'
+    ? context.actor === 'api:feed-writer'
+    : context.origin === 'mcp'
+      ? MCP_ACTOR_PATTERN.test(context.actor) && context.actor !== 'mcp:unknown'
+      : false;
+  if (!hasValidActor) {
     issues.push({ path: 'actor', message: 'must be a server-derived feed writer principal' });
   }
   if (context.origin !== 'api' && context.origin !== 'mcp') issues.push({ path: 'origin', message: 'must be api or mcp' });

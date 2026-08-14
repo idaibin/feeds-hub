@@ -35,6 +35,15 @@ MCP URL：`https://feeds.idaibin.dev/api/mcp`
 - `registration_endpoint`，或为客户端预建 static OAuth client
 - `code_challenge_methods_supported` 包含 `S256`
 
+公开 `registration_endpoint` 不等于 DCR 已启用。2026-08-14 的 Grok 实际接入中，
+MCP URL 校验成功且 Grok 识别为 `OAUTH_STRATEGY_DCR`，但 Auth0 注册返回
+`dynamic client registration is disabled`，因此 OAuth authorization URL 未生成。
+
+Auth0 DCR 是 Open Registration。启用前必须明确确认 tenant 风险，并采用 strict
+security mode、domain-level login connection 和受控的第三方应用 API grant。不要把
+四个写 scope 作为所有第三方动态客户端的长期默认权限；Grok 注册后应使用 per-app
+grant 明确授权该 `tpc_` client。
+
 resource / audience 固定为 `https://feeds.idaibin.dev/api/mcp`。客户端最终能看到哪些
 工具，还会受到账号套餐、workspace action control、OAuth grants 和服务端 kill switch
 共同限制；只看到三个读取工具不等于服务端没有写工具。
@@ -51,6 +60,15 @@ resource / audience 固定为 `https://feeds.idaibin.dev/api/mcp`。客户端最
 Grok 的 custom connector 由 Grok 服务端访问，因此 MCP URL 必须公网 HTTPS 可达；
 不要把 localhost 或私网 URL 配置到正式连接器。
 
+若 Grok 显示“connector unavailable”，按以下顺序判断：
+
+1. Grok `/rest/mcp/validate-url` 的 `isValid`；
+2. `authRequired` 与 `oauthStrategy`；
+3. OAuth authorization URL 创建是否因 DCR、API grant 或 login connection 失败；
+4. 只有 OAuth 完成后才检查 `tools/list` 和单工具 scope。
+
+不要把 OAuth 注册失败误报为 MCP URL、数据库或 Feed 工具失败。
+
 ## Gemini Spark
 
 Gemini custom app 当前只在具备 Spark 资格的个人 Google Account 中可用，并受地区、
@@ -62,6 +80,13 @@ Gemini custom app 当前只在具备 Spark 资格的个人 Google Account 中可
 3. 若客户端提示 DCR 不可用，展开 Advanced features，填写为 Gemini 预建的 static
    OAuth client credentials；不要把 client secret 写入本仓库、日志或截图。
 4. 连接后只在 Spark task 中调用 `list_feeds` 和 `get_feed` 做只读 canary。
+
+2026-08-14 实测 Gemini Spark 能发现 MCP、完成 Auth0 DCR、登录、consent 和授权码
+交换，但每次未完成的重连都会创建新的 `tpc_` client。若使用严格的精确 client ID
+兼容配置，必须以最后一次实际授权的 client ID 为准；不要按 `tpc_` 前缀放行全部动态
+客户端。当天账号同时显示 Spark 用量已耗尽；Spark 任务提示与 Usage 页面曾显示不同的
+刷新时间，因此只把 Usage 页面刚更新的时间作为当前参考，并在实际恢复后重新尝试。
+工具调用与写入回读仍需单独验收，不能把 OAuth 成功记作工具成功。
 
 ## 查询验收
 
