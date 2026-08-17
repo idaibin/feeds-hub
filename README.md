@@ -4,6 +4,11 @@ AI-powered information hub built with Astro.
 
 Feeds Hub 把公开信息搜索、主题筛选、事实核验、去重、结构化 Markdown、Neon 数据同步和 Production 发布串成一套可复制流程。仓库保存应用代码、项目规则、处理后的 feed 内容和运行证据；跨仓库 AI Engineering 工作流以 [`idaibin/ai-handbook/workflows/ai-engineering-system/`](https://github.com/idaibin/ai-handbook/tree/main/workflows/ai-engineering-system) 为唯一权威，可复用技能由 [`idaibin/skills`](https://github.com/idaibin/skills) 维护。
 
+产品系统边界为 `Sources → Feeds → Research → Insights`。当前已验证 runtime
+只覆盖 Feed；Research/Insights 的生成、存储、Review 和发布仍为 `Not verified`。
+Feeds Hub 不承担 Createway 的最终内容出版，也不承担 Story Studio 的课程、漫剧
+或视频生产。
+
 ## 用途
 
 - 个人 AI 新闻入口
