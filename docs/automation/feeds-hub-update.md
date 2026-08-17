@@ -1,6 +1,13 @@
 # Feeds Hub Update
 
-例行 Feed 更新由 ChatGPT Chat 定时任务执行。任务配置在 ChatGPT Automations，本仓库保存可版本化规则；执行入口为 `docs/automation/chatgpt-scheduled-task.md`。
+例行任务按 owner 拆分，本仓库保存可版本化规则：
+
+- Grok：`docs/automation/grok-realtime-discovery.md`，负责 `ai` 的高时效发现、去重和
+  无人审稿发布；内部连续 draft → publish，正常成功不遗留草稿。
+- Gemini Spark：`docs/automation/gemini-spark-deep-research.md`，负责周频单主题 Research
+  Dossier；只读 Feeds Hub，不更新 Feed。
+- ChatGPT Chat：`docs/automation/chatgpt-scheduled-task.md`，继续负责非重叠的例行 Feed
+  更新和最终 Production 写入合同。
 
 ## 权威边界
 
@@ -13,18 +20,21 @@
 ## 例行流程
 
 ```text
-Chat 定时任务
+非重叠 Feed publisher
 → 按实际时间选择 topic
 → 官方来源核验
 → Production 数据与语义去重
 → 生成正常中文正文
 → 只读写入计划
-→ Neon 单事务写入及审计
+→ 每个 Feed 生命周期操作各自事务原子写入及审计
 → 数据库 post-verify
 → 首页 / 分类页 / 详情页回读
 ```
 
 单轮最多新增 1 条；没有高置信度新事件时跳过。不得为了维持频率凑数。
+
+`ai` 只有 Grok 一个常规 publisher，`github` 只有 ChatGPT 一个常规 publisher；不得在同一
+窗口由多个 provider 重复发布。Research Dossier 不进入 `feeds` 表，也不抵扣普通 Feed 覆盖。
 
 ## 写入门禁
 
@@ -33,6 +43,10 @@ Chat 定时任务
 - 必须遵循当前 `feeds` schema、枚举、内容哈希、版本、审计和幂等契约。
 - 优先使用 Feeds Hub API/MCP；仅有 Neon 连接时，复用当前 repository 的 draft → published 事务语义。
 - 写后目标 eventKey 必须恰好 1 条，总数只增加 1，业务字段与正文一致，并存在完整 revision/audit/idempotency 记录。
+
+MCP 的 draft 与 publish 是两个独立调用，每个调用内部事务原子；跨调用依靠稳定幂等键和
+orphan-draft 恢复，不得宣称整体单事务。只有明确授权的直接 Neon 路径才能在一个数据库
+事务中完成完整 draft → published 生命周期。
 
 ## 发布与验证
 

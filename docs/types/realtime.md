@@ -6,7 +6,7 @@
 
 - 1 feed = 1 个 release、政策、公司更新、advisory、incident、产品变化或市场相关事实。
 - 默认重点：`ai`、`github`；sports 由 `sports.md` 先处理，`stock` 使用 `scheduled-market.md`。
-- 默认每个 topic 1-3 条高质量 feed。
+- 自动任务每轮每个 topic 最多 1 条高质量 Feed；更低频的人工批处理另行授权。
 
 ## Source
 

@@ -4,8 +4,9 @@ Topic 文件只定义机器可读配置和少量主题特例。通用生成规�
 
 ## 通用规则
 
-- 默认处理 `hot`、`ai`、`github`、`stock`、`lol`、`worldcup`。
-- `stock`、`lol`、`worldcup`、`github`、`hot` 都有固定检查节奏；`ai` 按事件发生随机检查。
+- 默认处理 `hot`、`ai`、`github`、`stock`、`lol`、`worldcup`；调度 owner 以
+  `docs/automation/feeds-hub-update.md` 为准。
+- Grok 每小时处理 `ai`；ChatGPT 按日处理 `github`，并继续处理 stock、赛事和 hot。
 - 其它历史 topic 保留内容和路由，默认不自动生成。
 - frontmatter 是唯一机器可读配置，必须包含 `id`、`type`、`flows`、`sources`、`contentDir`、`allowedKinds`。
 - topic 特例只写在 `Topic Scope` 或 `Topic Overrides`。

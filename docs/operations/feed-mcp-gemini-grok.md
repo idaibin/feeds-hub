@@ -50,6 +50,12 @@ resource / audience 固定为 `https://feeds.idaibin.dev/api/mcp`。客户端最
 
 ## Grok
 
+Grok 定时任务的版本化合同见
+[`grok-realtime-discovery.md`](../automation/grok-realtime-discovery.md)。当前无人审稿兼容
+模式连续调用 `save_feed_draft` 和 `publish_feed`，因此 client 需要 `feeds:read`、
+`feeds:write`、`feeds:publish`，不得授予 `feeds:archive`。Prompt 禁止 update/archive；
+真正的最小权限仍需后续新增独立 `feeds:draft` scope。
+
 1. 打开 `https://grok.com/connectors`。
 2. 选择 **New Connector → Custom**。
 3. Name 填 `Feeds Hub`，Server URL 填
@@ -70,6 +76,11 @@ Grok 的 custom connector 由 Grok 服务端访问，因此 MCP URL 必须公网
 不要把 OAuth 注册失败误报为 MCP URL、数据库或 Feed 工具失败。
 
 ## Gemini Spark
+
+Gemini Spark 深度研究任务的版本化合同见
+[`gemini-spark-deep-research.md`](../automation/gemini-spark-deep-research.md)。该任务只读
+Feeds Hub 并生成 Research Dossier 工作副本；Research runtime、Handbook consumer 和
+自动发布仍为 `Not verified`。
 
 Gemini custom app 当前只在具备 Spark 资格的个人 Google Account 中可用，并受地区、
 语言、Keep Activity 等产品条件约束。配置入口位于 Gemini web 的
@@ -117,8 +128,9 @@ Gemini custom app 当前只在具备 Spark 资格的个人 Google Account 中可
 
 ## 关注范围
 
-Grok 负责 X、GitHub、Hacker News 等高时效 discovery；Gemini Spark 负责官方来源、
-论文、法规和跨源验证。最终分类与来源优先级分别读取：
+Grok 负责 AI 的 X 与官方渠道高时效 discovery 和发布；ChatGPT 负责 GitHub 日更；
+Gemini Spark 负责官方来源、论文、法规和跨源验证，并按周形成单主题 Dossier。三者不
+共享常规发布 owner。最终分类与来源优先级分别读取：
 
 - [`ai.md`](../topics/ai.md)：国内外主流模型厂商与 X 三层白名单
 - [`github.md`](../topics/github.md)：AI、skills、Agent、UI、image 趋势

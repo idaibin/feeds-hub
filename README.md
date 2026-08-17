@@ -25,6 +25,8 @@ Feeds Hub 不承担 Createway 的最终内容出版，也不承担 Story Studio 
 | `DESIGN.md` | Google DESIGN.md 格式的共享视觉语义、tokens 和组件状态 |
 | `docs/rules/repo-scope.md` | 仓库边界和允许修改路径 |
 | `docs/automation/feeds-hub-update.md` | AI 更新任务入口 |
+| `docs/automation/grok-realtime-discovery.md` | Grok `ai` 每小时无人审稿发布任务与后续最小权限升级门禁 |
+| `docs/automation/gemini-spark-deep-research.md` | Gemini Spark 周频单主题 Research Dossier 任务 |
 | `docs/topics/README.md` | 主题列表和主题文档格式 |
 | `docs/topics/<category>.md` | 单主题范围、来源、跳过条件 |
 | `docs/rules/content-format.md` | frontmatter、标题、摘要、正文格式 |
@@ -61,8 +63,8 @@ Feeds Hub 不承担 Createway 的最终内容出版，也不承担 Story Studio 
 完整执行规则见 `docs/automation/feeds-hub-update.md`。核心顺序：
 
 ```text
-topics -> sources -> dedupe -> kind -> markdown -> local validation
-       -> merge main -> Production database plan/apply -> live readback
+topics -> sources -> dedupe -> kind -> draft/publish transaction
+       -> Production database verification -> public live readback
 ```
 
 必要原则：
@@ -75,11 +77,11 @@ topics -> sources -> dedupe -> kind -> markdown -> local validation
 
 ## 运行时架构
 
-当前代码具备 Astro Content Collection / Neon Postgres 双读取源、受保护的 Feed 写入 API，以及 Astro 内的 Remote MCP Server。Production 已切换为 Neon Postgres 读取并启用受保护的写入与 MCP；截至 `2026-08-13` 的最近一次核验为 236 条 Feed（235 published、1 draft）。精确 commit、deployment、数据库计数与恢复点见 [`docs/progress/feed-runtime.md`](docs/progress/feed-runtime.md)；不得仅根据代码默认值推断线上状态。
+当前代码具备 Astro Content Collection / Neon Postgres 双读取源、受保护的 Feed 写入 API，以及 Astro 内的 Remote MCP Server。Production 已切换为 Neon Postgres 读取并启用受保护的写入与 MCP；截至 `2026-08-13` 的最近一次核验为 236 条 Feed（235 published、1 draft）。精确 commit、deployment、数据库计数与恢复点见 [`docs/progress/feed-runtime.md`](docs/progress/feed-runtime.md)；不得仅根据代码默认值推断线上状态。Grok 负责 AI 的无人审稿兼容发布；Gemini Spark 的 Dossier 仍是 Research 工作副本，不属于已验证 runtime。
 
 ![Feeds Hub 运行时架构图](docs/architecture/feed-runtime-architecture.png)
 
-初始化切换历史顺序为 `content → database → read-only MCP → writes`，该阶段已经完成。现在的例行内容发布顺序是 `Markdown → main → database plan/apply → Production readback`。`src/content/**` 与 `ContentFeedSource` 继续作为审查和回滚来源，不删除。数据库导入是独立的受控步骤；Vercel 构建成功本身不代表 Feed 已写入 Neon。
+初始化切换历史顺序为 `content → database → read-only MCP → writes`，该阶段已经完成。现在的例行内容发布直接遵循 `sources → Production dedupe → draft → publish → database/public readback`，不新增 Markdown、不提交 `main`、不触发部署。`src/content/**` 与 `ContentFeedSource` 继续作为历史导入和恢复来源，不删除。数据库导入是独立的受控步骤；Vercel 构建成功本身不代表 Feed 已写入 Neon。
 
 ![Feeds 后续更新流程图](docs/architecture/feed-runtime-update-flow.png)
 

@@ -9,7 +9,8 @@ Feeds Hub 是以 Neon Postgres 为 Production 内容源的动态信息站。所�
 - GitHub 只管理代码、schema、迁移、规则、runbook 和历史导入资产。
 - `src/content/**` 是历史导入与恢复资产，不是例行更新入口。
 - 例行流程：来源核验 → 按时间判断应检查 topic → 数据库与语义去重 → 正常中文正文 → 受控写入 → 数据库复核 → 公网页面回读。
-- Chat 定时任务入口：`docs/automation/chatgpt-scheduled-task.md`。
+- 定时任务总入口：`docs/automation/feeds-hub-update.md`；Grok、Gemini Spark、ChatGPT
+  分别读取该目录下自己的版本化合同。
 
 ## 分层
 

@@ -73,5 +73,5 @@ v1 不复制 Handbook 的图谱、promotion 状态机、freshness 规则或 publ
 - 交付方式、鉴权、重试和审计位置已由单独任务批准；
 - contract fixture 和幂等回归测试通过。
 
-在此之前，不修改当前 `topics -> sources -> dedupe -> kind -> markdown -> validation`
+在此之前，不修改当前 `topics -> sources -> Production dedupe -> draft -> publish -> readback`
 主流程，也不把候选字段加入 feed frontmatter。

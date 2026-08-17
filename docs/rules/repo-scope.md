@@ -8,6 +8,8 @@
 - `docs/topics/**` topic 配置。
 - `docs/types/**` 信息类型规则。
 - `docs/rules/**` 内容/UI/仓库规则。
+- `docs/automation/**` 定时任务 owner、Prompt、调度与验收合同。
+- `docs/operations/**` MCP、OAuth、Production 操作与故障 runbook。
 - `src/**` 站点 UI、内容读取和展示逻辑。
 - 经明确批准后，按 `docs/architecture/knowledge-candidate-handoff.md` 输出显式
   knowledge candidate；当前合同尚未实现。
